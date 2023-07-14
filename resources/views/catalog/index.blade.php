@@ -6,7 +6,7 @@
         <div class="container__main">
             <main>
                 <section class="catalog">
-                    <div class="catalog__title">Ортопедическая школьная обувь в Екатеринбурге</div>
+                    <div class="catalog__title">{{ $h1 }}</div>
                     <div class="infos">
                         <div class="infos__row">
                             <div class="infos__column">
@@ -43,11 +43,11 @@
                                     <span>111441</span>
                                 </div>
                                 <a class="catalog-card__link" href="javascript:void(0)">
-                                    <img class="catalog-card__picture lazy" src="/" data-src="static/images/common/card-1.jpg" width="330" height="200" alt="">
+                                    <img class="catalog-card__picture lazy" src="/" data-src="/static/images/common/card-1.jpg" width="330" height="200" alt="">
                                 </a>
                                 <div class="catalog-card__text">ФУТМАСТЕР Туфли (лечебная антивальгусная обувь) высокие берцы Мальвина 2400-0013 Черный лак</div>
                                 <a class="catalog-card__fss" href="ajax-ipr.html" data-fancybox data-type="ajax">
-                                    <img class="lazy" src="/" data-src="static/images/common/fss.png" width="50" height="43" alt="">
+                                    <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="">
                                     <span>Компенсация ФСС</span>
                                 </a>
                                 <div class="catalog-card__price">Цена от
@@ -81,11 +81,11 @@
                                     <span>0013-0013-3</span>
                                 </div>
                                 <a class="catalog-card__link" href="javascript:void(0)">
-                                    <img class="catalog-card__picture lazy" src="/" data-src="static/images/common/card-2.jpg" width="330" height="200" alt="">
+                                    <img class="catalog-card__picture lazy" src="/" data-src="/static/images/common/card-2.jpg" width="330" height="200" alt="">
                                 </a>
                                 <div class="catalog-card__text">ФУТМАСТЕР Туфли (лечебная антивальгусная обувь) высокие берцы Метида липы 0013-0013-3 Черный кожа</div>
                                 <a class="catalog-card__fss" href="ajax-ipr.html" data-fancybox data-type="ajax">
-                                    <img class="lazy" src="/" data-src="static/images/common/fss.png" width="50" height="43" alt="">
+                                    <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="">
                                     <span>Компенсация ФСС</span>
                                 </a>
                                 <div class="catalog-card__price">Цена от
@@ -118,11 +118,11 @@
                                     <span>0201-0011</span>
                                 </div>
                                 <a class="catalog-card__link" href="javascript:void(0)">
-                                    <img class="catalog-card__picture lazy" src="/" data-src="static/images/common/card-3.jpg" width="330" height="200" alt="">
+                                    <img class="catalog-card__picture lazy" src="/" data-src="/static/images/common/card-3.jpg" width="330" height="200" alt="">
                                 </a>
                                 <div class="catalog-card__text">ФУТМАСТЕР Туфли (лечебная антивальгусная обувь) Полуботинки школьные Атлант без утепления 0201-0011 Черный кожа</div>
                                 <a class="catalog-card__fss" href="ajax-ipr.html" data-fancybox data-type="ajax">
-                                    <img class="lazy" src="/" data-src="static/images/common/fss.png" width="50" height="43" alt="">
+                                    <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="">
                                     <span>Компенсация ФСС</span>
                                 </a>
                                 <div class="catalog-card__price">Цена от
@@ -155,11 +155,11 @@
                                     <span>111441</span>
                                 </div>
                                 <a class="catalog-card__link" href="javascript:void(0)">
-                                    <img class="catalog-card__picture lazy" src="/" data-src="static/images/common/card-4.png" width="255" height="143" alt="">
+                                    <img class="catalog-card__picture lazy" src="/" data-src="/static/images/common/card-4.png" width="255" height="143" alt="">
                                 </a>
                                 <div class="catalog-card__text">МЕМО (лечебная антивальгусная обувь) Сандали CINDIRELLA-черный</div>
                                 <a class="catalog-card__fss" href="ajax-ipr.html" data-fancybox data-type="ajax">
-                                    <img class="lazy" src="/" data-src="static/images/common/fss.png" width="50" height="43" alt="">
+                                    <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="">
                                     <span>Компенсация ФСС</span>
                                 </a>
                                 <div class="catalog-card__price">Цена от
@@ -192,11 +192,11 @@
                                     <span>111441</span>
                                 </div>
                                 <a class="catalog-card__link" href="javascript:void(0)">
-                                    <img class="catalog-card__picture lazy" src="/" data-src="static/images/common/card-5.png" width="371" height="207" alt="">
+                                    <img class="catalog-card__picture lazy" src="/" data-src="/static/images/common/card-5.png" width="371" height="207" alt="">
                                 </a>
                                 <div class="catalog-card__text">Сурсил-Орто Туфли школьные 141110 Черный</div>
                                 <a class="catalog-card__fss" href="ajax-ipr.html" data-fancybox data-type="ajax">
-                                    <img class="lazy" src="/" data-src="static/images/common/fss.png" width="50" height="43" alt="">
+                                    <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="">
                                     <span>Компенсация ФСС</span>
                                 </a>
                                 <div class="catalog-card__price">Цена от
@@ -230,11 +230,11 @@
                                     <span>Арт.: 0201-0011</span>
                                 </div>
                                 <a class="catalog-card__link" href="javascript:void(0)">
-                                    <img class="catalog-card__picture lazy" src="/" data-src="static/images/common/card-6.png" width="367" height="293" alt="">
+                                    <img class="catalog-card__picture lazy" src="/" data-src="/static/images/common/card-6.png" width="367" height="293" alt="">
                                 </a>
                                 <div class="catalog-card__text">МЕГА ОРТОПЕДИК Туфли закрытые 225-128-88 Синий лак</div>
                                 <a class="catalog-card__fss" href="ajax-ipr.html" data-fancybox data-type="ajax">
-                                    <img class="lazy" src="/" data-src="static/images/common/fss.png" width="50" height="43" alt="">
+                                    <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="">
                                     <span>Компенсация ФСС</span>
                                 </a>
                                 <div class="catalog-card__price">Цена от

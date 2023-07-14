@@ -168,12 +168,16 @@ class Catalog extends Model {
 	}
 
 	public function getUrlAttribute() {
-		if ($this->_url) return $this->_url;
-		$path = 'catalog/' . $this->alias;
+        if ($this->_url) return $this->_url;
+        $path = 'catalog/' . $this->slug;
+        $current_city = SiteHelper::getCurrentCity();
+        if ($current_city) {
+            $path = $current_city->alias . '/' . ltrim($path, '/');
+        }
 
-		$this->_url = route('default', ['alias' => $path]);
+        $this->_url = route('default', ['alias' => $path]);
 
-		return $this->_url;
+        return $this->_url;
 	}
 
 	public function getIsActiveAttribute() {
@@ -374,7 +378,7 @@ class Catalog extends Model {
     }
 
     public static function getTopLevelOnList() {
-        return self::public()->whereParentId(0)->whereOnMainList(1)->orderBy('order')->get();
+        return self::public()->whereParentId(0)->orderBy('order')->get();
     }
 
     public static function getUpdatedAt() {

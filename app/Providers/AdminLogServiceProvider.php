@@ -22,18 +22,6 @@ class AdminLogServiceProvider extends ServiceProvider {
 	 */
 	public function boot() {
 
-		Complex::created(function($obj){
-			AdminLog::add('Создана новая новость: ' . $obj->name);
-		});
-
-		Complex::updated(function($obj){
-			AdminLog::add('Обновлена новость: ' . $obj->name);
-		});
-
-		Complex::deleting(function($obj){
-			AdminLog::add('Удалена новость: ' . $obj->name);
-		});
-
 		Page::created(function($obj){
 			AdminLog::add('Создана новая страница: ' . $obj->name);
 		});

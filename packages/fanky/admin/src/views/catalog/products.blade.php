@@ -34,10 +34,8 @@
                 @foreach ($products as $item)
                     <tr data-id="{{ $item->id }}">
                         <td>
-                            @if ($item->image()->first())
-                                <img src="{{ $item->image()->first()->image }}" height="100" width="100">
-                            @elseif($catalog->image)
-                                <img class="img-polaroid" src="{{ \Fanky\Admin\Models\Catalog::UPLOAD_URL . $catalog->image }}" width="150">
+                            @if ($img = $item->image()->first())
+                                <img src="{{ $img->thumb(1) }}" height="100" width="100">
                             @else
                                 <img class="img-polaroid" src="{{ \Fanky\Admin\Models\Product::NO_IMAGE }}" height="100">
                             @endif

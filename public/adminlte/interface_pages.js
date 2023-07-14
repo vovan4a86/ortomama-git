@@ -215,8 +215,8 @@ $(document).ready(function () {
         sendAjax('/admin/pages/reorder', d);
     }).on("activate_node.jstree", function(e,data){
         if(data.event.button == 0){
-            // window.location.href = '/admin/pages/edit/' + data.node.id;
-            pageContent('/admin/pages/edit/' + data.node.id);
+            window.location.href = '/admin/pages/edit/' + data.node.id;
+            // pageContent('/admin/pages/edit/' + data.node.id);
         }
     });
 });

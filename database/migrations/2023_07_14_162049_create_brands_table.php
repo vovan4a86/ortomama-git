@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCharsToProducts extends Migration
+class CreateBrandsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class AddCharsToProducts extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->text('chars_text')
-                ->nullable()
-                ->after('text');
+        Schema::create('brands', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
         });
     }
 
@@ -27,8 +26,6 @@ class AddCharsToProducts extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['chars_text']);
-        });
+        Schema::dropIfExists('brands');
     }
 }

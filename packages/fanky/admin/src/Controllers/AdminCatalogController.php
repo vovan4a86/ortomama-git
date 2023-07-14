@@ -1,25 +1,17 @@
 <?php namespace Fanky\Admin\Controllers;
 
+use Carbon\Carbon;
 use Exception;
-use Fanky\Admin\Models\AddParam;
-use Fanky\Admin\Models\CatalogParam;
-use Fanky\Admin\Models\CatalogFilter;
-use Fanky\Admin\Models\CatalogSubShow;
-use Fanky\Admin\Models\MenuAction;
-use Fanky\Admin\Models\Param;
-use Fanky\Admin\Models\ProductDoc;
-use Fanky\Admin\Models\ProductFilters;
-use Fanky\Admin\Models\ProductIcon;
-use Fanky\Admin\Models\ProductChar;
-use Fanky\Admin\Models\ProductRelated;
+use Fanky\Admin\Models\Brand;
+use Fanky\Admin\Models\Size;
+use Fanky\Admin\Models\Type;
 use Fanky\Admin\Pagination;
-use http\Params;
-use Illuminate\Support\Str;
 use Request;
 use Settings;
 use Validator;
 use Text;
 use DB;
+use Fanky\Admin\Models\Char;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\Product;
 use Fanky\Admin\Models\ProductImage;
@@ -175,11 +167,18 @@ class AdminCatalogController extends AdminController {
             $product = Product::create([
                 'catalog_id' => Request::get('catalog'),
                 'published' => 1,
+                'brand_id' => 1,
+                'in_stock' => 1,
             ]);
             $product->article = $product->makeArticle($product->id);
             $product->save();
         }
         $catalogs = Catalog::getCatalogList();
+        $brands = Brand::all()->pluck('name', 'id');
+        $sizes = Size::all();
+        $product_sizes = $product->sizes()->pluck('sizes.id')->all();
+        $types = Type::all();
+        $product_types = $product->types()->pluck('types.id')->all();
         $product_list = Product::public()->where('id', '<>', $product->id)->orderBy('name')->pluck('name', 'id')->all();
         $prod_root = $product->findRootParentCatalog($product->catalog_id);
 
@@ -188,6 +187,11 @@ class AdminCatalogController extends AdminController {
             'prod_root' => $prod_root,
             'catalogs' => $catalogs,
             'product_list' => $product_list,
+            'brands' => $brands,
+            'sizes' => $sizes,
+            'product_sizes' => $product_sizes,
+            'types' => $types,
+            'product_types' => $product_types,
         ];
         return view('admin::catalog.product_edit', $data);
     }
@@ -203,13 +207,30 @@ class AdminCatalogController extends AdminController {
 
     public function postProductSave(): array {
         $id = Request::get('id');
-        $data = Request::except(['id']);
+        $data = Request::except(['id', 'sizes', 'types', 'chars']);
+        $sizes = Request::get('sizes');
+        $types = Request::get('types');
 
         if (!array_get($data, 'published')) $data['published'] = 0;
         if (!array_get($data, 'alias')) $data['alias'] = Text::translit($data['name']);
         if (!array_get($data, 'title')) $data['title'] = $data['name'];
         if (!array_get($data, 'h1')) $data['h1'] = $data['name'];
         if (!array_get($data, 'chars_text')) $data['chars_text'] = '';
+
+        //сохраняем Характеристики
+        $param_data = Request::get('chars', []);
+        $param_ids = array_get($param_data, 'id', []);
+        $param_names = array_get($param_data, 'name', []);
+        $param_values = array_get($param_data, 'value', []);
+        $params = [];
+        foreach ($param_ids as $key => $param_id) {
+            $params[] = [
+                'id'	=> $param_id,
+                'name'	=> trim(array_get($param_names, $key)),
+                'value'	=> trim(array_get($param_values, $key)),
+            ];
+        }
+        array_pop($params);
 
         $rules = [
             'name' => 'required'
@@ -236,6 +257,21 @@ class AdminCatalogController extends AdminController {
         } else {
             $product->update($data);
         }
+        $product->sizes()->sync($sizes);
+        $product->types()->sync($types);
+
+        $start_update = Carbon::now();
+        foreach ($params as $key => $char) {
+            $p = Char::findOrNew(array_get($char, 'id'));
+            if(!$p->id) $redirect = false;
+            $char['product_id'] = $product->id;
+            $char['order'] = $key;
+            $char['updated_at'] = $start_update;
+            $p->fill($char)->save();
+        }
+        Char::whereProductId($product->id)
+            ->where('updated_at', '<', $start_update)
+            ->delete();
 
         return $redirect
             ? ['redirect' => route('admin.catalog.productEdit', [$product->id])]
@@ -274,7 +310,7 @@ class AdminCatalogController extends AdminController {
         $images = Request::file('images');
         $items = [];
         if ($images) foreach ($images as $image) {
-            $file_name = ProductImage::uploadCustomImage($image);
+            $file_name = ProductImage::uploadImage($image);
             $order = ProductImage::where('product_id', $product_id)->max('order') + 1;
             $item = ProductImage::create(['product_id' => $product_id, 'image' => $file_name, 'order' => $order]);
             $items[] = $item;

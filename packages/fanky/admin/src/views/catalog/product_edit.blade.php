@@ -21,10 +21,9 @@
         <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_1" data-toggle="tab">Параметры</a></li>
             <li><a href="#tab_2" data-toggle="tab">Текст ({{ $product->text ? 1 : 0 }})</a></li>
-            <li><a href="#tab_3" data-toggle="tab">Характеристики ({{ $product->chars_text ? '1' : count($product->chars()->get()) }})</a></li>
+            <li><a href="#tab_chars" data-toggle="tab">Характеристики</a></li>
+            <li><a href="#tab_sizes" data-toggle="tab">Размеры/Типы</a></li>
             <li><a href="#tab_4" data-toggle="tab">Изображения ({{ count($product->images()->get()) }})</a></li>
-            <li><a href="#tab_sert" data-toggle="tab">Сертификаты и ТУ ({{ count($product->certificates()->get()) }})</a></li>
-            <li><a href="#tab_docs" data-toggle="tab">Документы ({{ count($product->docs) }})</a></li>
             <li class="pull-right">
                 <a href="{{ route('admin.catalog.products', [$product->catalog_id]) }}"
                    onclick="return catalogContent(this)">К списку товаров</a>
@@ -41,34 +40,27 @@
                 {!! Form::groupText('name', $product->name, 'Название') !!}
                 {!! Form::groupText('h1', $product->h1, 'H1') !!}
                 {!! Form::groupSelect('catalog_id', $catalogs, $product->catalog_id, 'Каталог') !!}
+                {!! Form::groupSelect('brand_id', $brands, $product->brand_id, 'Бренд') !!}
+                {!! Form::groupText('article', $product->article, 'Артикул') !!}
                 {!! Form::groupText('alias', $product->alias, 'Alias') !!}
                 {!! Form::groupText('title', $product->title, 'Title') !!}
                 {!! Form::groupText('keywords', $product->keywords, 'keywords') !!}
                 {!! Form::groupText('description', $product->description, 'description') !!}
                 {!! Form::groupText('price', $product->price ?: 0, 'price') !!}
-                {!! Form::groupText('measure', $product->measure ?: 0, 'Измерение') !!}
-                {!! Form::groupText('discount', $product->discont, 'Скидка на товар (приоритет перед скидкой во всем разделе)') !!}
                 <hr>
                 {!! Form::hidden('in_stock', 0) !!}
                 {!! Form::groupCheckbox('published', 1, $product->published, 'Показывать товар') !!}
                 {!! Form::groupCheckbox('in_stock', 1, $product->in_stock, 'В наличии') !!}
 
             </div>
+
             <div class="tab-pane" id="tab_2">
                 {{--                {!! Form::groupRichtext('announce_text', $product->announce_text, 'Краткое описание', ['rows' => 3]) !!}--}}
                 {!! Form::groupRichtext('text', $product->text, 'Текст', ['rows' => 3]) !!}
-                {{--                {!! Form::groupRichtext('seo_text', $product->seo_text, 'SEO Текст', ['rows' => 3]) !!}--}}
             </div>
-            <div class="tab-pane" id="tab_3">
-                {{-- харакетристики для Кабельной продукции --}}
-                @if($prod_root->id == 1)
-{{--                    <p>Характеристики для товаров раздела "Кабельная продукция" задаются в настройках подраздела для всех товаров сразу</p>--}}
-                    {!! Form::groupRichtext('chars', $product->chars_text, 'Характеристики', ['rows' => 3]) !!}
-                @else
-                {{-- вывод харакетристик для остальных разделов --}}
-                    @include('admin::catalog.tabs.tab_chars')
-                @endif
-                <hr>
+
+            <div class="tab-pane" id="tab_chars">
+                @include('admin::catalog.product_chars')
             </div>
 
             <div class="tab-pane" id="tab_4">
@@ -82,10 +74,10 @@
                             Загрузить изображения
                         </label>
                     </div>
-                    <p>Размер изображения: 586x386</p>
+                    <p>Размер изображения: 400x400</p>
 
                     <div class="images_list">
-                        @foreach ($product->images()->get() as $image)
+                        @foreach ($product->images as $image)
                             @include('admin::catalog.product_image', ['image' => $image, 'active' => $product->image])
                         @endforeach
                     </div>
@@ -94,23 +86,26 @@
                 @endif
             </div>
 
-            <div class="tab-pane" id="tab_sert">
-                @if(count($product->certificates()->get()))
-                    <div class="certificates" style="display: flex; column-gap: 20px;">
-                        @foreach($product->certificates()->get() as $cert)
-                            <img class="img-polaroid" style="cursor: zoom-in;"
-                                 src="{{ \Fanky\Admin\Models\Product::CERTIFICATE_PATH . $cert->image }}"
-                                 height="200"
-                                 data-image="{{ \Fanky\Admin\Models\Product::CERTIFICATE_PATH . $cert->image }}"
-                                 onclick="return popupImage($(this).data('image'))">
-                        @endforeach
+            <div class="tab-pane" id="tab_sizes">
+                <h4>Размеры товара:</h4>
+                <div style="max-width: 440px;">
+                    @foreach($sizes as $size)
+                        <input type="checkbox" name="sizes[]" id="size_{{ $size->value }}" value="{{$size->id}}"
+                                {{ in_array($size->id, $product_sizes) ? 'checked' : '' }}>
+                        <label for="size_{{ $size->value }}" style="margin-right: 10px;">{{$size->value}}</label>
+                    @endforeach
+                </div>
+                <hr>
+                <h4>Тип товара:</h4>
+                @foreach($types as $type)
+                    <div>
+                        <input type="checkbox" name="types[]" id="type_{{ $type->name }}" value="{{$type->id}}"
+                                {{ in_array($type->id, $product_types) ? 'checked' : '' }}>
+                        <label for="type_{{ $type->name }}">{{$type->name}}</label>
                     </div>
-                @endif
+                @endforeach
             </div>
 
-            <div class="tab-pane" id="tab_docs">
-                @include('admin::catalog.tabs.tab_docs')
-            </div>
         </div>
 
         <div class="box-footer">

@@ -29,7 +29,7 @@ class CatalogController extends Controller {
     }
 
     public function index() {
-        $page = Page::getByPath(['catalog']);
+        $page = Page::where('alias', 'catalog')->first();
         if (!$page) return abort(404);
         $bread = $page->getBread();
         $page->h1 = $page->getH1();
@@ -79,42 +79,18 @@ class CatalogController extends Controller {
             $canonical = null;
         }
 
-        $root = $category;
-        while ($root->parent_id !== 0) {
-            $root = $root->findRootCategory($root->parent_id);
-        }
-
-        $view = $category->parent_id == 0 ? 'catalog.sub_category' : 'catalog.category';
-
-        $rootIds = Catalog::where('parent_id', 0)->pluck('id')->all();
-        if (in_array($category->parent_id, $rootIds) && $root->is_table == 1) {
-            $view = 'catalog.sub_category_table';
-            $children = $category->children;
-            $items = collect();
-
-            foreach ($children as $child) {
-                $prods = $child->products()->orderBy('name')->get();
-                $items->push([$child->name => ['url' => $child->url, 'value' => $prods->chunk(4)]]);
-            }
-        } else {
-            $per_page = Settings::get('product_per_page') ?: 9;
-            $data['per_page'] = $per_page;
-            $items = $category->getRecurseProducts()->paginate($per_page);
-        }
-
         Auth::init();
         if (Auth::user() && Auth::user()->isAdmin) {
             View::share('admin_edit_link', route('admin.catalog.catalogEdit', [$category->id]));
         }
+
+        $items = [];
 
         $data = [
             'bread' => $bread,
             'category' => $category,
             'canonical' => $canonical,
             'h1' => $category->getH1(),
-            'items' => $items,
-            'asideName' => $root->name,
-            'root' => $root,
         ];
 
         if (Request::ajax()) {
@@ -123,7 +99,6 @@ class CatalogController extends Controller {
                 $view_items[] = view('catalog.product_item', [
                     'item' => $item,
                     'category' => $category,
-                    'per_page' => $per_page
                 ])->render();
             }
 

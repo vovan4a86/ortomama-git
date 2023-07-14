@@ -64,6 +64,10 @@ class Page extends Model {
     protected $_parents = [];
     private $_url;
 
+    public static $excludePageImage = ['catalog'];
+
+    public static $excludePageText = [];
+
 	public static function boot() {
 		parent::boot();
 

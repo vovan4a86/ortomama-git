@@ -35,9 +35,9 @@ class ProductImage extends Model {
 	const UPLOAD_URL = '/uploads/products/';
 
 	public static $thumbs = [
-		1 => '376x295', //admin product_list
-		2 => '112x61', //list_row
-		3 => '586x386', //product_page
+		1 => '100x100|fit', //admin product_list
+		2 => '333x205|fit', //list item
+		3 => '316x316|fit', //product_page
 	];
 
     public function product() {

@@ -5,6 +5,8 @@ use App\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
@@ -113,13 +115,25 @@ class Product extends Model {
 
     const UPLOAD_PATH = '/public/uploads/products/';
     const UPLOAD_URL = '/uploads/products/';
-    const UPLOAD_CUSTOM_IMG = '/uploads/products/custom/';
-    const CERTIFICATE_PATH = '/uploads/certificates/';
-
     const NO_IMAGE = "/adminlte/no_image.png";
 
     public function catalog() {
         return $this->belongsTo(Catalog::class);
+    }
+
+    public function sizes(): BelongsToMany
+    {
+        return $this->belongsToMany(Size::class);
+    }
+
+    public function types(): BelongsToMany
+    {
+        return $this->belongsToMany(Type::class);
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
     }
 
     public function images(): HasMany {
@@ -127,18 +141,13 @@ class Product extends Model {
             ->orderBy('order');
     }
 
-    public function certificates(): HasMany {
-        return $this->hasMany(ProductCertificate::class, 'product_id')
-            ->orderBy('order');
-    }
-
-    public function docs(): HasMany {
-        return $this->hasMany(ProductDoc::class, 'product_id')
-            ->orderBy('order');
-    }
-
     public function image(): HasOne {
         return $this->hasOne(ProductImage::class, 'product_id')
+            ->orderBy('order');
+    }
+
+    public function chars(): HasMany {
+        return $this->hasMany(Char::class, 'product_id')
             ->orderBy('order');
     }
 
@@ -157,11 +166,6 @@ class Product extends Model {
         } else {
             return self::NO_IMAGE;
         }
-    }
-
-    public function chars(): HasMany {
-        return $this->hasMany(ProductChar::class, 'product_id')->orderBy('order')
-            ->join('chars', 'chars.id', '=', 'product_chars.char_id');
     }
 
     public function related(): HasMany {
