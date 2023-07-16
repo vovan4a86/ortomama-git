@@ -41,9 +41,6 @@
                 {!! Form::groupText('keywords', $catalog->keywords, 'keywords') !!}
                 {!! Form::groupText('description', $catalog->description, 'description') !!}
 
-                {!! Form::groupText('discount', $catalog->discont, 'Скидка на все товары категории') !!}
-                {!! Form::groupText('catalog_measure', $catalog->catalog_measure, 'Указать измерение для всех товаров каталога') !!}
-
                 <div class="form-group" style="display: flex; column-gap: 30px;">
                     <div>
                         <label for="article-image">Изображение</label>
@@ -60,22 +57,12 @@
                             @endif
                         </div>
                     </div>
-                    @if($catalog->parent_id == 0)
-                        <div style="align-self: center; ">
-                            {!! Form::groupText('size_main', $catalog->size_main, 'Размер иконки на главной (w,h)') !!}
-                            {!! Form::groupText('size_cat', $catalog->size_cat, 'Размер иконки в разделе каталог (w,h)') !!}
-                        </div>
-                    @endif
                 </div>
                 {!! Form::hidden('published', 0) !!}
                 {!! Form::groupCheckbox('published', 1, $catalog->published, 'Показывать раздел') !!}
-
-                @if($catalog->parent_id == 0)
-                    {!! Form::groupCheckbox('is_table', 1, $catalog->is_table, 'Отображать раздел в виде таблицы') !!}
-                    {!! Form::groupCheckbox('on_main', 1, $catalog->on_main, 'Показывать в каталоге на главной') !!}
-                    {!! Form::groupCheckbox('on_menu', 1, $catalog->on_menu, 'Показывать в главном меню') !!}
-                    {!! Form::groupCheckbox('on_main_list', 1, $catalog->on_main_list, 'Показывать в каталоге продукции') !!}
-                    {!! Form::groupCheckbox('on_footer_menu', 1, $catalog->on_footer_menu, 'Показывать в футере') !!}
+                @if ($catalog->parent_id ==0)
+                    {!! Form::hidden('on_footer_menu', 0) !!}
+                    {!! Form::groupCheckbox('on_footer_menu', 1, $catalog->on_footer_menu, 'Показывать в каталоге подвала') !!}
                 @endif
 
                 <div class="box box-primary box-solid">
@@ -109,10 +96,6 @@
 
             <div class="tab-pane" id="tab_2">
                 {!! Form::groupRichtext('text', $catalog->text, 'Основной текст', ['rows' => 3]) !!}
-                @if($root->id == 1 && $catalog->parent_id != 1)
-                {!! Form::groupRichtext('chars', $catalog->chars, 'Характеристики (актуальны для всех товаров раздела)', ['rows' => 3]) !!}
-                @endif
-{{--                {!! Form::groupRichtext('sphere', $catalog->sphere, 'Сфера применения', ['rows' => 3]) !!}--}}
             </div>
         </div>
 

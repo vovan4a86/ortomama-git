@@ -99,81 +99,23 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		Route::post('product-image-order', $controller . 'postProductImageOrder')
 			->name('.productImageOrder');
 
-        Route::post('product-certificate-upload/{id}', $controller . 'postProductCertificateUpload')
-            ->name('.productCertificateUpload');
+        Route::post('product-doc-upload/{id}', $controller . 'postProductDocUpload')
+            ->name('.productDocUpload');
 
-        Route::post('product-certificate-delete/{id}', $controller . 'postProductCertificateDelete')
-            ->name('.productCertificateDel');
+        Route::post('product-doc-delete/{id}', $controller . 'postProductDocDelete')
+            ->name('.productDocDel');
+
+        Route::post('product-doc-order', $controller . 'postProductDocOrder')
+            ->name('.productDocOrder');
+
+        Route::post('product-doc-edit/{id}', $controller . 'postProductDocEdit')
+            ->name('.productDocEdit');
+
+        Route::post('product-doc-data-save/{id}', $controller . 'postProductDocDataSave')
+            ->name('.productDocDataSave');
 
 		Route::get('get-catalogs/{id?}', $controller . 'getGetCatalogs')
 			->name('.get_catalogs');
-
-        Route::post('add-doc/{id}', [
-            'as'   => '.add_doc',
-            'uses' => $controller . 'postAddDoc'
-        ]);
-
-        Route::post('del-doc/{id}', [
-            'as'   => '.del_doc',
-            'uses' => $controller . 'postDelDoc'
-        ]);
-
-        Route::post('save-related/{id}', [
-            'as'   => '.save_related',
-            'uses' => $controller . 'postSaveRelated'
-        ]);
-	});
-
-	Route::group(['as' => '.complex', 'prefix' => 'complex'], function () {
-		$controller = 'AdminComplexController@';
-		Route::get('/', $controller . 'getIndex');
-
-		Route::get('edit/{id?}', $controller . 'getEdit')
-			->name('.edit');
-
-		Route::post('save', $controller . 'postSave')
-			->name('.save');
-
-		Route::post('delete/{id}', $controller . 'postDelete')
-			->name('.delete');
-
-		Route::post('delete-image/{id}', $controller . 'postDeleteImage')
-			->name('.delete-image');
-	});
-
-	Route::group(['as' => '.objects', 'prefix' => 'objects'], function () {
-		$controller = 'AdminObjectsController@';
-		Route::get('/', $controller . 'getIndex');
-
-		Route::get('edit/{id?}', $controller . 'getEdit')
-			->name('.edit');
-
-		Route::post('save', $controller . 'postSave')
-			->name('.save');
-
-		Route::post('delete/{id}', $controller . 'postDelete')
-			->name('.delete');
-
-		Route::post('delete-image/{id}', $controller . 'postDeleteImage')
-			->name('.delete-image');
-
-        Route::post('add-images/{id}', $controller . 'postProductImageUpload')
-            ->name('.add_images');
-
-        Route::post('image-data-save/{id}', $controller . 'postImageDataSave')
-            ->name('.imageDataSave');
-
-        Route::post('image-edit/{id}', $controller . 'postImageEdit')
-            ->name('.imageEdit');
-
-        Route::post('del-images/{id}', $controller . 'postDelImg')
-            ->name('.del_img');
-
-        Route::post('update-img-order/{id}', $controller . 'postUpdateImgOrder')
-            ->name('.update-img-order');
-
-        Route::post('reorder', $controller . 'postReorder')
-            ->name('.reorder');
 	});
 
     Route::group(['as' => '.contacts', 'prefix' => 'contacts'], function () {
@@ -193,8 +135,8 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
             ->name('.update-order');
     });
 
-    Route::group(['as' => '.delivery', 'prefix' => 'delivery'], function () {
-        $controller = 'AdminDeliveryController@';
+    Route::group(['as' => '.points', 'prefix' => 'points'], function () {
+        $controller = 'AdminPointsController@';
         Route::get('/', $controller . 'getIndex');
 
         Route::get('edit/{id?}', $controller . 'getEdit')
@@ -206,8 +148,8 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
         Route::post('delete/{id}', $controller . 'postDelete')
             ->name('.delete');
 
-        Route::post('update-order/{id}', $controller . 'postUpdateOrder')
-            ->name('.update-order');
+        Route::post('reorder', $controller . 'postReorder')
+            ->name('.reorder');
     });
 
     Route::group(['as' => '.payment', 'prefix' => 'payment'], function () {

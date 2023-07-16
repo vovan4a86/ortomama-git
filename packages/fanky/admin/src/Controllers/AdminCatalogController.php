@@ -1,20 +1,24 @@
 <?php namespace Fanky\Admin\Controllers;
 
 use Carbon\Carbon;
+use DB;
 use Exception;
 use Fanky\Admin\Models\Brand;
+use Fanky\Admin\Models\Catalog;
+use Fanky\Admin\Models\Category;
+use Fanky\Admin\Models\Char;
+use Fanky\Admin\Models\Document;
+use Fanky\Admin\Models\Product;
+use Fanky\Admin\Models\ProductImage;
+use Fanky\Admin\Models\Season;
+use Fanky\Admin\Models\Sex;
 use Fanky\Admin\Models\Size;
 use Fanky\Admin\Models\Type;
 use Fanky\Admin\Pagination;
 use Request;
 use Settings;
-use Validator;
 use Text;
-use DB;
-use Fanky\Admin\Models\Char;
-use Fanky\Admin\Models\Catalog;
-use Fanky\Admin\Models\Product;
-use Fanky\Admin\Models\ProductImage;
+use Validator;
 
 class AdminCatalogController extends AdminController {
 
@@ -60,18 +64,12 @@ class AdminCatalogController extends AdminController {
             ->where('id', '!=', $catalog->id)
             ->get();
 
-        $root = $catalog;
-        while ($root->parent_id !== 0) {
-            $root = $root->findRootCategory($root->parent_id);
-        }
-
         $catalogProducts = $catalog->getRecurseProducts()->orderBy('name')->pluck('id', 'name')->all();
 
         return view('admin::catalog.catalog_edit', [
             'catalog' => $catalog,
             'catalogs' => $catalogs,
             'catalogProducts' => $catalogProducts,
-            'root' => $root
         ]);
     }
 
@@ -116,8 +114,6 @@ class AdminCatalogController extends AdminController {
             $file_name = Catalog::uploadImage($image);
             $data['image'] = $file_name;
         }
-
-        $data['discount'] = preg_replace("/[^0-9]/", '', $data['discount']);
 
         // сохраняем страницу
         $catalog = Catalog::find($id);
@@ -164,11 +160,13 @@ class AdminCatalogController extends AdminController {
     public function postProductEdit($id = null) {
         /** @var Product $product */
         if (!$id || !($product = Product::findOrFail($id))) {
+            $catalog_id = Request::get('catalog');
             $product = Product::create([
-                'catalog_id' => Request::get('catalog'),
+                'catalog_id' => $catalog_id,
                 'published' => 1,
                 'brand_id' => 1,
                 'in_stock' => 1,
+                'order' => Product::where('catalog_id', $catalog_id)->max('order') + 1
             ]);
             $product->article = $product->makeArticle($product->id);
             $product->save();
@@ -179,19 +177,27 @@ class AdminCatalogController extends AdminController {
         $product_sizes = $product->sizes()->pluck('sizes.id')->all();
         $types = Type::all();
         $product_types = $product->types()->pluck('types.id')->all();
-        $product_list = Product::public()->where('id', '<>', $product->id)->orderBy('name')->pluck('name', 'id')->all();
-        $prod_root = $product->findRootParentCatalog($product->catalog_id);
+        $seasons = Season::query()->orderBy('order')->get();
+        $product_seasons = $product->seasons()->pluck('seasons.id')->all();
+        $sexes = Sex::query()->orderBy('order')->get();
+        $product_sexes = $product->sexes()->pluck('sexes.id')->all();
+        $cats = Category::query()->orderBy('order')->get();
+        $product_cats = $product->categories()->pluck('categories.id')->all();
 
         $data = [
             'product' => $product,
-            'prod_root' => $prod_root,
             'catalogs' => $catalogs,
-            'product_list' => $product_list,
             'brands' => $brands,
             'sizes' => $sizes,
             'product_sizes' => $product_sizes,
             'types' => $types,
             'product_types' => $product_types,
+            'seasons' => $seasons,
+            'product_seasons' => $product_seasons,
+            'sexes' => $sexes,
+            'product_sexes' => $product_sexes,
+            'cats' => $cats,
+            'product_cats' => $product_cats
         ];
         return view('admin::catalog.product_edit', $data);
     }
@@ -207,15 +213,18 @@ class AdminCatalogController extends AdminController {
 
     public function postProductSave(): array {
         $id = Request::get('id');
-        $data = Request::except(['id', 'sizes', 'types', 'chars']);
+        $data = Request::except(['id', 'sizes', 'types', 'chars', 'sexes', 'seasons']);
         $sizes = Request::get('sizes');
         $types = Request::get('types');
+        $sexes = Request::get('sexes');
+        $seasons = Request::get('seasons');
+        $cats = Request::get('cats');
 
         if (!array_get($data, 'published')) $data['published'] = 0;
         if (!array_get($data, 'alias')) $data['alias'] = Text::translit($data['name']);
         if (!array_get($data, 'title')) $data['title'] = $data['name'];
         if (!array_get($data, 'h1')) $data['h1'] = $data['name'];
-        if (!array_get($data, 'chars_text')) $data['chars_text'] = '';
+        if (!array_get($data, 'compensation')) $data['compensation'] = 0;
 
         //сохраняем Характеристики
         $param_data = Request::get('chars', []);
@@ -251,14 +260,18 @@ class AdminCatalogController extends AdminController {
         // сохраняем страницу
         $product = Product::find($id);
         if (!$product) {
-            $data['order'] = Product::where('catalog_id', $data['catalog_id'])->max('order') + 1;
+//            $data['order'] = Product::where('catalog_id', $data['catalog_id'])->max('order') + 1;
             $product = Product::create($data);
             $redirect = true;
         } else {
             $product->update($data);
         }
+        $product->article = $product->makeArticle($product->id);
         $product->sizes()->sync($sizes);
         $product->types()->sync($types);
+        $product->sexes()->sync($sexes);
+        $product->seasons()->sync($seasons);
+        $product->categories()->sync($cats);
 
         $start_update = Carbon::now();
         foreach ($params as $key => $char) {
@@ -361,37 +374,52 @@ class AdminCatalogController extends AdminController {
         return $result;
     }
 
-    public function postAddDoc($product_id): array {
-        $product = Product::findOrFail($product_id);
-        $data = Request::except('file');
-        $file = Request::file('file');
-
-        $valid = Validator::make($data, [
-            'name' => 'required',
-        ]);
-
-        if ($file) {
-            $file_name = ProductDoc::uploadFile($file);
-            $data['file'] = $file_name;
+    public function postProductDocUpload($product_id): array {
+        $docs = Request::file('docs');
+        $items = [];
+        if ($docs) foreach ($docs as $doc) {
+            $file_name = Document::uploadFile($doc);
+            $order = Document::where('product_id', $product_id)->max('order') + 1;
+            $item = Document::create(['product_id' => $product_id, 'src' => $file_name, 'order' => $order]);
+            $items[] = $item;
         }
 
-        if ($valid->fails()) {
-            return ['errors' => $valid->messages()];
-        } else {
-            $data = array_map('trim', $data);
-            $data['product_id'] = $product->id;
-            $data['order'] = ProductDoc::whereProductId($product_id)->max('order') + 1;
-            $doc = ProductDoc::create($data);
-            $row = view('admin::catalog.tabs.doc_row', compact('doc'))->render();
-
-            return ['row' => $row];
+        $html = '';
+        foreach ($items as $item) {
+            $html .= view('admin::catalog.product_doc', ['doc' => $item]);
         }
+
+        return ['html' => $html];
     }
 
-    public function postDelDoc($doc_id): array {
-        $related = ProductDoc::findOrFail($doc_id);
-        $related->delete();
+    public function postProductDocOrder(): array {
+        $sorted = Request::get('sorted', []);
+        foreach ($sorted as $order => $id) {
+            Document::whereId($id)->update(['order' => $order]);
+        }
 
         return ['success' => true];
     }
+
+    public function postProductDocDelete($id): array {
+        $item = Document::findOrFail($id);
+        $item->deleteSrcFile();
+        $item->delete();
+
+        return ['success' => true];
+    }
+
+    public function postProductDocEdit($id) {
+        $doc = Document::findOrFail($id);
+        return view('admin::catalog.product_doc_edit', ['doc' => $doc]);
+    }
+
+    public function postProductDocDataSave($id) {
+        $image = Document::findOrFail($id);
+        $data = Request::only('name');
+        $image->name = $data['name'];
+        $image->save();
+        return ['success' => true];
+    }
+
 }

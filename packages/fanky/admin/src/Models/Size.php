@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Size extends Model
 {
-    protected $fillable = ['value'];
+    protected $fillable = ['value', 'order'];
 
     public $timestamps = false;
 
-    public function product(): BelongsToMany
+    public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class);
     }

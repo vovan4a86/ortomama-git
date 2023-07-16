@@ -1,7 +1,7 @@
 'use strict';
 
-const api = 'api/store.json';
-const cartLink = 'javascript:void(0)';
+const api = '/ajax/get-products';
+const cartLink = '/cart';
 
 document.addEventListener('DOMContentLoaded', () => {
   cookie();

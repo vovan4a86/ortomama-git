@@ -23,10 +23,6 @@ Route::group(['prefix' => 'ajax', 'as' => 'ajax.'], function () {
     Route::post('edit-cart-product', [AjaxController::class, 'postEditCartProduct'])->name('edit-cart-product');
     Route::post('order', [AjaxController::class, 'postOrder'])->name('order');
 	Route::post('request', 'AjaxController@postRequest')->name('request');
-    Route::post('consultation', 'AjaxController@postConsultation')->name('consultation');
-    Route::post('product-consult', 'AjaxController@postProductConsult')->name('product-consult');
-    Route::post('optimal-decision', 'AjaxController@postOptimalDecision')->name('optimal-decision');
-    Route::post('complex-decision', 'AjaxController@postComplexDecision')->name('complex-decision');
 	Route::post('writeback', 'AjaxController@postWriteback')->name('writeback');
 	Route::post('manager-request', 'AjaxController@postManagerRequest')->name('manager-request');
 	Route::post('callback', 'AjaxController@postCallback')->name('callback');
@@ -34,6 +30,9 @@ Route::group(['prefix' => 'ajax', 'as' => 'ajax.'], function () {
     Route::post('update-char-value', [AjaxController::class, 'postUpdateProductCharValue'])->name('update-char-value');
     Route::post('add-product-char', [AjaxController::class, 'postAddProductChar'])->name('add-product-char');
     Route::post('delete-product-char', [AjaxController::class, 'postDeleteProductChar'])->name('delete-product-char');
+    Route::post('per-page-select', [AjaxController::class, 'postPerPageSelect'])
+        ->name('per-page-select');
+    Route::get('get-products', 'AjaxController@postGetProducts')->name('get-products');
 });
 
 Route::group(['middleware' => ['redirects']], function() {

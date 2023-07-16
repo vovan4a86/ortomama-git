@@ -2,6 +2,7 @@
 
 use App\Traits\HasH1;
 use App\Traits\HasSeo;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 use Settings;
-use Carbon\Carbon;
 
 /**
  * Fanky\Admin\Models\Product
@@ -126,9 +126,29 @@ class Product extends Model {
         return $this->belongsToMany(Size::class);
     }
 
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
     public function types(): BelongsToMany
     {
         return $this->belongsToMany(Type::class);
+    }
+
+    public function sexes(): BelongsToMany
+    {
+        return $this->belongsToMany(Sex::class);
+    }
+
+    public function seasons(): BelongsToMany
+    {
+        return $this->belongsToMany(Season::class);
+    }
+
+    public function docs(): HasMany {
+        return $this->hasMany(Document::class)
+            ->orderBy('order');
     }
 
     public function brand(): BelongsTo
@@ -189,9 +209,9 @@ class Product extends Model {
         return $query->where('on_main', 1);
     }
 
-    public function getImageSrcAttribute($value) {
-        return ($this->image)
-            ? $this->image->image_src
+    public function getImageSrcAttribute() {
+        return ($this->image()->first())
+            ? ProductImage::UPLOAD_URL . $this->image()->first()->image
             : null;
     }
 

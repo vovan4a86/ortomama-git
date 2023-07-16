@@ -32,7 +32,7 @@
         <link rel="canonical" href="{{ $canonical }}"/>
     @endif
 
-    @if(Route::is('contacts'))
+    @if(Route::is('cart'))
         <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
     @endif
 </head>

@@ -25,20 +25,14 @@ class AdminMenuMiddleware {
 			$menu->add('Заказы', ['route' => 'admin.orders', 'icon' => 'fa-dollar'])
 				->active('/admin/orders/*');
 
-			$menu->add('Комплексные решения', ['route' => 'admin.complex', 'icon' => 'fa-calendar'])
-				->active('/admin/complex/*');
-
-			$menu->add('Наши объекты', ['route' => 'admin.objects', 'icon' => 'fa-star'])
-				->active('/admin/objects/*');
-
 //			$menu->add('Региональность', ['route' => 'admin.cities', 'icon' => 'fa-globe'])
 //				->active('/admin/cities/*');
 
-			$menu->add('Способы доставки', ['route' => 'admin.delivery', 'icon' => 'fa-truck'])
-				->active('/admin/delivery/*');
+			$menu->add('Пункты выдачи', ['route' => 'admin.points', 'icon' => 'fa-star'])
+				->active('/admin/points/*');
 
-			$menu->add('Способы оплаты', ['route' => 'admin.payment', 'icon' => 'fa-handshake-o'])
-				->active('/admin/payment/*');
+//			$menu->add('Способы оплаты', ['route' => 'admin.payment', 'icon' => 'fa-handshake-o'])
+//				->active('/admin/payment/*');
 
 //			$menu->add('Новости', ['route' => 'admin.complex', 'icon' => 'fa-calendar'])
 //				->active('/admin/complex/*');
@@ -49,9 +43,6 @@ class AdminMenuMiddleware {
 //			$menu->add('Партнеры', ['route' => 'admin.partners', 'icon' => 'fa-handshake-o'])
 //				->active('/admin/partners/*');
 
-//            $menu->add('Контакты в городах', ['route' => 'admin.contacts', 'icon' => 'fa-id-card'])
-//                ->active('/admin/contacts/*');
-
 //			$menu->add('Акции', ['route' => 'admin.actions', 'icon' => 'fa-percent'])
 //				->active('/admin/actions/*');
 
@@ -61,8 +52,8 @@ class AdminMenuMiddleware {
 //			$menu->add('Галереи', ['route' => 'admin.gallery', 'icon' => 'fa-image'])
 //				->active('/admin/gallery/*');
 
-//			$menu->add('Отзывы', ['route' => 'admin.reviews', 'icon' => 'fa-star'])
-//				->active('/admin/reviews/*');
+			$menu->add('Отзывы', ['route' => 'admin.reviews', 'icon' => 'fa-star'])
+				->active('/admin/reviews/*');
 
 			$menu->add('Настройки', ['icon' => 'fa-cogs'])
 				->nickname('settings');

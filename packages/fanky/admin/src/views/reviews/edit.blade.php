@@ -26,44 +26,38 @@
 		<div class="box box-solid">
 			<div class="box-body">
 
-				<div class="form-group" style="width:200px;">
-					<label for="review-type">Категория</label>
-					<select id="review-type" class="form-control" name="type">
-						<option value=""></option>
-						@foreach ($review::$types as $typeId => $typeName)
-							<option value="{{ $typeId }}" {{ $review->type == $typeId ? 'selected' : '' }}>{{ $typeName }}</option>
-						@endforeach
-					</select>
+				<div class="form-group">
+					<label for="review-name">Имя, должность</label>
+					<input id="review-name" class="form-control" type="text" name="name" value="{{ $review->name }}">
 				</div>
 
 				<div class="form-group">
-					<label for="review-adress">Адрес</label>
-					<input id="review-adress" class="form-control" type="text" name="adress" value="{{ $review->adress }}">
-				</div>
-
-				<div class="form-group">
-					<label for="review-text">Название</label>
+					<label for="review-text">Текст</label>
 					<textarea id="review-text" class="form-control" name="text" rows="6">{{ $review->text }}</textarea>
 				</div>
 
-				<div class="form-group">
-					<label for="review-video">Видео</label>
-					<input id="review-video" class="form-control" type="text" name="video" value="" placeholder="Ссылка YouTube...">
-					<div id="review-video-block">
-						@if ($review->video)
-							<img class="img-polaroid" src="{{ $review->video_thumb }}" height="100" onclick="popupVideo('{{ $review->video_src }}')">
-						@else
-							<p class="text-yellow">Видео не добавлено.</p>
-						@endif
+				<div class="form-group" style="display: flex; column-gap: 30px;">
+					<div>
+						<label for="review-image">Изображение</label>
+						<input id="review-image" type="file" name="image" value=""
+							   onchange="return reviewImageAttache(this, event)">
+						<div id="review-image-block">
+							@if ($review->image)
+								<img class="img-polaroid"
+									 src="{{ \Fanky\Admin\Models\Review::UPLOAD_URL . $review->image }}" height="100"
+									 data-image="{{ \Fanky\Admin\Models\Review::UPLOAD_URL . $review->image }}"
+									 onclick="return popupImage($(this).data('image'))">
+							@else
+								<p class="text-yellow">Изображение не загружено.</p>
+							@endif
+						</div>
 					</div>
 				</div>
 
-				<div class="form-group">
-					<label>
-						<input type="checkbox" class="minimal" name="on_main" value="1" {{ $review->on_main == 1 ? 'checked' : '' }}>
-						Показывать на главной
-					</label>
-				</div>
+				{!! Form::hidden('published', 0) !!}
+				{!! Form::groupCheckbox('published', 1, $review->published, 'Показывать') !!}
+				{!! Form::hidden('on_main', 0) !!}
+				{!! Form::groupCheckbox('on_main', 1, $review->on_main, 'Показывать на главной') !!}
 
 			</div>
 

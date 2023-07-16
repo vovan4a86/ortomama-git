@@ -27,16 +27,13 @@
 						@foreach ($reviews as $item)
 							<tr data-id="{{ $item->id }}">
 								<td width="40"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></td>
-								<td width="150">
-									@if ($item->video)
-										<img src="{{ $item->video_thumb }}" height="60" onclick="popupVideo('{{ $item->video_src }}')" style="cursor:pointer;">
-									@endif
-								</td>
+								<td width="150">{{ $item->name }}</td>
 								<td>{{ $item->text }}</td>
-								<td width="150">{{ $item->type_name }}</td>
-								<td><a class="glyphicon glyphicon-edit" href="{{ route('admin.reviews.edit', [$item->id]) }}" style="font-size:20px; color:orange;"></a></td>
+								<td width="100">{{ $item->on_main ? 'На главной' : '' }}</td>
+								<td width="50"><a class="glyphicon glyphicon-edit" href="{{ route('admin.reviews.edit', [$item->id]) }}" style="font-size:20px; color:orange;"></a></td>
 								<td>
-									<a class="glyphicon glyphicon-trash" href="{{ route('admin.reviews.del', [$item->id]) }}" style="font-size:20px; color:red;" onclick="reviewsDel(this, event)"></a>
+									<a class="glyphicon glyphicon-trash" href="{{ route('admin.reviews.del', [$item->id]) }}" style="font-size:20px; color:red;"
+									   onclick="reviewsDel(this, event)"></a>
 								</td>
 							</tr>
 						@endforeach

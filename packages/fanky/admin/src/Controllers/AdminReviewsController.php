@@ -27,16 +27,17 @@ class AdminReviewsController extends AdminController {
 	public function postSave()
 	{
 		$id = Request::input('id');
-		$data = Request::only(['date', 'text', 'adress', 'type', 'on_main']);
-		$video = Request::input('video');
+		$data = Request::only(['name', 'text', 'order', 'on_main', 'published']);
+		$image = Request::file('image');
 
+		if (!$data['published']) $data['published'] = 0;
 		if (!$data['on_main']) $data['on_main'] = 0;
-		if ($video) $data['video'] = YouTube::getId($video);
 
 		// валидация данных
 		$validator = Validator::make(
 		    $data,
 		    [
+		    	'name' => 'required',
 		    	'text' => 'required',
 		    ]
 		);
@@ -44,19 +45,26 @@ class AdminReviewsController extends AdminController {
 			return ['errors' => $validator->messages()];
 		}
 
+        if($image) {
+            $file_name = Review::uploadImage($image);
+            $data['image'] = $file_name;
+        }
+
 		// сохраняем страницу
 		$review = Review::find($id);
+        $redirect = false;
 		if (!$review) {
 			$data['order'] = Review::max('order') + 1;
 			$review = Review::create($data);
-			return ['redirect' => route('admin.reviews.edit', [$review->id])];
+            $redirect = true;
 		} else {
-			$old_video = $review->video;
-			$review->update($data);
-			if ($video && $old_video != $video) return ['redirect' => route('admin.reviews.edit', [$review->id])];
+            $review->update($data);
 		}
-
-		return ['msg' => 'Изменения сохранены.'];
+        if ($redirect) {
+            return ['redirect' => route('admin.reviews.edit', [$review->id])];
+        } else {
+            return ['success' => true, 'msg' => 'Изменения сохранены'];
+        }
 	}
 
 	public function postReorder()

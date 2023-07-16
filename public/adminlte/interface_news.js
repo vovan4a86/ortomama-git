@@ -24,7 +24,7 @@ function newsSave(form, e){
     });
     if (newsImage) {
         data.append('image', newsImage);
-    };
+    }
 
     sendFiles(url, data, function(json){
         if (typeof json.errors != 'undefined') {

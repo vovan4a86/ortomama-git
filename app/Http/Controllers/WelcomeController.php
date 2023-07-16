@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use Fanky\Admin\Models\Catalog;
+use Fanky\Admin\Models\Category;
 use Fanky\Admin\Models\City;
 use Fanky\Admin\Models\Page;
 use SEOMeta;
@@ -12,13 +13,13 @@ class WelcomeController extends Controller {
         $page = Page::find(1);
         $page->ogGenerate();
         $page->setSeo();
-//        $categories = Catalog::getTopOnMain();
+        $cats_list = Category::query()->orderBy('order')->get();
 
         return response()->view('pages.index', [
             'page' => $page,
             'text' => $page->text,
             'h1' => $page->getH1(),
-//            'categories' => $categories,
+            'cats_list' => $cats_list
         ]);
     }
 }

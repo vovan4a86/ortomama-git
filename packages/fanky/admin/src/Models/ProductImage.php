@@ -36,8 +36,9 @@ class ProductImage extends Model {
 
 	public static $thumbs = [
 		1 => '100x100|fit', //admin product_list
-		2 => '333x205|fit', //list item
+		2 => '330x200|fit', //list item
 		3 => '316x316|fit', //product_page
+		4 => '200x200|fit', //index_cats_image
 	];
 
     public function product() {

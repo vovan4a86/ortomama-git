@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use Cache;
+use Cookie;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\City;
@@ -9,6 +10,7 @@ use Fanky\Admin\Models\Product;
 use Fanky\Admin\Settings;
 use Fanky\Auth\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Response;
 use SEOMeta;
 use Session;
 use Request;
@@ -35,7 +37,16 @@ class CatalogController extends Controller {
         $page->h1 = $page->getH1();
         $page->setSeo();
 
+//        $per_page = Request::get('per_page', 6);
+//        $per_page = is_numeric($per_page) ? $per_page : \Settings::get('product_per_page');
+        if (!$per_page = session('per_page')) {
+            $per_page = 6;
+            session(['per_page' => $per_page]);
+        }
+
         $categories = Catalog::getTopLevelOnList();
+        $products = Product::public()->paginate($per_page);
+        $products_count = Product::public()->count();
 
         return view('catalog.index', [
             'h1' => $page->h1,
@@ -43,6 +54,9 @@ class CatalogController extends Controller {
             'title' => $page->title,
             'bread' => $bread,
             'categories' => $categories,
+            'products' => $products,
+            'products_count' => $products_count,
+            'per_page' => $per_page
         ]);
     }
 
@@ -83,19 +97,26 @@ class CatalogController extends Controller {
         if (Auth::user() && Auth::user()->isAdmin) {
             View::share('admin_edit_link', route('admin.catalog.catalogEdit', [$category->id]));
         }
-
-        $items = [];
+        if (!$per_page = session('per_page')) {
+            $per_page = 6;
+            session(['per_page' => $per_page]);
+        }
+        $products = Product::where('catalog_id', $category->id)->public()->paginate($per_page);
+        $products_count = $category->products->count();
 
         $data = [
             'bread' => $bread,
             'category' => $category,
             'canonical' => $canonical,
             'h1' => $category->getH1(),
+            'products' => $products,
+            'products_count' => $products_count,
+            'per_page' => $per_page
         ];
 
         if (Request::ajax()) {
             $view_items = [];
-            foreach ($items as $item) {
+            foreach ($products as $item) {
                 $view_items[] = view('catalog.product_item', [
                     'item' => $item,
                     'category' => $category,
@@ -105,31 +126,21 @@ class CatalogController extends Controller {
             return response()->json([
                 'items' => $view_items,
                 'paginate' => view('catalog.section_pagination', [
-                    'paginator' => $items,
+                    'paginator' => $products,
                 ])->render(),
             ]);
         }
 
-        return view($view, $data);
+        return view('catalog.category', $data);
     }
 
     public function product(Product $product) {
         $bread = $product->getBread();
-        $rawSimilarName = $product->name;
         $product->generateTitle();
         $product->generateDescription();
         $product->generateText();
         $product->setSeo();
         $categories = Catalog::getTopLevelOnList();
-
-        $catalog = Catalog::whereId($product->catalog_id)->first();
-        $root = $catalog;
-        while ($root->parent_id !== 0) {
-            $root = $root->findRootCategory($root->parent_id);
-        }
-
-        $relatedIds = $product->related()->get()->pluck('related_id'); //похожие товары добавленные из админки
-        $related = Product::whereIn('id', $relatedIds)->get();
 
         //наличие в корзине
         $in_cart = false;
@@ -140,29 +151,15 @@ class CatalogController extends Controller {
             }
         }
 
+        $viewed = Session::get('viewed');
+        if(!in_array($product->id, $viewed)) {
+            Session::push('viewed', $product->id);
+        }
+
         $images = $product->images;
-        if(!count($images)) {
-            $img = Catalog::whereId($product->catalog_id)->first()->section_image;
-            if (!$img) $img = Catalog::UPLOAD_URL . Catalog::whereId($product->catalog_id)->first()->image;
-            $images = collect([
-                (object) [
-                    'image' => $img
-                ]
-            ]);
-        }
+        $sizes = $product->sizes;
+        $chars = $product->chars;
 
-        $text = $product->text ?: $root->text;
-        if($root->id == 1) {
-            $chars = $product->chars_text ?: $catalog->chars;
-        } else {
-            $chars = $product->chars;
-        }
-
-        $similarName = explode(' ', $rawSimilarName)[0];
-        $similar = Product::where('catalog_id', $product->catalog_id)->where('alias', '<>', $product->alias)->where('name', 'like', $similarName . '%')->get();
-        if (count($similar) > 10) {
-            $similar = $similar->random(10);
-        }
 
         Auth::init();
         if (Auth::user() && Auth::user()->isAdmin) {
@@ -171,19 +168,12 @@ class CatalogController extends Controller {
 
         return view('catalog.product', [
             'product' => $product,
-            'category' => $catalog,
             'categories' => $categories,
             'in_cart' => $in_cart,
-            'text' => $text,
             'bread' => $bread,
-            'name' => $product->name,
-            'related' => $related,
             'images' => $images,
-            'cat_image' => $cat_image ?? null,
-            'chars' => $chars,
-            'root' => $root,
-            'asideName' => $root->name,
-            'similar' => $similar,
+            'sizes' => $sizes,
+            'chars' => $chars
         ]);
     }
 

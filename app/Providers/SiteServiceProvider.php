@@ -1,8 +1,13 @@
 <?php namespace App\Providers;
 
 use App\Classes\SiteHelper;
+use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\City;
+use Fanky\Admin\Models\Point;
+use Fanky\Admin\Models\Review;
+use Fanky\Admin\Models\Size;
+use Fanky\Admin\Models\Type;
 use Request;
 use Cache;
 use DB;
@@ -63,7 +68,7 @@ class SiteServiceProvider extends ServiceProvider {
             if(!count($footerMenu)) {
                 $footerMenu = Page::query()
                     ->public()
-                    ->where('parent_id', 0)
+                    ->where('parent_id', 1)
                     ->where('on_footer_menu', 1)
                     ->orderBy('order')
                     ->get();
@@ -79,7 +84,7 @@ class SiteServiceProvider extends ServiceProvider {
 		});
 
         View::composer(
-            ['catalog.blocks.layout_aside'],
+            ['catalog.blocks.product_aside'],
             function ($view) {
                 $categories = Cache::get('categories', collect());
                 if (!count($categories)) {
@@ -87,12 +92,99 @@ class SiteServiceProvider extends ServiceProvider {
                         ->where('parent_id', 0)
                         ->orderBy('order')
                         ->get();
-                    Cache::add('catalog_index', $categories, now()->addMinutes(60));
+                    Cache::add('categories', $categories, now()->addMinutes(60));
                 }
 
                 $view->with(
                     compact(
                         'categories'
+                    )
+                );
+            }
+        );
+
+        View::composer(
+            ['catalog.blocks.catalog_aside'],
+            function ($view) {
+                $categories = Cache::get('categories', collect());
+                if (!count($categories)) {
+                    $categories = Catalog::public()
+                        ->where('parent_id', 0)
+                        ->orderBy('order')
+                        ->get();
+                    Cache::add('categories', $categories, now()->addMinutes(60));
+                }
+
+                $filter_sizes = Cache::get('filter_sizes', collect());
+                if (!count($filter_sizes)) {
+                    $filter_sizes = Size::query()
+                        ->orderBy('value')
+                        ->get();
+                    Cache::add('filter_sizes', $filter_sizes, now()->addMinutes(60));
+                }
+
+                $filter_brands = Cache::get('filter_brands', collect());
+                if (!count($filter_brands)) {
+                    $filter_brands = Brand::query()
+                        ->orderBy('name')
+                        ->get();
+                    Cache::add('filter_brands', $filter_brands, now()->addMinutes(60));
+                }
+
+                $filter_types = Cache::get('filter_types', collect());
+                if (!count($filter_types)) {
+                    $filter_types = Type::query()
+                        ->orderBy('order')
+                        ->get();
+                    Cache::add('filter_types', $filter_types, now()->addMinutes(60));
+                }
+
+                $view->with(
+                    compact(
+                        'categories',
+                        'filter_sizes',
+                        'filter_brands',
+                        'filter_types'
+
+                    )
+                );
+            }
+        );
+
+        View::composer(
+            ['catalog.blocks.points'],
+            function ($view) {
+                $points = Cache::get('points', collect());
+                if (!count($points)) {
+                    $points = Point::query()
+                        ->orderBy('order')
+                        ->get();
+                    Cache::add('points', $points, now()->addMinutes(60));
+                }
+
+                $view->with(
+                    compact(
+                        'points'
+                    )
+                );
+            }
+        );
+
+        View::composer(
+            ['pages.blocks.index_reviews'],
+            function ($view) {
+                $index_reviews = Cache::get('index_reviews', collect());
+                if (!count($index_reviews)) {
+                    $index_reviews = Review::public()
+                        ->onMain()
+                        ->orderBy('order')
+                        ->get();
+                    Cache::add('index_reviews', $index_reviews, now()->addMinutes(60));
+                }
+
+                $view->with(
+                    compact(
+                        'index_reviews'
                     )
                 );
             }

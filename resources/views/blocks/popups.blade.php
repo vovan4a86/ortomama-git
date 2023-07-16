@@ -10,7 +10,7 @@
     </div>
 </div>
 <div class="popup" id="create-request" style="display:none">
-    <form class="form" id="form" action="#">
+    <form class="form" id="form" action="{{ route('ajax.request') }}" onclick="sendRequest(this, event)">
         <div class="popup__title">Заказать сейчас</div>
         <div class="popup__content">
             <label class="popup__label">
@@ -33,9 +33,9 @@
 <div class="popup" id="create-order" style="display:none"></div>
 <div class="scrolltop">
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-				<g>
-                    <polyline fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="bevel" stroke-miterlimit="10" points="15,40 32,23
-		49,40"></polyline>
-                </g>
-			</svg>
+        <g>
+            <polyline fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="bevel" stroke-miterlimit="10" points="15,40 32,23
+49,40"></polyline>
+        </g>
+    </svg>
 </div>

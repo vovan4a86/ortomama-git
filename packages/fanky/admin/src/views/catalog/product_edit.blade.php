@@ -20,10 +20,11 @@
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_1" data-toggle="tab">Параметры</a></li>
-            <li><a href="#tab_2" data-toggle="tab">Текст ({{ $product->text ? 1 : 0 }})</a></li>
-            <li><a href="#tab_chars" data-toggle="tab">Характеристики</a></li>
-            <li><a href="#tab_sizes" data-toggle="tab">Размеры/Типы</a></li>
-            <li><a href="#tab_4" data-toggle="tab">Изображения ({{ count($product->images()->get()) }})</a></li>
+            <li><a href="#tab_2" data-toggle="tab">Текст ({{ $product->text ? '+' : '-' }})</a></li>
+            <li><a href="#tab_chars" data-toggle="tab">Характеристики ({{ $product->chars->count() }})</a></li>
+            <li><a href="#tab_filters" data-toggle="tab">Фильтры</a></li>
+            <li><a href="#tab_4" data-toggle="tab">Изображения ({{ $product->images()->count() }})</a></li>
+            <li><a href="#tab_docs" data-toggle="tab">Документы ({{ $product->docs()->count() }})</a></li>
             <li class="pull-right">
                 <a href="{{ route('admin.catalog.products', [$product->catalog_id]) }}"
                    onclick="return catalogContent(this)">К списку товаров</a>
@@ -40,27 +41,76 @@
                 {!! Form::groupText('name', $product->name, 'Название') !!}
                 {!! Form::groupText('h1', $product->h1, 'H1') !!}
                 {!! Form::groupSelect('catalog_id', $catalogs, $product->catalog_id, 'Каталог') !!}
-                {!! Form::groupSelect('brand_id', $brands, $product->brand_id, 'Бренд') !!}
                 {!! Form::groupText('article', $product->article, 'Артикул') !!}
                 {!! Form::groupText('alias', $product->alias, 'Alias') !!}
                 {!! Form::groupText('title', $product->title, 'Title') !!}
                 {!! Form::groupText('keywords', $product->keywords, 'keywords') !!}
                 {!! Form::groupText('description', $product->description, 'description') !!}
-                {!! Form::groupText('price', $product->price ?: 0, 'price') !!}
+                {!! Form::groupText('price', $product->price ?: 0, 'Цена') !!}
+                {!! Form::groupText('old_price', $product->old_price ?: 0, 'Старая цена') !!}
+                <hr>
+                <label class="control-label">Категории:</label>
+                <div style="max-width: 440px;">
+                    @foreach($cats as $cat)
+                        <input type="checkbox" name="cats[]" id="cat_{{ $cat->id }}" value="{{$cat->id}}"
+                                {{ in_array($cat->id, $product_cats) ? 'checked' : '' }}>
+                        <label for="cat_{{ $cat->id }}" style="margin-right: 10px;">{{$cat->name}}</label>
+                    @endforeach
+                </div>
                 <hr>
                 {!! Form::hidden('in_stock', 0) !!}
                 {!! Form::groupCheckbox('published', 1, $product->published, 'Показывать товар') !!}
                 {!! Form::groupCheckbox('in_stock', 1, $product->in_stock, 'В наличии') !!}
+                {!! Form::groupCheckbox('compensation', 1, $product->compensation, 'Показывать значок компенсации ФСС') !!}
 
             </div>
 
             <div class="tab-pane" id="tab_2">
-                {{--                {!! Form::groupRichtext('announce_text', $product->announce_text, 'Краткое описание', ['rows' => 3]) !!}--}}
                 {!! Form::groupRichtext('text', $product->text, 'Текст', ['rows' => 3]) !!}
             </div>
 
             <div class="tab-pane" id="tab_chars">
                 @include('admin::catalog.product_chars')
+            </div>
+
+            <div class="tab-pane" id="tab_filters">
+                {!! Form::groupSelect('brand_id', $brands, $product->brand_id, 'Бренд') !!}
+                <hr>
+                <label class="control-label">Размеры товара:</label>
+                <div style="max-width: 440px;">
+                    @foreach($sizes as $size)
+                        <input type="checkbox" name="sizes[]" id="size_{{ $size->value }}" value="{{$size->id}}"
+                                {{ in_array($size->id, $product_sizes) ? 'checked' : '' }}>
+                        <label for="size_{{ $size->value }}" style="margin-right: 10px;">{{$size->value}}</label>
+                    @endforeach
+                </div>
+                <hr>
+                <label class="control-label">Сезонность:</label>
+                <div style="max-width: 440px;">
+                    @foreach($seasons as $season)
+                        <input type="checkbox" name="seasons[]" id="season_{{ $season->id }}" value="{{$season->id}}"
+                                {{ in_array($season->id, $product_seasons) ? 'checked' : '' }}>
+                        <label for="season_{{ $season->id }}" style="margin-right: 10px;">{{$season->value}}</label>
+                    @endforeach
+                </div>
+                <hr>
+                <label class="control-label">Пол:</label>
+                <div style="max-width: 440px;">
+                    @foreach($sexes as $sex)
+                        <input type="checkbox" name="$sexes[]" id="sex_{{ $sex->id }}" value="{{$sex->id}}"
+                                {{ in_array($sex->id, $product_sexes) ? 'checked' : '' }}>
+                        <label for="season_{{ $sex->id }}" style="margin-right: 10px;">{{$sex->value}}</label>
+                    @endforeach
+                </div>
+                <hr>
+                <label class="control-label">Тип товара:</label>
+                @foreach($types as $type)
+                    <div>
+                        <input type="checkbox" name="types[]" id="type_{{ $type->name }}" value="{{$type->id}}"
+                                {{ in_array($type->id, $product_types) ? 'checked' : '' }}>
+                        <label for="type_{{ $type->name }}">{{$type->name}}</label>
+                    </div>
+                @endforeach
             </div>
 
             <div class="tab-pane" id="tab_4">
@@ -86,26 +136,29 @@
                 @endif
             </div>
 
-            <div class="tab-pane" id="tab_sizes">
-                <h4>Размеры товара:</h4>
-                <div style="max-width: 440px;">
-                    @foreach($sizes as $size)
-                        <input type="checkbox" name="sizes[]" id="size_{{ $size->value }}" value="{{$size->id}}"
-                                {{ in_array($size->id, $product_sizes) ? 'checked' : '' }}>
-                        <label for="size_{{ $size->value }}" style="margin-right: 10px;">{{$size->value}}</label>
-                    @endforeach
-                </div>
-                <hr>
-                <h4>Тип товара:</h4>
-                @foreach($types as $type)
-                    <div>
-                        <input type="checkbox" name="types[]" id="type_{{ $type->name }}" value="{{$type->id}}"
-                                {{ in_array($type->id, $product_types) ? 'checked' : '' }}>
-                        <label for="type_{{ $type->name }}">{{$type->name}}</label>
+            <div class="tab-pane" id="tab_docs">
+{{--                <input id="product-doc" type="hidden" name="doc" value="{{ $product->image }}">--}}
+                @if ($product->id)
+                    <div class="form-group">
+                        <label class="btn btn-success">
+                            <input id="offer_doc_upload" type="file" multiple
+                                   accept=".doc, .docx, .pdf"
+                                   data-url="{{ route('admin.catalog.productDocUpload', $product->id) }}"
+                                   style="display:none;" onchange="productDocUpload(this, event)">
+                            Загрузить документы
+                        </label>
                     </div>
-                @endforeach
-            </div>
+                    <p>Форматы: .doc, .docx, .pdf</p>
 
+                    <div class="docs_list">
+                        @foreach ($product->docs as $doc)
+                            @include('admin::catalog.product_doc', ['doc' => $doc])
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-yellow">Документы можно будет загрузить после сохранения товара!</p>
+                @endif
+            </div>
         </div>
 
         <div class="box-footer">
@@ -121,7 +174,15 @@
             var data = {};
             data.sorted = $('.images_list').sortable("toArray", {attribute: 'data-id'});
             sendAjax(url, data);
-            //console.log(data);
+        },
+    }).disableSelection();
+
+    $(".docs_list").sortable({
+        update: function (event, ui) {
+            var url = "{{ route('admin.catalog.productDocOrder') }}";
+            var data = {};
+            data.sorted = $('.docs_list').sortable("toArray", {attribute: 'data-id'});
+            sendAjax(url, data);
         },
     }).disableSelection();
 </script>

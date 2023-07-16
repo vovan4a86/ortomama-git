@@ -12,7 +12,7 @@
                     <span class="request-btn__label">Запрос менеджеру</span>
                 </button>
             </div>
-            @include('catalog.blocks.layout_aside')
+            @include('catalog.blocks.catalog_aside')
             <div class="layout__content">
                 <main>
                     <section class="section">

@@ -1,5 +1,6 @@
 <?php namespace Fanky\Admin\Models;
 
+use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Model;
 use Fanky\Admin\YouTube;
 
@@ -36,17 +37,24 @@ use Fanky\Admin\YouTube;
  */
 class Review extends Model {
 
-	protected $table = 'reviews';
+    use HasImage;
 
-	protected $fillable = ['type', 'text', 'adress', 'video', 'on_main', 'order'];
+    public static $thumbs = [
+        1 => '124x124|fit',
+    ];
 
-	public static $types = [
-		'windows' => 'Пластиковые окна',
-		'balcony' => 'Лоджии и балконы',
-		'dveri' => 'Сейф-двери',
-	];
+    const UPLOAD_URL = '/uploads/reviews/';
+    const NO_IMAGE = '/static/images/common/woman-2.png';
 
-	public function scopeOnMain($query)
+    protected $table = 'reviews';
+
+	protected $fillable = ['name', 'text', 'image', 'on_main', 'order', 'published'];
+
+    public function scopePublic($query) {
+        return $query->where('published', 1);
+    }
+
+    public function scopeOnMain($query)
 	{
 		return $query->where('on_main', 1);
 	}

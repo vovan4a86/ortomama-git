@@ -1,4 +1,5 @@
-<?php namespace App\Http\Controllers;
+<?php
+namespace App\Http\Controllers;
 
 use DB;
 use Fanky\Admin\Models\Catalog;
@@ -21,12 +22,14 @@ use Settings;
 use SiteHelper;
 use Validator;
 
-class AjaxController extends Controller {
-    private $fromMail = 'info@levering.ru';
-    private $fromName = 'LeveringUral';
+class AjaxController extends Controller
+{
+    private $fromMail = 'info@ortomama.ru';
+    private $fromName = 'OrtoMama';
 
     //РАБОТА С КОРЗИНОЙ
-    public function postAddToCart(Request $request): array {
+    public function postAddToCart(Request $request): array
+    {
         $id = $request->get('id');
         $count = $request->get('count');
 
@@ -45,7 +48,10 @@ class AjaxController extends Controller {
                 $product_item['image'] = $prodImage->image;
             } else {
                 $image = Catalog::whereId($product->catalog_id)->first()->section_image;
-                if (!$image) $product_item['image'] = Catalog::UPLOAD_URL . Catalog::whereId($product->catalog_id)->first()->image;
+                if (!$image) {
+                    $product_item['image'] = Catalog::UPLOAD_URL . Catalog::whereId($product->catalog_id)->first(
+                        )->image;
+                }
             }
 
             Cart::add($product_item);
@@ -58,7 +64,8 @@ class AjaxController extends Controller {
         ];
     }
 
-    public function postEditCartProduct(Request $request): array {
+    public function postEditCartProduct(Request $request): array
+    {
         $id = $request->get('id');
         $count = $request->get('count', 1);
         /** @var Product $product */
@@ -77,7 +84,8 @@ class AjaxController extends Controller {
         return ['cart_popup' => $popup];
     }
 
-    public function postUpdateToCart(Request $request): array {
+    public function postUpdateToCart(Request $request): array
+    {
         $id = $request->get('id');
         $count = $request->get('count');
 
@@ -95,7 +103,9 @@ class AjaxController extends Controller {
             $product_item['image'] = $prodImage->image;
         } else {
             $image = Catalog::whereId($product->catalog_id)->first()->section_image;
-            if (!$image) $product_item['image'] = Catalog::UPLOAD_URL . Catalog::whereId($product->catalog_id)->first()->image;
+            if (!$image) {
+                $product_item['image'] = Catalog::UPLOAD_URL . Catalog::whereId($product->catalog_id)->first()->image;
+            }
         }
 
         Cart::updateCount($id, $count);
@@ -110,7 +120,8 @@ class AjaxController extends Controller {
         ];
     }
 
-    public function postRemoveFromCart(Request $request): array {
+    public function postRemoveFromCart(Request $request): array
+    {
         $id = $request->get('id');
         Cart::remove($id);
         $total = view('cart.table_row_total')->render();
@@ -122,7 +133,8 @@ class AjaxController extends Controller {
         ];
     }
 
-    public function postPurgeCart(): array {
+    public function postPurgeCart(): array
+    {
         Cart::purge();
         $total = view('cart.table_row_total')->render();
         $header_cart = view('blocks.header_cart', ['innerPage' => true])->render();
@@ -134,16 +146,15 @@ class AjaxController extends Controller {
     }
 
     //заявка в свободной форме
-    public function postRequest(Request $request) {
-        $data = $request->only(['name', 'phone', 'email', 'text']);
+    public function postRequest(Request $request)
+    {
+        $data = $request->only(['name', 'email', 'text']);
         $valid = Validator::make($data, [
             'name' => 'required',
-            'phone' => 'required',
-            'text' => 'required'
+            'email' => 'required',
         ], [
             'name.required' => 'Не заполнено поле Имя',
-            'phone.required' => 'Не заполнено поле Телефон',
-            'text.required' => 'Не заполнено поле Сообщение',
+            'email.required' => 'Не заполнено поле Телефон',
         ]);
 
         if ($valid->fails()) {
@@ -155,7 +166,7 @@ class AjaxController extends Controller {
             ];
             $feedback = Feedback::create($feedback_data);
             Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Заявка в свободной форме | LEVERING';
+                $title = $feedback->id . ' | Заявка | OrtoMama';
                 $message->from($this->fromMail, $this->fromName)
                     ->to(Settings::get('feedback_email'))
                     ->subject($title);
@@ -166,7 +177,8 @@ class AjaxController extends Controller {
     }
 
     //заказать звонок
-    public function postCallback(Request $request) {
+    public function postCallback(Request $request)
+    {
         $data = $request->only(['name', 'phone', 'time']);
         $valid = Validator::make($data, [
             'name' => 'required',
@@ -195,78 +207,9 @@ class AjaxController extends Controller {
         }
     }
 
-    //получить консультацию
-    public function postConsultation(Request $request) {
-        $data = $request->only(['name', 'phone']);
-        $valid = Validator::make($data, [
-            'name' => 'required',
-            'phone' => 'required',
-        ], [
-            'name.required' => 'Не заполнено поле Имя',
-            'phone.required' => 'Не заполнено поле Телефон',
-        ]);
-
-        if ($valid->fails()) {
-            return ['errors' => $valid->messages()];
-        } else {
-            $feedback_data = [
-                'type' => 3,
-                'data' => $data
-            ];
-            $feedback = Feedback::create($feedback_data);
-            Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Консультация | LEVERING';
-                $message->from($this->fromMail, $this->fromName)
-                    ->to(Settings::get('feedback_email'))
-                    ->subject($title);
-            });
-
-            return ['success' => true];
-        }
-    }
-
-    //предложим оптимальное решение
-    public function postOptimalDecision(Request $request) {
-        $data = $request->only(['name', 'phone', 'email']);
-        $file = $request->file('file');
-        $valid = Validator::make($data, [
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required',
-        ], [
-            'name.required' => 'Не заполнено поле имя',
-            'email.required' => 'Не заполнено поле Email',
-            'phone.required' => 'Не заполнено поле телефон',
-        ]);
-
-        if ($valid->fails()) {
-            return ['errors' => $valid->messages()];
-        } else {
-            if ($file) {
-                $file_name = md5(uniqid(rand(), true)) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path(Feedback::UPLOAD_URL), $file_name);
-                $data['file'] = '<a target="_blanc" href=\'' . Feedback::UPLOAD_URL . $file_name . '\'>' . $file_name . '</a>';
-            }
-
-            $feedback_data = [
-                'type' => 4,
-                'data' => $data
-            ];
-
-            $feedback = Feedback::create($feedback_data);
-            Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Оптимальное решение | LEVERING';
-                $message->from($this->fromMail, $this->fromName)
-                    ->to(Settings::get('feedback_email'))
-                    ->subject($title);
-            });
-
-            return ['success' => true];
-        }
-    }
-
     //консультация с файлом
-    public function postProductConsult(Request $request) {
+    public function postProductConsult(Request $request)
+    {
         $data = $request->only(['name', 'phone', 'message']);
         $file = $request->file('dfile');
         $valid = Validator::make($data, [
@@ -304,7 +247,8 @@ class AjaxController extends Controller {
     }
 
     //получить прайс
-    public function postGetPrice(Request $request) {
+    public function postGetPrice(Request $request)
+    {
         $data = $request->only(['name', 'email', 'phone']);
         $file = $request->file('fileprice');
         $valid = Validator::make($data, [
@@ -343,47 +287,9 @@ class AjaxController extends Controller {
         }
     }
 
-    //комплексное решение
-    public function postComplexDecision(Request $request) {
-        $data = $request->only(['name', 'phone', 'message']);
-        $file = $request->file('cfile');
-        $valid = Validator::make($data, [
-            'name' => 'required',
-            'phone' => 'required',
-            'message' => 'required',
-        ], [
-            'name.required' => 'Не заполнено поле имя',
-            'phone.required' => 'Не заполнено поле телефон',
-        ]);
-
-        if ($valid->fails()) {
-            return ['errors' => $valid->messages()];
-        } else {
-            if ($file) {
-                $file_name = md5(uniqid(rand(), true)) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path(Feedback::UPLOAD_URL), $file_name);
-                $data['file'] = '<a target="_blanc" href=\'' . Feedback::UPLOAD_URL . $file_name . '\'>' . $file_name . '</a>';
-            }
-
-            $feedback_data = [
-                'type' => 7,
-                'data' => $data
-            ];
-
-            $feedback = Feedback::create($feedback_data);
-            Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Комплексное решение | LEVERING';
-                $message->from($this->fromMail, $this->fromName)
-                    ->to(Settings::get('feedback_email'))
-                    ->subject($title);
-            });
-
-            return ['success' => true];
-        }
-    }
-
     //запрос менеджеру
-    public function postManagerRequest(Request $request) {
+    public function postManagerRequest(Request $request)
+    {
         $data = $request->only(['name', 'phone', 'email', 'message']);
         $file = $request->file('mfile');
         $valid = Validator::make($data, [
@@ -421,7 +327,8 @@ class AjaxController extends Controller {
     }
 
     //ОФОРМЛЕНИЕ ЗАКАЗА
-    public function postOrder(Request $request) {
+    public function postOrder(Request $request)
+    {
         $data = $request->only([
             'name',
             'phone',
@@ -500,7 +407,8 @@ class AjaxController extends Controller {
         return ['success' => true];
     }
 
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $data = $request->only(['search']);
 
         $items = null;
@@ -514,7 +422,8 @@ class AjaxController extends Controller {
                 'bread' => $bread,
                 'items' => $items,
                 'data' => $data,
-            ])];
+            ])
+        ];
 
 //        return view('search.index', [
 //            'bread' => $bread,
@@ -524,7 +433,8 @@ class AjaxController extends Controller {
 
     }
 
-    public function changeProductsPerPage(Request $request) {
+    public function changeProductsPerPage(Request $request)
+    {
         $count = $request->only('num');
 
         $setting = Setting::find(9);
@@ -537,14 +447,16 @@ class AjaxController extends Controller {
         }
     }
 
-    public function postSetView($view) {
+    public function postSetView($view)
+    {
         $view = $view == 'list' ? 'list' : 'grid';
         session(['catalog_view' => $view]);
 
         return ['success' => true];
     }
 
-    public function postUpdateProductCharValue(Request $request): array {
+    public function postUpdateProductCharValue(Request $request): array
+    {
         $id = $request->get('char');
         $product_id = $request->get('product');
         $value = $request->get('value');
@@ -555,7 +467,8 @@ class AjaxController extends Controller {
         return ['success' => true];
     }
 
-    public function postAddProductChar(Request $request): array {
+    public function postAddProductChar(Request $request): array
+    {
         $data = $request->only(['id', 'name', 'value']);
 
         $valid = Validator::make($data, [
@@ -590,20 +503,56 @@ class AjaxController extends Controller {
 
             return ['success' => true, 'item' => $item];
         }
-
     }
 
-    public function postDeleteProductChar(Request $request): array {
+    public function postDeleteProductChar(Request $request): array
+    {
         $char_id = $request->get('char');
         $product_id = $request->get('product');
 
         $id = ProductChar::where('product_id', $product_id)->where('char_id', $char_id)->first()->delete();
-        if($id) {
+        if ($id) {
             return ['success' => true];
         } else {
             return ['success' => false, 'errors' => ['Не удалось удалить характеристику']];
         }
-
-
     }
+
+    public function postPerPageSelect(): array
+    {
+        $count = request()->get('count');
+        if (!$count) {
+            return ['success' => false, 'error' => '!$count'];
+        }
+
+        session(['per_page' => $count]);
+        return ['success' => true];
+    }
+
+    public function postGetProducts()
+    {
+        $prods = Product::public()->get();
+        $res = [];
+
+        foreach ($prods as $prod) {
+            $res[] = [
+                'id' => $prod->id,
+                'image' => $prod->image()->first()->thumb(2),
+                'title' => $prod->name,
+                'data' => [
+                    [
+                        'key' => 'Количество',
+                        'value' => 1
+                    ],
+                    [
+                        'key' => 'Цена',
+                        'value' => $prod->price . ' руб.'
+                    ]
+                ]
+            ];
+        }
+
+        return response()->json($res);
+    }
+
 }
