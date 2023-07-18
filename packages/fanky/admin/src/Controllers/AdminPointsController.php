@@ -47,8 +47,10 @@ class AdminPointsController extends AdminController
         } else {
             $item->update($data);
         }
-
-        return ['redirect' => route('admin.points')];
+        return $redirect
+            ? ['redirect' => route('admin.points')]
+            : ['success' => true, 'msg' => 'Изменения сохранены'];
+//        return ['redirect' => route('admin.points')];
     }
 
     public function postDelete($id)

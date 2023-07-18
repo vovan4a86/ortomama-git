@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function createPopupTemplate(array) {
           const { image, title, data } = array;
+          const size = document.querySelector('.radios__input:checked');
 
           return `
             <div class="popup__container" data-temp-data>
@@ -59,6 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     data &&
                     `
                       <div class="popup__data">
+                           <dl class="param">
+                              <dt class="param__key"><span>Размер</span></dt>
+                              <dd class="param__value">${size.value}</dd>
+                            </dl>
                         ${data
                           .map(
                             item => `
@@ -350,12 +355,19 @@ function initCounter() {
       counter.addEventListener('click', function (e) {
         const input = this.querySelector('[data-count]');
         const target = e.target;
+        const row = input.closest('.tbl-order__row--body');
+        const footer = document.querySelector('.tbl-order__row--footer')
 
         if (target.closest('.counter__btn--prev') && input.value > 1) {
           input.value--;
         } else if (target.closest('.counter__btn--next')) {
           input.value++;
         }
+        Cart.update(row.dataset.product, input.value, function(res) {
+          row.querySelector('.tbl-order__col--price').innerHTML = res.price;
+          footer.innerHTML = res.footer_total;
+        });
+
 
         input.addEventListener('change', function () {
           if (this.value < 0 || this.value === '0' || this.value === '') {

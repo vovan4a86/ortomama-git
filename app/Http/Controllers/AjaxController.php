@@ -32,6 +32,7 @@ class AjaxController extends Controller
     {
         $id = $request->get('id');
         $count = $request->get('count');
+        $size = $request->get('size');
 
         /** @var Product $product */
         $product = Product::find($id);
@@ -39,24 +40,19 @@ class AjaxController extends Controller
             $product_item['id'] = $product->id;
             $product_item['name'] = $product->name;
             $product_item['price'] = $product->price;
-            $product_item['measure'] = $product->getRecourseMeasure();
             $product_item['count'] = $count;
+            $product_item['size'] = $size;
+            $product_item['sizes'] = $product->sizes->toArray();
             $product_item['url'] = $product->url;
 
             $prodImage = $product->image()->first();
             if ($prodImage) {
-                $product_item['image'] = $prodImage->image;
-            } else {
-                $image = Catalog::whereId($product->catalog_id)->first()->section_image;
-                if (!$image) {
-                    $product_item['image'] = Catalog::UPLOAD_URL . Catalog::whereId($product->catalog_id)->first(
-                        )->image;
-                }
+                $product_item['image'] = $prodImage->image_src;
             }
 
             Cart::add($product_item);
         }
-        $header_cart = view('blocks.header_cart', ['innerPage' => true])->render();
+        $header_cart = view('blocks.header_cart')->render();
 
         return [
             'success' => true,
@@ -90,33 +86,19 @@ class AjaxController extends Controller
         $count = $request->get('count');
 
         $product = Product::find($id);
-
-        $product_item['id'] = $product->id;
-        $product_item['name'] = $product->name;
-        $product_item['price'] = $product->price;
         $product_item['count'] = $count;
-        $product_item['measure'] = $product->getRecourseMeasure();
-        $product_item['url'] = $product->url;
-
-        $prodImage = $product->image()->first();
-        if ($prodImage) {
-            $product_item['image'] = $prodImage->image;
-        } else {
-            $image = Catalog::whereId($product->catalog_id)->first()->section_image;
-            if (!$image) {
-                $product_item['image'] = Catalog::UPLOAD_URL . Catalog::whereId($product->catalog_id)->first()->image;
-            }
-        }
 
         Cart::updateCount($id, $count);
 
-        $item_summ = view('cart.table_row_summ', ['item' => $product_item])->render();
-        $total = view('cart.table_row_total')->render();
+        $cart = Cart::all();
+
+        $price = view('cart.cart_item_price', ['item' => $cart[$id]])->render();
+        $footer_total = view('cart.footer_total')->render();
 
         return [
             'success' => true,
-            'item_summ' => $item_summ,
-            'total' => $total,
+            'price' => $price,
+            'footer_total' => $footer_total,
         ];
     }
 

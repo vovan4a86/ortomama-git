@@ -15,9 +15,9 @@
                 </ul>
             </nav>
             @endif
-            <form class="search" action="#">
-                <input class="search__input" type="search" placeholder="Поиск по сайту">
-                <button class="search__button">
+            <form class="search" action="{{ route('search') }}">
+                <input class="search__input" type="search" name="search" placeholder="Поиск по сайту" value="{{ Request::get('search') }}">
+                <button class="search__button" type="submit">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15 15L12.2186 12.0575C13.3249 10.9116 13.9738 9.40054 14.0432 7.80917C14.1125 6.2178 13.5973 4.65604 12.5949 3.41825C11.5924 2.18045 10.1718 1.35213 8.60087 1.08939C7.02994 0.826658 5.41717 1.14766 4.06653 1.9919C2.7159 2.83614 1.72069 4.14531 1.26849 5.67264C0.816292 7.19997 0.938335 8.83997 1.61162 10.2835C2.2849 11.7271 3.46291 12.8745 4.92362 13.5095C6.38434 14.1445 8.02686 14.2232 9.54159 13.7308"
                               stroke="black" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round" />

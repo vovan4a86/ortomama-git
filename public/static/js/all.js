@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function createPopupTemplate(array) {
           const { image, title, data } = array;
+          const size = document.querySelector('.radios__input:checked');
 
           return `
             <div class="popup__container" data-temp-data>
@@ -77,6 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     data &&
                     `
                       <div class="popup__data">
+                           <dl class="param">
+                              <dt class="param__key"><span>Размер</span></dt>
+                              <dd class="param__value">${size.value}</dd>
+                            </dl>
                         ${data
                           .map(
                             item => `
@@ -368,12 +373,19 @@ function initCounter() {
       counter.addEventListener('click', function (e) {
         const input = this.querySelector('[data-count]');
         const target = e.target;
+        const row = input.closest('.tbl-order__row--body');
+        const footer = document.querySelector('.tbl-order__row--footer')
 
         if (target.closest('.counter__btn--prev') && input.value > 1) {
           input.value--;
         } else if (target.closest('.counter__btn--next')) {
           input.value++;
         }
+        Cart.update(row.dataset.product, input.value, function(res) {
+          row.querySelector('.tbl-order__col--price').innerHTML = res.price;
+          footer.innerHTML = res.footer_total;
+        });
+
 
         input.addEventListener('change', function () {
           if (this.value < 0 || this.value === '0' || this.value === '') {
@@ -615,6 +627,54 @@ function sendAjax(url, data, callback, type){
     });
 }
 
+let Cart = {
+    add: function (id, count, size, callback) {
+        sendAjax('/ajax/add-to-cart',
+            {id, count, size}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    update: function (id, count, callback) {
+        sendAjax('/ajax/update-to-cart',
+            {id, count}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    edit:  function (id, count, callback) {
+        sendAjax('/ajax/edit-cart-product',
+            {id, count}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    remove: function (id, callback) {
+        sendAjax('/ajax/remove-from-cart',
+            {id: id}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    purge: function (callback) {
+        sendAjax('/ajax/purge-cart',
+            {}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+}
+
 function resetForm(form) {
     $(form).trigger('reset');
     $(form).find('.err-msg-block').remove();
@@ -654,6 +714,23 @@ function sendRequest(frm, e) {
             form.find('.sending__title').after('<div class="err-msg-block has-error">Заполните, пожалуйста, обязательные поля.</div>');
         } else {
             showThankDialog('#form');
+        }
+    });
+}
+
+function addItemToCart(elem, e) {
+    //e.preventDefault();
+    const id = $(elem).attr('data-product');
+    const size = $('.radios__input:checked').val();
+    if (!size) {
+        alert('Не выбран размер');
+        e.preventDefault();
+    }
+    Cart.add(id, 1, size, function(res) {
+        if (res.success) {
+            $('.header__column--basket').replaceWith(res.header_cart);
+            // var lazyLoadInstance = new LazyLoad();
+            // lazyLoadInstance.update();
         }
     });
 }

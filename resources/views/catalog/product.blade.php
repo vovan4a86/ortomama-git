@@ -20,9 +20,10 @@
                             @if(count($product->docs))
                                 <div class="product__links text-content">
                                     @foreach($product->docs as $doc)
-                                    <a class="download download--doc" href="{{ $doc->doc_src }}" data-fancybox data-type="ajax">
-                                        {{ $doc->name }}
-                                    </a>
+                                        <a class="download download--doc" href="{{ $doc->doc_src }}" data-fancybox
+                                           data-type="ajax">
+                                            {{ $doc->name }}
+                                        </a>
                                     @endforeach
                                     @if ($product->compensation)
                                         <a class="product__fss" href="javascript:void(0)">
@@ -84,10 +85,12 @@
                                 </div>
                                 <div class="actions-product__column">
                                     <div class="actions-product__list">
-                                        <button class="btn btn--small btn--cart" type="button" data-product="10"
-                                                data-create-order data-src="#create-order" onclick="console.log(this)">
+                                        <button class="btn btn--small btn--cart" type="button"
+                                                data-product="{{ $product->id }}"
+                                                data-create-order data-src="#create-order"
+                                                onclick="addItemToCart(this, event)">
                                             <svg class="svg-sprite-icon icon-basket">
-                                                <use xlink:href="static/images/sprite/symbol/sprite.svg#basket"></use>
+                                                <use xlink:href="/static/images/sprite/symbol/sprite.svg#basket"></use>
                                             </svg>
                                             <span>В корзину</span>
                                         </button>
@@ -95,7 +98,7 @@
                                            rel="noopener">
                                             <span>Заказать по</span>
                                             <svg class="svg-sprite-icon icon-wa">
-                                                <use xlink:href="static/images/sprite/symbol/sprite.svg#wa"></use>
+                                                <use xlink:href="/static/images/sprite/symbol/sprite.svg#wa"></use>
                                             </svg>
                                         </a>
                                     </div>
@@ -133,165 +136,5 @@
             </main>
         </div>
     </div>
-    <!-- if productPage-->
-    <section class="viewed">
-        <div class="container">
-            <h2 class="v-hidden">Просмотренные товары</h2>
-            <div class="viewed__title">Вы смотрели (12)</div>
-            <div class="viewed__container">
-                <div class="viewed__slider swiper" data-viewed-slider>
-                    <div class="viewed__wrapper swiper-wrapper">
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-1.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические туфли женские на шнурках черные 17-014">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-2.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические туфли женские на шнурках черные 17-014</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-3.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-4.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-1.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические туфли женские на шнурках черные 17-014">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-2.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические туфли женские на шнурках черные 17-014</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-3.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-4.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-1.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические туфли женские на шнурках черные 17-014">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-2.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические туфли женские на шнурках черные 17-014</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-3.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником TW-176 TWIKI (р.26-30)</span>
-                            </a>
-                        </div>
-                        <div class="viewed__item swiper-slide">
-                            <a class="card" href="javascript:void(0)"
-                               title="Ортопедические сандалии с открытым носком и высоким задником">
-									<span class="card__preview">
-										<img class="swiper-lazy" data-src="/static/images/common/product-4.png"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                             width="200" height="200" alt="alt" title="title"/>
-									</span>
-                                <span class="card__title">Ортопедические сандалии с открытым носком и высоким задником</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="viewed__nav nav-viewed">
-                    <div class="nav-viewed__prev">
-                        <svg width="21" height="37" viewBox="0 0 21 37" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.5 2L3.41425 17.0858C2.6332 17.8668 2.6332 19.1331 3.41425 19.9142L18.5 35"
-                                  stroke="#00B4AB" stroke-width="4" stroke-linecap="round"/>
-                        </svg>
-
-                    </div>
-                    <div class="nav-viewed__next">
-                        <svg width="21" height="37" viewBox="0 0 21 37" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M2.5 2L17.5858 17.0858C18.3668 17.8668 18.3668 19.1331 17.5858 19.9142L2.5 35"
-                                  stroke="#00B4AB" stroke-width="4" stroke-linecap="round"/>
-                        </svg>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    @include('catalog.blocks.viewed')
 @endsection

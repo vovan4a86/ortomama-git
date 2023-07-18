@@ -34,6 +34,16 @@
 					<label for="review-address">Адрес</label>
 					<input id="review-address" class="form-control" type="text" name="address" value="{{ $item->address }}">
 				</div>
+
+				<div class="form-group">
+					<label for="review-long">Долгота</label>
+					<input id="review-long" class="form-control" type="text" name="longitude" value="{{ $item->longitude }}">
+				</div>
+
+				<div class="form-group">
+					<label for="review-lat">Широта</label>
+					<input id="review-lat" class="form-control" type="text" name="latitude" value="{{ $item->latitude }}">
+				</div>
 			</div>
 
 			<div class="box-footer">

@@ -14,6 +14,23 @@ class Cart {
         Session::put(self::$key, $cart);
     }
 
+    public static function count() {
+        $cart = self::all();
+
+        return count($cart);
+    }
+
+    public static function total_items() {
+        $cart = self::all();
+
+        $total_items = 0;
+        foreach ($cart as $item) {
+            $total_items += $item['count'];
+        }
+
+        return $total_items;
+    }
+
     public static function remove($id) {
         $cart = self::all();
         unset($cart[$id]);
@@ -49,23 +66,5 @@ class Cart {
             $sum += $item['count'] * $item['price'];
         }
         return $sum;
-    }
-
-    public static function total_weight(): int {
-        $cart = self::all();
-        $total = 0;
-        foreach ($cart as $item) {
-            if ($item['measure'] == 'т') {
-                $total += $item['weight'] * 1000;
-            } elseif ($item['measure'] == 'кг') {
-                $total += $item['weight'];
-            } elseif ($item['measure'] == 'м') {
-                $total += $item['weight'] * 1000;
-            } else {
-                $total += $item['weight'] * $item['count'];
-            }
-        }
-
-        return round($total);
     }
 }

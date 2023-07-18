@@ -3,6 +3,7 @@
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\DeliveryItem;
 use Fanky\Admin\Models\Page;
+use Fanky\Admin\Models\Point;
 use Fanky\Admin\Models\Product;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request as Request;
@@ -24,10 +25,13 @@ class CartController extends Controller {
             'name' => 'Корзина'
         ];
 
+        $points = Point::query()->orderBy('order')->get();
+
         return view('cart.index', [
 			'items' => $items,
             'sum' => Cart::sum(),
             'bread' => $bread,
+            'points' => $points
 		]);
 	}
 

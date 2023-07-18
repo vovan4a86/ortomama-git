@@ -70,7 +70,6 @@ Route::group(['middleware' => ['redirects']], function() {
 
     Route::any('faq', ['as' => 'faq', 'uses' => 'FaqController@index']);
 
-//    Route::any('search', ['as' => 'search', 'uses' => 'SearchController@getIndex']);
     Route::any('search', ['as' => 'search', 'uses' => 'CatalogController@search']);
 
     Route::get('cart', ['as' => 'cart', 'uses' => 'CartController@getIndex']);

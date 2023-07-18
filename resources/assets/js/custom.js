@@ -22,6 +22,54 @@ function sendAjax(url, data, callback, type){
     });
 }
 
+let Cart = {
+    add: function (id, count, size, callback) {
+        sendAjax('/ajax/add-to-cart',
+            {id, count, size}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    update: function (id, count, callback) {
+        sendAjax('/ajax/update-to-cart',
+            {id, count}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    edit:  function (id, count, callback) {
+        sendAjax('/ajax/edit-cart-product',
+            {id, count}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    remove: function (id, callback) {
+        sendAjax('/ajax/remove-from-cart',
+            {id: id}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+    purge: function (callback) {
+        sendAjax('/ajax/purge-cart',
+            {}, (result) => {
+                if (typeof callback == 'function') {
+                    callback(result);
+                }
+            });
+    },
+
+}
+
 function resetForm(form) {
     $(form).trigger('reset');
     $(form).find('.err-msg-block').remove();
@@ -61,6 +109,23 @@ function sendRequest(frm, e) {
             form.find('.sending__title').after('<div class="err-msg-block has-error">Заполните, пожалуйста, обязательные поля.</div>');
         } else {
             showThankDialog('#form');
+        }
+    });
+}
+
+function addItemToCart(elem, e) {
+    //e.preventDefault();
+    const id = $(elem).attr('data-product');
+    const size = $('.radios__input:checked').val();
+    if (!size) {
+        alert('Не выбран размер');
+        e.preventDefault();
+    }
+    Cart.add(id, 1, size, function(res) {
+        if (res.success) {
+            $('.header__column--basket').replaceWith(res.header_cart);
+            // var lazyLoadInstance = new LazyLoad();
+            // lazyLoadInstance.update();
         }
     });
 }

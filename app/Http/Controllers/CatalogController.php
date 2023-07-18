@@ -151,9 +151,16 @@ class CatalogController extends Controller {
             }
         }
 
-        $viewed = Session::get('viewed');
+        $viewed = Session::get('viewed', []);
         if(!in_array($product->id, $viewed)) {
             Session::push('viewed', $product->id);
+        }
+
+        $viewed_products = [];
+        if (count($viewed)) {
+            foreach ($viewed as $i => $id) {
+                $viewed_products[] = Product::find($id);
+            }
         }
 
         $images = $product->images;
@@ -173,13 +180,18 @@ class CatalogController extends Controller {
             'bread' => $bread,
             'images' => $images,
             'sizes' => $sizes,
-            'chars' => $chars
+            'chars' => $chars,
+            'viewed_products' => $viewed_products
         ]);
     }
 
     public function search() {
         $see = Request::get('see', 'all');
         $products_inst = Product::query();
+        if (!$per_page = session('per_page')) {
+            $per_page = 6;
+            session(['per_page' => $per_page]);
+        }
         if ($s = Request::get('search')) {
             $products_inst->where(function ($query) use ($s) {
                 /** @var QueryBuilder $query */
@@ -227,15 +239,17 @@ class CatalogController extends Controller {
         } else {
             $products = collect();
         }
-
+        $products_count = $products_inst->count();
 
         return view('search.index', [
-            'items' => $products,
-            'title' => 'Результат поиска «' . $s . '»',
+            'products' => $products,
+            'h1' => 'Результат поиска «' . $s . '»',
             'query' => $see,
             'name' => 'Поиск ' . $s,
             'keywords' => 'Поиск',
             'description' => 'Поиск',
+            'products_count' => $products_count,
+            'per_page' => $per_page,
         ]);
     }
 
