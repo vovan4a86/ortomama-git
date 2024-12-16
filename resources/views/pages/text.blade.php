@@ -5,7 +5,7 @@
         @include('blocks.bread')
         <section>
             <div class="container">
-                <h2 class="section__title centered">{{ $h1 }}</h2>
+                <h1 class="section__title centered">{{ $h1 }}</h1>
                 <div class="text-content">
                     {!! $text !!}
                 </div>

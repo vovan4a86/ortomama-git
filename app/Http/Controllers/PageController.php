@@ -16,14 +16,8 @@ class PageController extends Controller {
 
     public function page($alias = null) {
         $path = explode('/', $alias);
-//        if (!$alias) {
-//            $current_city = App::make('CurrentCity');
-//            $this->city = $current_city && $current_city->id ? $current_city : null;
-//            $page = $this->city->generateIndexPage();
-//        } else {
-            $page = Page::getByPath($path);
-            if (!$page) abort(404, 'Страница не найдена');
-//        }
+        $page = Page::getByPath($path);
+        if (!$page) abort(404, 'Страница не найдена');
         /** @var Page $page */
         $bread = $page->getBread();
         $children = $page->getPublicChildren();
@@ -45,8 +39,6 @@ class PageController extends Controller {
             'bread' => $bread,
             'children' => $children,
             'categories' => $categories ?? null,
-            'about_image' => $about_image ?? null,
-            'headerIsBlack' => $headerIsBlack ?? null,
         ]);
     }
 
@@ -111,5 +103,22 @@ class PageController extends Controller {
         $response->header('Content-Length', strlen($response->getOriginalContent()));
 
         return $response;
+    }
+
+    public function policy()
+    {
+        $page = Page::whereAlias('policy')->first();
+        if (!$page)
+            abort(404, 'Страница не найдена');
+        $bread = $page->getBread();
+        $page->ogGenerate();
+        $page->setSeo();
+
+        return view('pages.text', [
+            'page' => $page,
+            'text' => $page->text,
+            'h1'    => $page->getH1(),
+            'bread' => $bread,
+        ]);
     }
 }

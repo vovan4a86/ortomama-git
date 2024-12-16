@@ -1,16 +1,20 @@
 <header class="header header--homepage">
     <div class="header__container container" data-header>
         <div class="header__logo">
-            <a class="logo logo--black" href="{{ route('main') }}" title="В начало"></a>
+            @if(Route::is('main'))
+                <span class="logo logo--black"></span>
+            @else
+                <a class="logo logo--black" href="{{ route('main') }}" title="В начало"></a>
+            @endif
         </div>
         <div class="header__nav">
             @if (count($topMenu))
             <nav class="nav" itemscope itemtype="https://schema.org/SiteNavigationElement" aria-label="Меню">
                 <ul class="nav__list" itemprop="about" itemscope itemtype="https://schema.org/ItemList">
                     @foreach($topMenu as $menuItem)
-                    <li class="nav__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ItemList">
-                        <a class="nav__link" href="{{ $menuItem->url }}" title="{{ $menuItem->name }}" itemprop="url">{{ $menuItem->name }}</a>
-                    </li>
+                        <li class="nav__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ItemList">
+                            <a class="nav__link" href="{{ $menuItem->url }}" title="{{ $menuItem->name }}" itemprop="url">{{ $menuItem->name }}</a>
+                        </li>
                     @endforeach
                 </ul>
             </nav>
@@ -28,10 +32,12 @@
         </div>
         <div class="header__contacts contacts-header">
             @include('blocks.header_cart')
-            <div class="header__column">
-                <a class="contacts-header__phone" href="tel:+79122711515">+7 (912) 271-15-15</a>
-                <div class="contacts-header__label">Звонок по России бесплатный</div>
-            </div>
+            @if($phone = S::get('header_phone'))
+                <div class="header__column">
+                    <a class="contacts-header__phone" href="tel:{{ SiteHelper::clearPhone($phone) }}">{{ $phone }}</a>
+                    <div class="contacts-header__label">Звонок по России бесплатный</div>
+                </div>
+            @endif
             <div class="header__column">
                 <button class="contacts-header__action btn" type="button" data-fancybox data-src="#create-request" aria-label="Заказать сейчас">
                     <span>Заказать сейчас</span>

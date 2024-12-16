@@ -161,7 +161,7 @@ class Product extends Model {
             ->orderBy('order');
     }
 
-    public function image(): HasOne {
+    public function single_image(): HasOne {
         return $this->hasOne(ProductImage::class, 'product_id')
             ->orderBy('order');
     }

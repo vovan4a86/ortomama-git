@@ -1,17 +1,10 @@
 <?php namespace App\Traits;
+
 use Illuminate\Support\Str;
 use Image;
 use Intervention\Image\ImageManager;
 use Settings;
 use Thumb;
-
-/**
- * Created by PhpStorm.
- * User: aleks
- * Date: 19.12.2017
- * Time: 11:09
- */
-
 
 trait HasImage{
 	public $image_field = 'image';

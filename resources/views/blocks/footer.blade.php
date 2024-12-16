@@ -2,7 +2,11 @@
     <div class="footer__container container">
         <div class="footer__grid">
             <div class="footer__column">
-                <a class="logo logo--white" href="{{ route('main') }}" title="В начало"></a>
+                @if(Route::is('main'))
+                    <span class="logo logo--white"></span>
+                @else
+                    <a class="logo logo--white" href="{{ route('main') }}" title="В начало"></a>
+                @endif
             </div>
             <div class="footer__column">
                 @if ($footerCatalog)
@@ -34,9 +38,15 @@
                 </div>
             @endif
             <div class="footer__column">
-                <a class="footer__phone" href="tel:+79122711515">+7 (912) 271-15-15</a>
-                <div class="footer__address">г. Полевской, микр. Зеленый Бор, 19</div>
-                <a class="footer__email" href="mailto:info@ortoposhiv.ru">info@ortoposhiv.ru</a>
+                @if($phone = S::get('footer_phone'))
+                    <a class="footer__phone" href="tel:{{ SiteHelper::clearPhone($phone) }}">{{ $phone }}</a>
+                @endif
+                @if($address = S::get('footer_address'))
+                    <div class="footer__address">{{ $address }}</div>
+                @endif
+                @if($email = S::get('footer_email'))
+                    <a class="footer__email" href="mailto:{{ $email }}">{{ $email }}</a>
+                @endif
                 <button class="footer__action btn" type="button" data-fancybox data-src="#create-request"
                         aria-label="Оставить заявку">
                     <span>Оставить заявку</span>
@@ -44,11 +54,18 @@
             </div>
         </div>
         <div class="footer__copyright">
-            <span>© 2022 Пошив ортопедической обуви</span>
-            <span>Екатеринбург, Ленина, 1 |
-						<a href="tel:+73434589755">+7 (343) 458-97-55</a>&nbsp;|
-						<a href="mailto:info@ortoposhiv.ru">info@ortoposhiv.ru</a>
-					</span>
+            <span>© {{ date('Y') }} {{ S::get('footer_copy') }}</span>
+            <span>
+                @if($address = S::get('footer_address'))
+                    {{ $address }} |
+                @endif
+                 @if($phone = S::get('footer_phone'))
+                    <a href="tel:{{ SiteHelper::clearPhone($phone) }}">{{ $phone }}</a>&nbsp;|
+                 @endif
+                @if($email = S::get('footer_email'))
+                    <a href="mailto:{{ $email }}">{{ $email }}</a>
+                @endif
+            </span>
         </div>
     </div>
     <div class="footer__bottom">

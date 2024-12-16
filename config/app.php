@@ -216,18 +216,18 @@ return [
 		/*
 		 * My Class Aliases
 		 */
-		'Auth'      => Fanky\Auth\Auth::class,
-		'Text'      => Fanky\Admin\Text::class,
-		'YouTube'   => Fanky\Admin\YouTube::class,
+		'Auth'       => Fanky\Auth\Auth::class,
+		'Text'       => Fanky\Admin\Text::class,
+		'YouTube'    => Fanky\Admin\YouTube::class,
 		'Settings'   => App\Facades\Settings::class,
 		'S'          => App\Facades\Settings::class,
-		'Thumb'     => Fanky\Admin\Thumb::class,
-		'Pagination'=> Fanky\Admin\Pagination::class,
-		'Mailer'    => Fanky\Admin\Mailer::class,
-		'Cart'      => Fanky\Admin\Cart::class,
+		'Thumb'      => Fanky\Admin\Thumb::class,
+		'Pagination' => Fanky\Admin\Pagination::class,
+		'Mailer'     => Fanky\Admin\Mailer::class,
+		'Cart'       => Fanky\Admin\Cart::class,
 		'SiteHelper' => App\Facades\SiteHelper::class,
 		'HTMLMin'    => HTMLMin\HTMLMin\Facades\HTMLMin::class,
-		'Menu'      => Lavary\Menu\Facade::class,
+		'Menu'       => Lavary\Menu\Facade::class,
 	],
 
 ];

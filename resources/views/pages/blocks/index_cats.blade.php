@@ -18,7 +18,7 @@
                                         <a class="products__card card" href="{{ $product->url }}"
                                        title="{{ $product->name }}">
 										<span class="card__preview">
-											<img class="lazy" data-src="{{ $product->image()->first()->thumb(4) }}"
+											<img class="lazy" data-src="{{ $product->single_image->thumb(4) }}"
                                                  src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                                                  alt="{{ $product->name }}" title="{{ $product->name }}"/>
 										</span>

@@ -16,7 +16,7 @@ use Thumb;
 
 trait HasSeo{
 	public function setSeo() {
-        SEOMeta::setTitle($this->title);
+        SEOMeta::setTitle($this->title ?: $this->getH1());
         SEOMeta::setDescription($this->description);
         SEOMeta::setKeywords($this->keywords);
 	}
