@@ -1,6 +1,7 @@
 <?php namespace Fanky\Admin;
 use Image;
 use Fanky\Admin\Settings;
+use Intervention\Image\ImageManager;
 
 class Thumb {
 
@@ -33,15 +34,12 @@ class Thumb {
 		$thumb_dir = pathinfo($thumb_file, PATHINFO_DIRNAME);
 		if (!is_dir($thumb_dir)) mkdir($thumb_dir, 0775, true);
 
-		$image = Image::make(base_path('/public' . $url));
-		if ($fit == 'fit') {
-			$image->fit($width, $height);
-		} else {
-			$image->resize($width, $height, function ($constraint) {
-			    $constraint->aspectRatio();
-			    $constraint->upsize();
-			});
-		}
+        $image = ImageManager::gd()->read(base_path('/public' . $url));
+        if ($fit == 'fit') {
+            $image->cover($width, $height);
+        } else {
+            $image->resize($width, $height);
+        }
 			
 		$image->save($thumb_file, Settings::get('image_quality', 100));
 

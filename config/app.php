@@ -134,9 +134,9 @@ return [
 		Illuminate\Translation\TranslationServiceProvider::class,
 		Illuminate\Validation\ValidationServiceProvider::class,
 		Illuminate\View\ViewServiceProvider::class,
-		Intervention\Image\ImageServiceProvider::class,
+//		Intervention\Image\ImageServiceProvider::class,
 		Collective\Html\HtmlServiceProvider::class,
-		HTMLMin\HTMLMin\HTMLMinServiceProvider::class,
+//		HTMLMin\HTMLMin\HTMLMinServiceProvider::class,
 
 
 		/*
@@ -154,7 +154,7 @@ return [
 		Unisharp\Laravelfilemanager\LaravelFilemanagerServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
 		App\Providers\BroadcastServiceProvider::class,
-		Intervention\Image\ImageServiceProvider::class,
+//		Intervention\Image\ImageServiceProvider::class,
 
 		/*
 		 * My Providers

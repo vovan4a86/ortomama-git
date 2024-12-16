@@ -5,43 +5,42 @@
 	"license": "MIT",
 	"type": "project",
 	"require": {
-		"php": ">=7.2.5",
-		"barryvdh/laravel-debugbar": "~3.2",
-		"barryvdh/laravel-ide-helper": "~2.6",
-		"doctrine/dbal": "~2.9",
-		"fideloper/proxy": "~4.0",
-		"guzzlehttp/guzzle": "~7.2",
-		"htmlmin/htmlmin": "~7.0",
-		"intervention/image": "~2.4",
-		"laravel/framework": "^7.0",
-		"laravel/tinker": "~2.0",
-		"laravelcollective/html": "~6.0",
-		"phpspec/phpspec": "~6.3",
-		"lavary/laravel-menu": "^1.7",
-		"artesaos/seotools": "~0.18",
-		"laravel/helpers": "^1.2"
+		"php": ">=8.0",
+		"barryvdh/laravel-debugbar": "*",
+		"barryvdh/laravel-ide-helper": "*",
+		"doctrine/dbal": "*",
+		"guzzlehttp/guzzle": "*",
+		"intervention/image": "*",
+		"laravel/framework": "10.*",
+		"laravel/tinker": "*",
+		"laravelcollective/html": "*",
+		"phpspec/phpspec": "*",
+		"lavary/laravel-menu": "*",
+		"artesaos/seotools": "*",
+		"laravel/helpers": "*",
+		"intervention/image-laravel": "*",
+		"ext-gd": "*",
+		"psr/simple-cache": "*",
+		"maatwebsite/excel": "*"
 	},
 	"require-dev": {
-		"filp/whoops": "~2.0",
-		"fzaninotto/faker": "~1.4",
+		"filp/whoops": "*",
 		"mockery/mockery": "~1.0",
-		"nunomaduro/collision": "~4.1",
-		"phpunit/phpunit": "~8.5",
+		"nunomaduro/collision": "*",
+		"phpunit/phpunit": "*",
 		"symfony/thanks": "^1.0",
 		"symfony/css-selector": "3.1.*",
-		"symfony/dom-crawler": "^5.4"
+		"symfony/dom-crawler": "^5.4",
+		"beyondcode/laravel-query-detector": "^1.8"
 	},
 	"autoload": {
-        "files": [
-          "app/helpers.php"
-        ],
-		"classmap": [
-			"database/seeds",
-			"database/factories",
-			"packages/unisharp/laravel-filemanager/src"
+		"files": [
+			"app/helpers.php"
 		],
 		"psr-4": {
 			"App\\": "app/",
+			"Database\\Factories\\": "database/factories/",
+			"Database\\Seeders\\": "database/seeds/",
 			"Fanky\\Admin\\": "packages/fanky/admin/src/",
 			"Fanky\\Auth\\": "packages/fanky/auth/src/",
 			"Unisharp\\Laravelfilemanager\\": "packages/unisharp/laravel-filemanager/src"
@@ -67,9 +66,6 @@
 	},
 	"config": {
 		"preferred-install": "dist",
-		"platform": {
-			"php": "7.2.5"
-		},
 		"allow-plugins": {
 			"symfony/thanks": true
 		}
