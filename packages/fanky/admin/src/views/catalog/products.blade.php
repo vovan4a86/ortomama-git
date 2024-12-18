@@ -34,10 +34,8 @@
                 @foreach ($products as $item)
                     <tr data-id="{{ $item->id }}">
                         <td>
-                            @if ($img = $item->image()->first())
+                            @if ($img = $item->single_image)
                                 <img src="{{ $img->thumb(1) }}" height="100" width="100">
-                            @else
-                                <img class="img-polaroid" src="{{ \Fanky\Admin\Models\Product::NO_IMAGE }}" height="100">
                             @endif
                         </td>
                         <td><a href="{{ route('admin.catalog.productEdit', [$item->id]) }}" onclick="return catalogContent(this)" style="{{ $item->published != 1 ? 'text-decoration:line-through;' : '' }}">{{ $item->name }}</a></td>

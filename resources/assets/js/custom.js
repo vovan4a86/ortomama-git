@@ -83,10 +83,9 @@ function selectPerPage(count) {
 
     sendAjax(url, {count}, function (json) {
         if(json.success) {
-            // console.log('change');
             location.reload();
         } else {
-            alert('Ajax Error! ' . json.error);
+            console.error('Ajax request error! ' . json.error);
         }
     });
 }

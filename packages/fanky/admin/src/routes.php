@@ -1,8 +1,6 @@
 <?php
 
-//Route::any('admin', ['as' => 'admin', 'uses' => 'Fanky\Admin\Controllers\AdminController@main']);
 use Fanky\Admin\Controllers\AdminCatalogController;
-use Fanky\Admin\Controllers\AdminActionController;
 
 Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as' => 'admin'], function () {
 	Route::any('/', ['uses' => 'AdminController@main']);
@@ -117,6 +115,91 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		Route::get('get-catalogs/{id?}', $controller . 'getGetCatalogs')
 			->name('.get_catalogs');
 	});
+
+    Route::group(['as' => '.brands', 'prefix' => 'brands'], function () {
+        $controller = 'AdminBrandsController@';
+        Route::get('/', $controller . 'getIndex');
+
+        Route::get('edit/{id?}', $controller . 'getEdit')
+            ->name('.edit');
+
+        Route::post('save', $controller . 'postSave')
+            ->name('.save');
+
+        Route::post('delete/{id}', $controller . 'postDelete')
+            ->name('.del');
+
+        Route::post('reorder', $controller . 'postReorder')
+            ->name('.reorder');
+    });
+
+    Route::group(['as' => '.sizes', 'prefix' => 'sizes'], function () {
+        $controller = 'AdminSizesController@';
+        Route::get('/', $controller . 'getIndex');
+
+        Route::get('edit/{id?}', $controller . 'getEdit')
+            ->name('.edit');
+
+        Route::post('save', $controller . 'postSave')
+            ->name('.save');
+
+        Route::post('delete/{id}', $controller . 'postDelete')
+            ->name('.del');
+
+        Route::post('reorder', $controller . 'postReorder')
+            ->name('.reorder');
+    });
+
+    Route::group(['as' => '.seasons', 'prefix' => 'seasons'], function () {
+        $controller = 'AdminSeasonsController@';
+        Route::get('/', $controller . 'getIndex');
+
+        Route::get('edit/{id?}', $controller . 'getEdit')
+            ->name('.edit');
+
+        Route::post('save', $controller . 'postSave')
+            ->name('.save');
+
+        Route::post('delete/{id}', $controller . 'postDelete')
+            ->name('.del');
+
+        Route::post('reorder', $controller . 'postReorder')
+            ->name('.reorder');
+    });
+
+    Route::group(['as' => '.sexes', 'prefix' => 'sexes'], function () {
+        $controller = 'AdminSexesController@';
+        Route::get('/', $controller . 'getIndex');
+
+        Route::get('edit/{id?}', $controller . 'getEdit')
+            ->name('.edit');
+
+        Route::post('save', $controller . 'postSave')
+            ->name('.save');
+
+        Route::post('delete/{id}', $controller . 'postDelete')
+            ->name('.del');
+
+        Route::post('reorder', $controller . 'postReorder')
+            ->name('.reorder');
+    });
+
+    Route::group(['as' => '.types', 'prefix' => 'types'], function () {
+        $controller = 'AdminTypesController@';
+        Route::get('/', $controller . 'getIndex');
+
+        Route::get('edit/{id?}', $controller . 'getEdit')
+            ->name('.edit');
+
+        Route::post('save', $controller . 'postSave')
+            ->name('.save');
+
+        Route::post('delete/{id}', $controller . 'postDelete')
+            ->name('.del');
+
+        Route::post('reorder', $controller . 'postReorder')
+            ->name('.reorder');
+    });
 
     Route::group(['as' => '.contacts', 'prefix' => 'contacts'], function () {
         $controller = 'AdminContactsController@';

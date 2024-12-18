@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Type extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'order'];
 
     public $timestamps = false;
 

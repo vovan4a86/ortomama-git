@@ -26,6 +26,5 @@
                 @endforeach
             </div>
         </div>
-        @include('catalog.blocks.aside_request')
     </aside>
 </div>

@@ -137,7 +137,6 @@
             </div>
 
             <div class="tab-pane" id="tab_docs">
-{{--                <input id="product-doc" type="hidden" name="doc" value="{{ $product->image }}">--}}
                 @if ($product->id)
                     <div class="form-group">
                         <label class="btn btn-success">

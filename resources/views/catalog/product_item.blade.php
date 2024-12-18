@@ -1,12 +1,12 @@
 <div class="catalog__item">
     <div class="catalog-card">
-        <a class="catalog-card__brand" href="javascript:void(0)"
+        <a class="catalog-card__brand" href="{{ $product->url }}"
            title="{{ $product->brand->name }}">{{ $product->brand->name }}</a>
         <div class="catalog-card__id">Арт.:&nbsp;
             <span>{{ $product->article }}</span>
         </div>
         <a class="catalog-card__link" href="{{ $product->url }}">
-            <img class="catalog-card__picture lazy" src="/" data-src="{{ $product->image()->first()->thumb(2) }}"
+            <img class="catalog-card__picture lazy" src="/" data-src="{{ $product->single_image->thumb(2) }}"
                  width="330" height="200"
                  alt="{{ $product->name }}">
         </a>

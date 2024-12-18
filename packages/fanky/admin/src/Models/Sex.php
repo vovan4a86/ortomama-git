@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Sex extends Model
 {
-    protected $fillable = ['value'];
+    protected $fillable = ['value', 'order'];
 
     public $timestamps = false;
 

@@ -1,17 +1,12 @@
 <?php namespace App\Providers;
 
-use App\Classes\SiteHelper;
 use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
-use Fanky\Admin\Models\City;
 use Fanky\Admin\Models\Point;
 use Fanky\Admin\Models\Review;
 use Fanky\Admin\Models\Size;
 use Fanky\Admin\Models\Type;
-use Request;
 use Cache;
-use DB;
-use Fanky\Admin\Models\Complex;
 use Illuminate\Support\ServiceProvider;
 use View;
 use Cart;
@@ -110,6 +105,7 @@ class SiteServiceProvider extends ServiceProvider {
                 if (!count($categories)) {
                     $categories = Catalog::public()
                         ->where('parent_id', 0)
+                        ->with(['public_children'])
                         ->orderBy('order')
                         ->get();
                     Cache::add('categories', $categories, now()->addMinutes(60));

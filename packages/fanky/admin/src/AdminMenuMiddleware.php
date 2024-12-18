@@ -22,6 +22,19 @@ class AdminMenuMiddleware {
 			$menu->add('Каталог', ['route' => 'admin.catalog', 'icon' => 'fa-list'])
 				->active('/admin/catalog/*');
 
+            $menu->add('Фильтры', ['icon' => 'fa-list'])
+                ->nickname('filters');
+            $menu->filters->add('Размер', ['route' => 'admin.sizes', 'icon' => 'fa-arrows-h'])
+                ->active('/admin/sizes/*');
+            $menu->filters->add('Сезон', ['route' => 'admin.seasons', 'icon' => 'fa-thermometer'])
+                ->active('/admin/seasons/*');
+            $menu->filters->add('Бренд', ['route' => 'admin.brands', 'icon' => 'fa-tag'])
+                ->active('/admin/brands/*');
+            $menu->filters->add('Пол', ['route' => 'admin.sexes', 'icon' => 'fa-venus-mars'])
+                ->active('/admin/sexes/*');
+            $menu->filters->add('Тип обуви', ['route' => 'admin.types', 'icon' => 'fa-crosshairs'])
+                ->active('/admin/types/*');
+
 			$menu->add('Заказы', ['route' => 'admin.orders', 'icon' => 'fa-dollar'])
 				->active('/admin/orders/*');
 
@@ -37,18 +50,6 @@ class AdminMenuMiddleware {
 //			$menu->add('Новости', ['route' => 'admin.complex', 'icon' => 'fa-calendar'])
 //				->active('/admin/complex/*');
 
-//			$menu->add('Вакансии', ['route' => 'admin.vacancies', 'icon' => 'fa-user-circle'])
-//				->active('/admin/vacancies/*');
-
-//			$menu->add('Партнеры', ['route' => 'admin.partners', 'icon' => 'fa-handshake-o'])
-//				->active('/admin/partners/*');
-
-//			$menu->add('Акции', ['route' => 'admin.actions', 'icon' => 'fa-percent'])
-//				->active('/admin/actions/*');
-
-//            $menu->add('Спецпредложения', ['route' => 'admin.offers', 'icon' => 'fa-star'])
-//				->active('/admin/offers/*');
-
 //			$menu->add('Галереи', ['route' => 'admin.gallery', 'icon' => 'fa-image'])
 //				->active('/admin/gallery/*');
 
@@ -59,12 +60,10 @@ class AdminMenuMiddleware {
 				->nickname('settings');
 			$menu->settings->add('Настройки', ['route' => 'admin.settings', 'icon' => 'fa-gear'])
 				->active('/admin/settings/*');
-//            $menu->settings->add('Характеристики продуктов', ['route' => 'admin.char_settings', 'icon' => 'fa-gear'])
-//                ->active('/admin/chars_settings/*');
+
 			$menu->settings->add('Редиректы', ['route' => 'admin.redirects', 'icon' => 'fa-retweet'])
 				->active('/admin/redirects/*');
-//			$menu->add('Медиаменеджер', ['route' => 'admin.pages.imagemanager', 'icon' => 'fa-picture-o'])
-//				->active('/admin/pages/imagemanager');
+
 			$menu->add('Файловый менеджер', ['route' => 'admin.pages.filemanager', 'icon' => 'fa-file'])
 				->active('/admin/pages/filemanager');
 		});
