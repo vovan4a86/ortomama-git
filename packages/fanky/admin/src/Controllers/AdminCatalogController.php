@@ -91,7 +91,7 @@ class AdminCatalogController extends AdminController {
         if (!array_get($data, 'on_main')) $data['on_main'] = 0;
         if (!array_get($data, 'on_menu')) $data['on_menu'] = 0;
         if (!array_get($data, 'on_footer_menu')) $data['on_footer_menu'] = 0;
-        if (!array_get($data, 'discount')) $data['discount'] = 0;
+        if (!array_get($data, 'discount_delivery')) $data['discount_delivery'] = 0;
         $image = Request::file('image');
 
         // валидация данных

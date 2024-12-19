@@ -40,7 +40,8 @@
                 {!! Form::groupText('title', $catalog->title, 'Title') !!}
                 {!! Form::groupText('keywords', $catalog->keywords, 'keywords') !!}
                 {!! Form::groupText('description', $catalog->description, 'description') !!}
-                {!! Form::groupText('discount', $catalog->discount, 'Скидка на все товары в категории') !!}
+                {!! Form::groupText('discount_delivery', $catalog->discount_delivery, 'Скидка за самовывоз на все товары в категории') !!}
+                {!! Form::groupText('discount_payment', $catalog->discount_payment, 'Скидка по предоплате на все товары в категории') !!}
 
                 <div class="form-group" style="display: flex; column-gap: 30px;">
                     <div>

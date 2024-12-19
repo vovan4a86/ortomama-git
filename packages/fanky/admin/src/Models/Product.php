@@ -499,11 +499,22 @@ class Product extends Model {
         return str_pad($id, 6, '0', STR_PAD_LEFT);
     }
 
-    public function getDiscount() {
-        if ($this->discount) {
-            return $this->discount;
-        } elseif($this->catalog->discount) {
-            return $this->catalog->discount;
+    public function getDiscountDelivery() {
+        if ($this->discount_delivery) {
+            return $this->discount_delivery;
+        }
+        if($this->catalog->discount_delivery) {
+            return $this->catalog->discount_delivery;
+        }
+        return '123';
+    }
+
+    public function getDiscountPayment() {
+        if ($this->discount_payment) {
+            return $this->discount_payment;
+        } elseif($this->catalog->discount_payment) {
+            \Debugbar::log($this->catalog->discount_payment);
+            return $this->catalog->discount_payment;
         } else {
             return null;
         }

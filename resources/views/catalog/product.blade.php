@@ -44,8 +44,6 @@
                             <div class="product__text">
                                 @if ($product->text)
                                     {!! $product->text !!}
-                                @else
-                                    <div>Без описания</div>
                                 @endif
                             </div>
                             <div class="product__summary">
@@ -53,14 +51,18 @@
                                     <span data-end="₽">{{ $product->price }}</span>
                                 </div>
                                 <div class="product__discounts">
-                                    <div class="product__discount discount-product">
-                                        <div class="discount-product__label">Скидка за самовывоз</div>
-                                        <div class="discount-product__value" data-end="₽">-200</div>
-                                    </div>
-                                    <div class="product__discount discount-product">
-                                        <div class="discount-product__label">Скидка по предоплате</div>
-                                        <div class="discount-product__value" data-end="₽">-170</div>
-                                    </div>
+                                    @if($value = $product->getDiscountDelivery())
+                                        <div class="product__discount discount-product">
+                                            <div class="discount-product__label">Скидка за самовывоз</div>
+                                            <div class="discount-product__value" data-end="₽">-{{ $value }}</div>
+                                        </div>
+                                    @endif
+                                    @if($value = $product->getDiscountPayment())
+                                        <div class="product__discount discount-product">
+                                            <div class="discount-product__label">Скидка по предоплате</div>
+                                            <div class="discount-product__value" data-end="₽">-{{ $value }}</div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="product__actions actions-product">

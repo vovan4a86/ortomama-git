@@ -38,7 +38,7 @@ class Cart {
 
         $total_items = 0;
         foreach ($cart as $item) {
-            $total_items += $item['discount'];
+            $total_items += $item['discount_delivery'];
         }
 
         return $total_items;
@@ -88,7 +88,7 @@ class Cart {
         $cart = self::all();
         $sum = 0;
         foreach ($cart as $item) {
-            $sum += $item['count'] * $item['price'] - $item['discount'];
+            $sum += $item['count'] * $item['price'] - $item['discount_delivery'];
         }
         return $sum;
     }

@@ -49,7 +49,9 @@
                 {!! Form::groupText('price', $product->price ?: 0, 'Цена') !!}
                 {!! Form::groupText('old_price', $product->old_price ?: 0, 'Старая цена') !!}
 
-                {!! Form::groupText('discount', $product->discount ?: 0, 'Скидка') !!}
+                {!! Form::groupText('discount_delivery', $product->discount_delivery, 'Скидка за самовывоз') !!}
+                {!! Form::groupText('discount_payment', $product->discount_payment, 'Скидка по предоплате') !!}
+
                 <hr>
                 <label class="control-label">Категории:</label>
                 <div style="max-width: 440px;">
