@@ -40,6 +40,7 @@
                 {!! Form::groupText('title', $catalog->title, 'Title') !!}
                 {!! Form::groupText('keywords', $catalog->keywords, 'keywords') !!}
                 {!! Form::groupText('description', $catalog->description, 'description') !!}
+                {!! Form::groupText('discount', $catalog->discount, 'Скидка на все товары в категории') !!}
 
                 <div class="form-group" style="display: flex; column-gap: 30px;">
                     <div>
@@ -51,19 +52,13 @@
                                 <img class="img-polaroid"
                                      src="{{ \Fanky\Admin\Models\Catalog::UPLOAD_URL . $catalog->image }}" height="100"
                                      data-image="{{ \Fanky\Admin\Models\Catalog::UPLOAD_URL . $catalog->image }}"
-                                     onclick="return popupImage($(this).data('image'))">
+                                     onclick="return popupImage($(this).data('image'))" alt="">
                             @else
                                 <p class="text-yellow">Изображение не загружено.</p>
                             @endif
                         </div>
                     </div>
                 </div>
-                {!! Form::hidden('published', 0) !!}
-                {!! Form::groupCheckbox('published', 1, $catalog->published, 'Показывать раздел') !!}
-                @if ($catalog->parent_id ==0)
-                    {!! Form::hidden('on_footer_menu', 0) !!}
-                    {!! Form::groupCheckbox('on_footer_menu', 1, $catalog->on_footer_menu, 'Показывать в каталоге подвала') !!}
-                @endif
 
                 <div class="box box-primary box-solid">
                     <div class="box-header with-border">
@@ -92,6 +87,13 @@
                         своего шаблона
                     </div>
                 </div>
+
+                {!! Form::hidden('published', 0) !!}
+                {!! Form::groupCheckbox('published', 1, $catalog->published, 'Показывать раздел') !!}
+                @if ($catalog->parent_id ==0)
+                    {!! Form::hidden('on_footer_menu', 0) !!}
+                    {!! Form::groupCheckbox('on_footer_menu', 1, $catalog->on_footer_menu, 'Показывать в каталоге подвала') !!}
+                @endif
             </div>
 
             <div class="tab-pane" id="tab_2">

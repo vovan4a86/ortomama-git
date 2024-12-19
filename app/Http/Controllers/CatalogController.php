@@ -135,8 +135,6 @@ class CatalogController extends Controller {
         $product->setSeo();
         $categories = Catalog::getTopLevelOnList();
 
-//        $product->load(['single_image', 'catalog', 'brand']);
-
         //наличие в корзине
         $in_cart = false;
         if (Session::get('cart')) {

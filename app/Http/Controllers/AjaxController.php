@@ -43,11 +43,12 @@ class AjaxController extends Controller
             $product_item['count'] = $count;
             $product_item['size'] = $size;
             $product_item['sizes'] = $product->sizes->toArray();
+            $product_item['discount'] = $product->getDiscount();
             $product_item['url'] = $product->url;
 
-            $prodImage = $product->image()->first();
+            $prodImage = $product->single_image;
             if ($prodImage) {
-                $product_item['image'] = $prodImage->image_src;
+                $product_item['image'] = $prodImage->thumb(1);
             }
 
             Cart::add($product_item);
@@ -93,11 +94,13 @@ class AjaxController extends Controller
         $cart = Cart::all();
 
         $price = view('cart.cart_item_price', ['item' => $cart[$id]])->render();
+        $price_total = view('cart.cart_item_price_total', ['item' => $cart[$id]])->render();
         $footer_total = view('cart.footer_total')->render();
 
         return [
             'success' => true,
             'price' => $price,
+            'price_total' => $price_total,
             'footer_total' => $footer_total,
         ];
     }

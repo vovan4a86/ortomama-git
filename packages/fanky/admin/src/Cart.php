@@ -7,14 +7,16 @@ class Cart {
 
     private static $key = 'cart';
 
-    public static function add($item) {
+    public static function add($item): void
+    {
         $cart = self::all();
 
         $cart[$item['id']] = $item;
         Session::put(self::$key, $cart);
     }
 
-    public static function count() {
+    public static function count(): int
+    {
         $cart = self::all();
 
         return count($cart);
@@ -31,7 +33,19 @@ class Cart {
         return $total_items;
     }
 
-    public static function remove($id) {
+    public static function total_discount() {
+        $cart = self::all();
+
+        $total_items = 0;
+        foreach ($cart as $item) {
+            $total_items += $item['discount'];
+        }
+
+        return $total_items;
+    }
+
+    public static function remove($id): void
+    {
         $cart = self::all();
         unset($cart[$id]);
         Session::put(self::$key, $cart);
@@ -42,7 +56,8 @@ class Cart {
         return isset($cart[$id]);
     }
 
-    public static function updateCount($id, $count) {
+    public static function updateCount($id, $count): void
+    {
         $cart = self::all();
         if (isset($cart[$id])) {
             $cart[$id]['count'] = $count;
@@ -50,7 +65,8 @@ class Cart {
         }
     }
 
-    public static function purge() {
+    public static function purge(): void
+    {
         Session::put(self::$key, []);
     }
 
@@ -64,6 +80,15 @@ class Cart {
         $sum = 0;
         foreach ($cart as $item) {
             $sum += $item['count'] * $item['price'];
+        }
+        return $sum;
+    }
+
+    public static function sum_with_discount(): int {
+        $cart = self::all();
+        $sum = 0;
+        foreach ($cart as $item) {
+            $sum += $item['count'] * $item['price'] - $item['discount'];
         }
         return $sum;
     }

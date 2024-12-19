@@ -365,6 +365,7 @@ function initCounter() {
         }
         Cart.update(row.dataset.product, input.value, function(res) {
           row.querySelector('.tbl-order__col--price').innerHTML = res.price;
+          row.querySelector('.tbl-order__col--total').innerHTML = res.price_total;
           footer.innerHTML = res.footer_total;
         });
 

@@ -88,17 +88,10 @@ class AdminCatalogController extends AdminController {
         if (!array_get($data, 'alias')) $data['alias'] = Text::translit($data['name']);
         if (!array_get($data, 'title')) $data['title'] = $data['name'];
         if (!array_get($data, 'h1')) $data['h1'] = $data['name'];
-        if (!array_get($data, 'is_action')) $data['is_action'] = 0;
         if (!array_get($data, 'on_main')) $data['on_main'] = 0;
         if (!array_get($data, 'on_menu')) $data['on_menu'] = 0;
-        if (!array_get($data, 'on_main_list')) $data['on_main_list'] = 0;
         if (!array_get($data, 'on_footer_menu')) $data['on_footer_menu'] = 0;
         if (!array_get($data, 'discount')) $data['discount'] = 0;
-        if (!array_get($data, 'is_table')) $data['is_table'] = 0;
-        if (!array_get($data, 'size_main')) $data['size_main'] = null;
-        if (!array_get($data, 'catalog_measure')) $data['catalog_measure'] = null;
-        if (!array_get($data, 'size_cat')) $data['size_cat'] = null;
-        if (!array_get($data, 'catalog_measure')) $data['catalog_measure'] = null;
         $image = Request::file('image');
 
         // валидация данных

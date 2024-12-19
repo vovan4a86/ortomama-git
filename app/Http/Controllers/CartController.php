@@ -1,18 +1,15 @@
 <?php namespace App\Http\Controllers;
 
-use Fanky\Admin\Models\Catalog;
-use Fanky\Admin\Models\DeliveryItem;
-use Fanky\Admin\Models\Page;
+use Fanky\Admin\Models\City;
+use Fanky\Admin\Models\Delivery;
+use Fanky\Admin\Models\Payment;
 use Fanky\Admin\Models\Point;
 use Fanky\Admin\Models\Product;
+use Fanky\Admin\Models\SxgeoRegion;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request as Request;
-use Illuminate\Mail\Message;
-use Mailer;
-use Settings;
 use Cart;
 use Fanky\Admin\Models\Order as Order;
-use Response;
 
 class CartController extends Controller {
 
@@ -25,13 +22,24 @@ class CartController extends Controller {
             'name' => 'Корзина'
         ];
 
-        $points = Point::query()->orderBy('order')->get();
+        $points = Point::orderBy('order')->get();
+        $payments = Payment::orderBy('order')->get();
+        $deliveries = Delivery::orderBy('order')->get();
+
+        $all_regions = SxgeoRegion::where('country', 'RU')
+            ->orderBy('name_ru')->get(['id', 'name_ru']);
+
+        $all_cities = City::orderBy('name')->get(['id', 'name']);
 
         return view('cart.index', [
 			'items' => $items,
             'sum' => Cart::sum(),
             'bread' => $bread,
-            'points' => $points
+            'points' => $points,
+            'payments' => $payments,
+            'deliveries' => $deliveries,
+            'all_regions' => $all_regions,
+            'all_cities' => $all_cities
 		]);
 	}
 

@@ -383,6 +383,7 @@ function initCounter() {
         }
         Cart.update(row.dataset.product, input.value, function(res) {
           row.querySelector('.tbl-order__col--price').innerHTML = res.price;
+          row.querySelector('.tbl-order__col--total').innerHTML = res.price_total;
           footer.innerHTML = res.footer_total;
         });
 
@@ -688,10 +689,9 @@ function selectPerPage(count) {
 
     sendAjax(url, {count}, function (json) {
         if(json.success) {
-            // console.log('change');
             location.reload();
         } else {
-            alert('Ajax Error! ' . json.error);
+            console.error('Ajax request error! ' . json.error);
         }
     });
 }

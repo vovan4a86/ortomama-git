@@ -498,4 +498,14 @@ class Product extends Model {
     public function makeArticle($id): string {
         return str_pad($id, 6, '0', STR_PAD_LEFT);
     }
+
+    public function getDiscount() {
+        if ($this->discount) {
+            return $this->discount;
+        } elseif($this->catalog->discount) {
+            return $this->catalog->discount;
+        } else {
+            return null;
+        }
+    }
 }
