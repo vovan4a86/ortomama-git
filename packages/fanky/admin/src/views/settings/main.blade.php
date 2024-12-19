@@ -2,7 +2,6 @@
 
 @section('scripts')
 	<script type="text/javascript" src="/adminlte/plugins/ckeditor/ckeditor.js"></script>
-	<script src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="/adminlte/interface_settings.js"></script>
 @stop
 

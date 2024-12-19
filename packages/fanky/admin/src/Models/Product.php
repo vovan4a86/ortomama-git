@@ -166,6 +166,11 @@ class Product extends Model {
             ->orderBy('order');
     }
 
+    public function image(): HasOne {
+        return $this->hasOne(ProductImage::class, 'product_id')
+            ->orderBy('order');
+    }
+
     public function chars(): HasMany {
         return $this->hasMany(Char::class, 'product_id')
             ->orderBy('order');

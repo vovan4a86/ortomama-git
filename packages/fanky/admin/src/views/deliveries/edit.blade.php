@@ -3,12 +3,12 @@
 @section('scripts')
     <script type="text/javascript" src="/adminlte/plugins/ckeditor/ckeditor.js"></script>
     <script type="text/javascript" src="/adminlte/plugins/autocomplete/jquery.autocomplete.min.js"></script>
-    <script type="text/javascript" src="/adminlte/interface_delivery.js"></script>
+    <script type="text/javascript" src="/adminlte/interface_filters.js"></script>
 @stop
 
 @section('page_name')
     <h1>
-        Способ оплаты
+        Способ доставки
         <small>{{ $item->id ? 'Редактировать' : 'Новый' }}</small>
     </h1>
 @stop
@@ -16,13 +16,13 @@
 @section('breadcrumb')
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i>Главная</a></li>
-        <li><a href="{{ route('admin.payment') }}">Способы оплаты</a></li>
+        <li><a href="{{ route('admin.payments') }}">Способы доставки</a></li>
         <li class="active">{{ $item->id ? 'Редактировать' : 'Новый' }}</li>
     </ol>
 @stop
 
 @section('content')
-    <form action="{{ route('admin.payment.save') }}" onsubmit="return deliveryItemSave(this, event)">
+    <form action="{{ route('admin.deliveries.save') }}" onsubmit="return itemSave(this, event)">
         <input type="hidden" name="id" value="{{ $item->id }}">
 
         <div class="nav-tabs-custom">
@@ -32,7 +32,6 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
                     {!! Form::groupText('name', $item->name, 'Название') !!}
-                    {!! Form::groupText('description', $item->description, 'Описание') !!}
                 </div>
             </div>
 

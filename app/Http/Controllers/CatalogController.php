@@ -18,18 +18,6 @@ use View;
 
 class CatalogController extends Controller {
 
-    public function region_index($city) {
-        $this->city = City::current($city);
-
-        return $this->index();
-    }
-
-    public function region_view($city_alias, $alias) {
-        $this->city = City::current($city_alias);
-
-        return $this->view($alias);
-    }
-
     public function index() {
         $page = Page::where('alias', 'catalog')->first();
         if (!$page) return abort(404);
@@ -93,6 +81,8 @@ class CatalogController extends Controller {
             $canonical = null;
         }
 
+        $category->load(['parent']);
+
         Auth::init();
         if (Auth::user() && Auth::user()->isAdmin) {
             View::share('admin_edit_link', route('admin.catalog.catalogEdit', [$category->id]));
@@ -101,7 +91,10 @@ class CatalogController extends Controller {
             $per_page = 6;
             session(['per_page' => $per_page]);
         }
-        $products = Product::where('catalog_id', $category->id)->public()->paginate($per_page);
+        $products = Product::where('catalog_id', $category->id)
+            ->public()
+            ->with(['single_image', 'catalog', 'brand'])
+            ->paginate($per_page);
         $products_count = $category->products->count();
 
         $data = [
@@ -141,6 +134,8 @@ class CatalogController extends Controller {
         $product->generateText();
         $product->setSeo();
         $categories = Catalog::getTopLevelOnList();
+
+//        $product->load(['single_image', 'catalog', 'brand']);
 
         //наличие в корзине
         $in_cart = false;

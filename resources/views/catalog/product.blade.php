@@ -11,7 +11,7 @@
                             <div class="product__preview">
                                 <a href="{{ $product->image_src }}" title="{{ $product->name }}" data-fancybox
                                    data-caption="{{ $product->name }}">
-                                    <img class="lazy" data-src="{{ $product->image()->first()->thumb(3) }}"
+                                    <img class="lazy" data-src="{{ $product->single_image->thumb(3) }}"
                                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                                          alt="{{ $product->name }}"
                                          title="{{ $product->name }}">
@@ -26,10 +26,9 @@
                                         </a>
                                     @endforeach
                                     @if ($product->compensation)
-                                        <a class="product__fss" href="javascript:void(0)">
+                                        <a class="product__fss" href="{{ route('compensation') }}" target="_blank">
                                             <img class="lazy" data-src="/static/images/common/fss.png"
-                                                 src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                                 alt="Компенсация ФСС" title="Компенсация ФСС"/>
+                                                 src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Компенсация ФСС" title="Компенсация ФСС"/>
                                             <span>Компенсация ФСС</span>
                                         </a>
                                     @endif

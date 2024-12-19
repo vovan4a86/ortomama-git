@@ -11,7 +11,7 @@
                         <a class="card" href="{{ $item->url }}"
                            title="{{ $item->name }}">
 									<span class="card__preview">
-										<img class="swiper-lazy" data-src="{{ $item->image()->first()->thumb(2) }}"
+										<img class="swiper-lazy" data-src="{{ $item->single_image->thumb(2) }}"
                                              src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                                              width="200" height="200" alt="{{ $item->name }}" title="{{ $item->name }}"/>
 									</span>

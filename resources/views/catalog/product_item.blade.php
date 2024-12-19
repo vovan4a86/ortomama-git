@@ -1,6 +1,6 @@
 <div class="catalog__item">
     <div class="catalog-card">
-        <a class="catalog-card__brand" href="{{ $product->url }}"
+        <a class="catalog-card__brand" href="javascript:void(0)"
            title="{{ $product->brand->name }}">{{ $product->brand->name }}</a>
         <div class="catalog-card__id">Арт.:&nbsp;
             <span>{{ $product->article }}</span>
@@ -12,8 +12,8 @@
         </a>
         <div class="catalog-card__text">{{ $product->name }}</div>
         @if ($product->compensation)
-            <a class="catalog-card__fss" href="ajax-ipr.html" data-fancybox data-type="ajax">
-                <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="">
+            <a class="catalog-card__fss" href="{{ route('compensation') }}" data-fancybox data-type="ajax">
+                <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="Компенсация ФСС">
                 <span>Компенсация ФСС</span>
             </a>
         @endif

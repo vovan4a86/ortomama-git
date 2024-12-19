@@ -22,7 +22,7 @@ class AdminMenuMiddleware {
 			$menu->add('Каталог', ['route' => 'admin.catalog', 'icon' => 'fa-list'])
 				->active('/admin/catalog/*');
 
-            $menu->add('Фильтры', ['icon' => 'fa-list'])
+            $menu->add('Фильтры', ['icon' => 'fa-bars'])
                 ->nickname('filters');
             $menu->filters->add('Размер', ['route' => 'admin.sizes', 'icon' => 'fa-arrows-h'])
                 ->active('/admin/sizes/*');
@@ -41,11 +41,14 @@ class AdminMenuMiddleware {
 //			$menu->add('Региональность', ['route' => 'admin.cities', 'icon' => 'fa-globe'])
 //				->active('/admin/cities/*');
 
-			$menu->add('Пункты выдачи', ['route' => 'admin.points', 'icon' => 'fa-star'])
+			$menu->add('Пункты выдачи', ['route' => 'admin.points', 'icon' => 'fa-globe'])
 				->active('/admin/points/*');
 
-//			$menu->add('Способы оплаты', ['route' => 'admin.payment', 'icon' => 'fa-handshake-o'])
-//				->active('/admin/payment/*');
+			$menu->add('Способы оплаты', ['route' => 'admin.payments', 'icon' => 'fa-money'])
+				->active('/admin/payments/*');
+
+			$menu->add('Способы доставки', ['route' => 'admin.deliveries', 'icon' => 'fa-truck'])
+				->active('/admin/deliveries/*');
 
 //			$menu->add('Новости', ['route' => 'admin.complex', 'icon' => 'fa-calendar'])
 //				->active('/admin/complex/*');

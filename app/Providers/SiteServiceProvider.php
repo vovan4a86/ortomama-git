@@ -105,7 +105,7 @@ class SiteServiceProvider extends ServiceProvider {
                 if (!count($categories)) {
                     $categories = Catalog::public()
                         ->where('parent_id', 0)
-                        ->with(['public_children'])
+                        ->with(['public_children', 'parent'])
                         ->orderBy('order')
                         ->get();
                     Cache::add('categories', $categories, now()->addMinutes(60));

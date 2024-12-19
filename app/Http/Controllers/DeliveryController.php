@@ -7,7 +7,7 @@ use Fanky\Admin\Models\NewsTag;
 use Fanky\Admin\Models\Page;
 //use Request;
 use Fanky\Admin\Models\Partner;
-use Fanky\Admin\Models\PaymentItem;
+use Fanky\Admin\Models\Payment;
 use Illuminate\Http\Request;
 use Settings;
 use View;
@@ -38,7 +38,7 @@ class DeliveryController extends Controller {
 
         $deliveries = DeliveryItem::all()->sortBy('order');
 
-        $payments = PaymentItem::all()->sortBy('order');
+        $payments = Payment::all()->sortBy('order');
         $payments = $payments->chunk(2);
 
         return view('delivery.index', [

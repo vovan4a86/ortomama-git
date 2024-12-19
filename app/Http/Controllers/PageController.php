@@ -121,4 +121,23 @@ class PageController extends Controller {
             'bread' => $bread,
         ]);
     }
+
+    public function compensation()
+    {
+        $page = Page::whereAlias('compensation')->first();
+        if (!$page)
+            abort(404, 'Страница не найдена');
+        $bread = $page->getBread();
+        $page->ogGenerate();
+        $page->setSeo();
+
+        $view = view('pages.text', [
+            'page' => $page,
+            'text' => $page->text,
+            'h1'    => $page->getH1(),
+            'bread' => $bread,
+        ])->render();
+
+        return $view;
+    }
 }
