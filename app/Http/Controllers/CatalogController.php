@@ -91,7 +91,10 @@ class CatalogController extends Controller {
             $per_page = 6;
             session(['per_page' => $per_page]);
         }
-        $products = Product::where('catalog_id', $category->id)
+
+        $children_ids = $this->getChildrenIds($category);
+
+        $products = Product::whereIn('catalog_id', $children_ids)
             ->public()
             ->with(['single_image', 'catalog', 'brand'])
             ->paginate($per_page);
@@ -176,6 +179,18 @@ class CatalogController extends Controller {
             'chars' => $chars,
             'viewed_products' => $viewed_products
         ]);
+    }
+
+    public function getChildrenIds(Catalog $category) {
+        $children_ids = [];
+        if (count($category->children)) {
+            $children_ids = $category->getRecurseChildrenIds();
+        }
+        if (!in_array($category->id, $children_ids)) {
+            $children_ids[] = $category->id;
+        }
+
+        return $children_ids;
     }
 
     public function search() {

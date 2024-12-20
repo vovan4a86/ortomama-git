@@ -519,4 +519,8 @@ class Product extends Model {
             return null;
         }
     }
+
+    public function getSize() {
+        $this->sizes()->first();
+    }
 }
