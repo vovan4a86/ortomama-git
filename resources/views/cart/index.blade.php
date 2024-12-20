@@ -13,6 +13,7 @@
                             <div class="tbl-order__row tbl-order__row--top">
                                 <div class="tbl-order__col tbl-order__col--pic">Фото</div>
                                 <div class="tbl-order__col tbl-order__col--name">Товар</div>
+                                <div class="tbl-order__col tbl-order__col--size">Размер</div>
                                 <div class="tbl-order__col tbl-order__col--count">Количество</div>
                                 <div class="tbl-order__col tbl-order__col--price">Цена без скидки, руб.</div>
                                 <div class="tbl-order__col tbl-order__col--discount">Скидка, руб.</div>

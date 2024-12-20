@@ -4,6 +4,8 @@ use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\Point;
 use Fanky\Admin\Models\Review;
+use Fanky\Admin\Models\Season;
+use Fanky\Admin\Models\Gender;
 use Fanky\Admin\Models\Size;
 use Fanky\Admin\Models\Type;
 use Cache;
@@ -119,12 +121,28 @@ class SiteServiceProvider extends ServiceProvider {
                     Cache::add('filter_sizes', $filter_sizes, now()->addMinutes(60));
                 }
 
+                $filter_seasons = Cache::get('filter_seasons', collect());
+                if (!count($filter_seasons)) {
+                    $filter_seasons = Season::query()
+                        ->orderBy('order')
+                        ->get();
+                    Cache::add('filter_seasons', $filter_seasons, now()->addMinutes(60));
+                }
+
                 $filter_brands = Cache::get('filter_brands', collect());
                 if (!count($filter_brands)) {
                     $filter_brands = Brand::query()
-                        ->orderBy('name')
+                        ->orderBy('order')
                         ->get();
                     Cache::add('filter_brands', $filter_brands, now()->addMinutes(60));
+                }
+
+                $filter_genders = Cache::get('filter_genders', collect());
+                if (!count($filter_genders)) {
+                    $filter_genders = Gender::query()
+                        ->orderBy('order')
+                        ->get();
+                    Cache::add('filter_genders', $filter_genders, now()->addMinutes(60));
                 }
 
                 $filter_types = Cache::get('filter_types', collect());
@@ -140,7 +158,9 @@ class SiteServiceProvider extends ServiceProvider {
                         'categories',
                         'filter_sizes',
                         'filter_brands',
-                        'filter_types'
+                        'filter_types',
+                        'filter_seasons',
+                        'filter_genders'
 
                     )
                 );

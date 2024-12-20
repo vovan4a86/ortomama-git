@@ -35,7 +35,7 @@
         @endif
     </aside>
     <div class="container__divider"></div>
-    <form class="filter" action="#">
+    <form class="filter" action="{{ $category->url }}">
         <div class="filter__show" data-filter-open>
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
                  viewBox="0 0 16 16">
@@ -61,8 +61,10 @@
                                 @foreach($filter_sizes as $size)
                                     <div class="radios">
                                         <label class="radios__label">
-                                            <input class="radios__input" type="checkbox" name="size[]"
-                                                   value="{{ $size->value }}"/>
+                                            <input class="radios__input" type="checkbox" name="sizes[]"
+                                                   value="{{ $size->value }}"
+                                                    {{ in_array($size->id, $filter_data['sizes']) ? 'checked' : null }}
+                                            />
                                             <span class="radios__box">{{ $size->value }}</span>
                                         </label>
                                     </div>
@@ -76,7 +78,8 @@
                         </div>
                     </div>
                 @endif
-                <div class="filter__item">
+                @if (count($filter_seasons))
+                    <div class="filter__item">
                     <div class="filter__head" data-filter-head>
                         <div class="filter__title">Сезон</div>
                         <div class="filter__icon">
@@ -87,22 +90,14 @@
                     </div>
                     <div class="filter__content" data-filter-content>
                         <div class="filter__list">
-                            <label class="checkbox">
-                                <input class="checkbox__input" type="checkbox" name="season[]" value="Всесезон"/>
-                                <span class="checkbox__box"></span>Всесезон
-                            </label>
-                            <label class="checkbox">
-                                <input class="checkbox__input" type="checkbox" name="season[]" value="Деми"/>
-                                <span class="checkbox__box"></span>Деми
-                            </label>
-                            <label class="checkbox">
-                                <input class="checkbox__input" type="checkbox" name="season[]" value="Зима"/>
-                                <span class="checkbox__box"></span>Зима
-                            </label>
-                            <label class="checkbox">
-                                <input class="checkbox__input" type="checkbox" name="season[]" value="Лето"/>
-                                <span class="checkbox__box"></span>Лето
-                            </label>
+                            @foreach($filter_seasons as $season)
+                                <label class="checkbox">
+                                    <input class="checkbox__input" type="checkbox" name="seasons[]" value="{{ $season->id }}"
+                                            {{ isset($filter_data['seasons']) && in_array($season->id, $filter_data['seasons']) ? 'checked' : null }}
+                                    />
+                                    <span class="checkbox__box"></span>{{ $season->value }}
+                                </label>
+                            @endforeach
                         </div>
                         <div class="filter__action">
                             <button class="filter__submit btn-reset">
@@ -111,7 +106,8 @@
                         </div>
                     </div>
                 </div>
-                @if(count($filter_brands))
+                @endif
+                @if (count($filter_brands))
                     <div class="filter__item">
                         <div class="filter__head" data-filter-head>
                             <div class="filter__title">Бренд</div>
@@ -125,8 +121,10 @@
                             <div class="filter__list">
                                 @foreach($filter_brands as $brand)
                                     <label class="checkbox">
-                                        <input class="checkbox__input" type="checkbox" name="brands[]"
-                                               value="{{ $brand->id }}"/>
+                                        <input class="checkbox__input" type="checkbox" name="brand[]"
+                                               value="{{ $brand->id }}"
+                                                {{ in_array($brand->id, $filter_brand) ? 'checked' : null }}
+                                        />
                                         <span class="checkbox__box"></span>{{ $brand->name }}
                                     </label>
                                 @endforeach
@@ -139,7 +137,8 @@
                         </div>
                     </div>
                 @endif
-                <div class="filter__item">
+                @if (count($filter_genders))
+                    <div class="filter__item">
                     <div class="filter__head" data-filter-head>
                         <div class="filter__title">Пол</div>
                         <div class="filter__icon">
@@ -150,19 +149,14 @@
                     </div>
                     <div class="filter__content" data-filter-content>
                         <div class="filter__list">
-                            <label class="checkbox">
-                                <input class="checkbox__input" type="checkbox" name="genders[]" value="Мужской"/>
-                                <span class="checkbox__box"></span>Мужской
-                            </label>
-                            <label class="checkbox">
-                                <input class="checkbox__input" type="checkbox" name="genders[]" value="Женский"/>
-                                <span class="checkbox__box"></span>Женский
-                            </label>
-                            <label class="checkbox">
-                                <input class="checkbox__input" type="checkbox" name="genders[]"
-                                       value="Мужской, женский"/>
-                                <span class="checkbox__box"></span>Мужской, женский
-                            </label>
+                            @foreach($filter_genders as $gender)
+                                <label class="checkbox">
+                                    <input class="checkbox__input" type="checkbox" name="genders[]" value="{{ $gender->id }}"
+                                    {{ isset($filter_data['genders']) && in_array($gender->id, $filter_data['genders']) ? 'checked' : null }}
+                                    />
+                                    <span class="checkbox__box"></span>{{ $gender->value }}
+                                </label>
+                            @endforeach
                         </div>
                         <div class="filter__action">
                             <button class="filter__submit btn-reset">
@@ -171,7 +165,8 @@
                         </div>
                     </div>
                 </div>
-                @if(count($filter_types))
+                @endif
+                @if (count($filter_types))
                     <div class="filter__item">
                         <div class="filter__head" data-filter-head>
                             <div class="filter__title">Тип обуви</div>
@@ -186,7 +181,9 @@
                                 @foreach($filter_types as $type)
                                     <label class="checkbox">
                                         <input class="checkbox__input" type="checkbox" name="types[]"
-                                               value="{{ $type->id }}"/>
+                                               value="{{ $type->id }}"
+                                                {{ isset($filter_data['types']) && in_array($type->id, $filter_data['types']) ? 'checked' : null }}
+                                        />
                                         <span class="checkbox__box"></span>{{ $type->name }}
                                     </label>
                                 @endforeach

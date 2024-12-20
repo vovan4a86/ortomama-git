@@ -5,7 +5,7 @@ namespace Fanky\Admin\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Sex extends Model
+class Gender extends Model
 {
     protected $fillable = ['value', 'order'];
 

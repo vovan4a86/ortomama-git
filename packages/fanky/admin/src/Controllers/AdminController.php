@@ -2,18 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use Fanky\Admin\Models\AdminLog;
-use Request;
-use Validator;
-use App\User;
-use Auth;
-
-use Fanky\Admin\Models\Participant;
-use Fanky\Admin\Models\GalleryItem;
-use Fanky\Admin\Models\Complex;
-use Fanky\Admin\Models\Sponsor;
-use Fanky\Admin\Models\Specialist;
-use Image;
-use Thumb;
+use Fanky\Admin\Models\SearchIndex;
 
 class AdminController extends Controller {
 
@@ -26,6 +15,20 @@ class AdminController extends Controller {
 		$this->middleware('auth.fanky');
 		$this->middleware('menu.admin');
 	}
+
+    public function postClearCache(): array
+    {
+        \Cache::flush();
+
+        return ['success' => true];
+    }
+
+    public function postUpdateSearchIndex(): array
+    {
+        SearchIndex::update_index();
+
+        return ['success' => true];
+    }
 
 	public function main() {
 		$logs = AdminLog::orderBy('created_at', 'desc')->paginate(30);

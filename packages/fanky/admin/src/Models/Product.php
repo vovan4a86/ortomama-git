@@ -136,9 +136,9 @@ class Product extends Model {
         return $this->belongsToMany(Type::class);
     }
 
-    public function sexes(): BelongsToMany
+    public function genders(): BelongsToMany
     {
-        return $this->belongsToMany(Sex::class);
+        return $this->belongsToMany(Gender::class);
     }
 
     public function seasons(): BelongsToMany

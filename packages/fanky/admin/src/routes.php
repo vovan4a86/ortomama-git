@@ -4,6 +4,9 @@ use Fanky\Admin\Controllers\AdminCatalogController;
 
 Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as' => 'admin'], function () {
 	Route::any('/', ['uses' => 'AdminController@main']);
+    Route::post('clear-cache', ['uses' => 'AdminController@postClearCache'])->name('.clear-cache');
+    Route::post('update-search-index', ['uses' => 'AdminController@postUpdateSearchIndex'])->name('.update-search-index');
+
 	Route::group(['as' => '.pages', 'prefix' => 'pages'], function () {
 		$controller  = 'AdminPagesController@';
 		Route::get('/', $controller . 'getIndex');
@@ -167,8 +170,8 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
             ->name('.reorder');
     });
 
-    Route::group(['as' => '.sexes', 'prefix' => 'sexes'], function () {
-        $controller = 'AdminSexesController@';
+    Route::group(['as' => '.genders', 'prefix' => 'genders'], function () {
+        $controller = 'AdminGendersController@';
         Route::get('/', $controller . 'getIndex');
 
         Route::get('edit/{id?}', $controller . 'getEdit')

@@ -1,33 +1,42 @@
 <?php namespace Fanky\Admin\Models;
 
 use DB;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * Fanky\Admin\Models\SearchIndex
  *
- * @property string $name
- * @property string|null $text
- * @property string $url
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read mixed $announce
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex query()
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex whereText($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SearchIndex whereUrl($value)
+ * @property int $product_id
+ * @property array|null $sizes
+ * @property array|null $seasons
+ * @property string $brand
+ * @property array|null $genders
+ * @property array|null $types
+ * @method static Builder|SearchIndex newModelQuery()
+ * @method static Builder|SearchIndex newQuery()
+ * @method static Builder|SearchIndex query()
+ * @method static Builder|SearchIndex whereCreatedAt($value)
+ * @method static Builder|SearchIndex whereName($value)
+ * @method static Builder|SearchIndex whereText($value)
+ * @method static Builder|SearchIndex whereUpdatedAt($value)
+ * @method static Builder|SearchIndex whereUrl($value)
  * @mixin \Eloquent
  */
 class SearchIndex extends Model {
 
 	protected $primaryKey = null;
-	protected $fillable = ['product_id', 'name', 'text', 'url'];
+	protected $fillable = ['product_id','sizes', 'seasons', 'brand', 'genders', 'types'];
 	public $incrementing = false;
+    public $timestamps = false;
+
+    protected $casts = [
+        'sizes' => 'array',
+        'seasons' => 'array',
+        'genders' => 'array',
+        'types' => 'array'
+    ];
 
 	public function delete() {
 		parent::delete();
@@ -54,7 +63,8 @@ class SearchIndex extends Model {
 		}
 	}
 
-	public static function update_index() {
+	public static function update_index(): void
+    {
 		//clear_all;
 		$item = new self();
 		$table = $item->getTable();
@@ -64,29 +74,19 @@ class SearchIndex extends Model {
 
 			DB::table($table)->delete();
 
-//			$pages = Page::wherePublished(1)->get();
-//			foreach ($pages as $page){
-//				self::create([
-//					'name'	=> $page->name,
-//					'text' 	=> $page->text,
-//					'url' 	=> $page->url
-//				]);
-//			}
+			$catalogs = Catalog::wherePublished(1)->with(['public_products'])->get();
 
-			$catalogs = Catalog::wherePublished(1)->get();
 			foreach ($catalogs as $catalog){
-//				self::create([
-//					'name'	=> $catalog->name,
-//					'text' 	=> $catalog->text_after,
-//					'url' 	=> $catalog->url
-//				]);
-
-				foreach ($catalog->products()->public()->get() as $product){
+				foreach ($catalog->public_products()
+                             ->with(['sizes', 'seasons', 'brand', 'genders', 'types'])
+                             ->get() as $product){
 					self::create([
-						'product_id'	=> $product->id,
-						'name'	=> $product->name,
-//						'text' 	=> $product->text,
-//						'url' 	=> $catalog->url . '/' . $product->id
+						'product_id' => $product->id,
+                        'sizes' => $product->sizes()->pluck('size_id')->all(),
+                        'seasons' => $product->seasons()->pluck('season_id')->all(),
+                        'brand' => $product->brand->id,
+                        'genders' => $product->genders()->pluck('gender_id')->all(),
+                        'types' => $product->types()->pluck('type_id')->all(),
 					]);
 				}
 			}
@@ -94,6 +94,7 @@ class SearchIndex extends Model {
 			DB::commit();
 
 		} catch (\Exception $e){
+            \Debugbar::log($e->getMessage());
 			DB::rollBack();
 		}
 

@@ -7,6 +7,7 @@ use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\City;
 use Fanky\Admin\Models\Page;
 use Fanky\Admin\Models\Product;
+use Fanky\Admin\Models\SearchIndex;
 use Fanky\Admin\Settings;
 use Fanky\Auth\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -81,8 +82,6 @@ class CatalogController extends Controller {
             $canonical = null;
         }
 
-        $category->load(['parent']);
-
         Auth::init();
         if (Auth::user() && Auth::user()->isAdmin) {
             View::share('admin_edit_link', route('admin.catalog.catalogEdit', [$category->id]));
@@ -91,6 +90,27 @@ class CatalogController extends Controller {
             $per_page = 6;
             session(['per_page' => $per_page]);
         }
+
+        $filter_data = request()->except(['page', 'brand']);
+        $filter_brand = request()->get('brand');
+
+        \Debugbar::log($filter_data['sizes']);
+        \Debugbar::log($filter_brand);
+
+        $query = SearchIndex::query();
+        if($filter_brand) {
+            $query = $query->whereIn('brand', $filter_brand);
+        }
+
+        foreach ($filter_data as $name => $values) {
+            $query = $query->whereIn($name, $values);
+        }
+
+        $products_ids = $query->pluck('product_id')->all();
+
+//        News::find(20)->media()->where(function ($q) {
+//            $q->where("id",36)->orWhere("type",1);
+//        })->get();
 
         $children_ids = $this->getChildrenIds($category);
 
@@ -107,25 +127,11 @@ class CatalogController extends Controller {
             'h1' => $category->getH1(),
             'products' => $products,
             'products_count' => $products_count,
-            'per_page' => $per_page
+            'per_page' => $per_page,
+            'filter_data' => $filter_data,
+            'filter_brand' => $filter_brand,
+            'filer_sizes' => $filter_data['sizes'] ?? []
         ];
-
-        if (Request::ajax()) {
-            $view_items = [];
-            foreach ($products as $item) {
-                $view_items[] = view('catalog.product_item', [
-                    'item' => $item,
-                    'category' => $category,
-                ])->render();
-            }
-
-            return response()->json([
-                'items' => $view_items,
-                'paginate' => view('catalog.section_pagination', [
-                    'paginator' => $products,
-                ])->render(),
-            ]);
-        }
 
         return view('catalog.category', $data);
     }

@@ -6,7 +6,7 @@
 
 @section('page_name')
 	<h1>Пол
-		<small><a href="{{ route('admin.sexes.edit') }}">Добавить пол</a></small>
+		<small><a href="{{ route('admin.genders.edit') }}">Добавить пол</a></small>
 	</h1>
 @stop
 
@@ -27,10 +27,10 @@
 							<tr data-id="{{ $item->id }}">
 								<td width="40"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></td>
 								<td>{{ $item->value }}</td>
-								<td width="50"><a class="glyphicon glyphicon-edit" href="{{ route('admin.sexes.edit', [$item->id]) }}"
+								<td width="50"><a class="glyphicon glyphicon-edit" href="{{ route('admin.genders.edit', [$item->id]) }}"
 												  style="font-size:20px; color:orange;"></a></td>
 								<td width="50">
-									<a class="glyphicon glyphicon-trash" href="{{ route('admin.sexes.del', [$item->id]) }}"
+									<a class="glyphicon glyphicon-trash" href="{{ route('admin.genders.del', [$item->id]) }}"
 									   style="font-size:20px; color:red;" onclick="itemDel(this, event, 'Удалить пол?')"></a>
 								</td>
 							</tr>
@@ -41,7 +41,7 @@
 				<script type="text/javascript">
 					$("#items-list").sortable({
 						update: function( event, ui ) {
-							var url = "{{ route('admin.sexes.reorder') }}";
+							var url = "{{ route('admin.genders.reorder') }}";
 							var data = {};
 							data.sorted = ui.item.closest('#items-list').sortable( "toArray", {attribute: 'data-id'} );
 							sendAjax(url, data);

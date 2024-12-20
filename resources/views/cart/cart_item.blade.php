@@ -8,6 +8,9 @@
     <div class="tbl-order__col tbl-order__col--name">
         <span>{{ $item['name'] }}</span>
     </div>
+    <div class="tbl-order__col tbl-order__col--size">
+        <span>{{ $item['size'] }}</span>
+    </div>
     <div class="tbl-order__col tbl-order__col--count">
         <div class="counter" data-counter>
             <button class="counter__btn counter__btn--prev btn-reset">

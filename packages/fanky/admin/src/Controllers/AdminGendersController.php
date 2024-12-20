@@ -1,26 +1,26 @@
 <?php namespace Fanky\Admin\Controllers;
 
-use Fanky\Admin\Models\Sex;
+use Fanky\Admin\Models\Gender;
 use Request;
 use Validator;
 use DB;
 
-class AdminSexesController extends AdminController {
+class AdminGendersController extends AdminController {
 
 	public function getIndex()
 	{
-		$sexes = Sex::orderBy('order')->get();
+		$sexes = Gender::orderBy('order')->get();
 
-		return view('admin::sexes.main', ['sexes' => $sexes]);
+		return view('admin::genders.main', ['sexes' => $sexes]);
 	}
 
 	public function getEdit($id = null)
 	{
-		if (!$id || !($sex = Sex::findOrFail($id))) {
-			$sex = new Sex;
+		if (!$id || !($sex = Gender::findOrFail($id))) {
+			$sex = new Gender;
 		}
 
-		return view('admin::sexes.edit', ['sex' => $sex]);
+		return view('admin::genders.edit', ['sex' => $sex]);
 	}
 
 	public function postSave(): array
@@ -40,17 +40,17 @@ class AdminSexesController extends AdminController {
 		}
 
 		// сохраняем страницу
-		$sex = Sex::find($id);
+		$sex = Gender::find($id);
         $redirect = false;
 		if (!$sex) {
-			$data['order'] = Sex::max('order') + 1;
-			$sex = Sex::create($data);
+			$data['order'] = Gender::max('order') + 1;
+			$sex = Gender::create($data);
             $redirect = true;
 		} else {
             $sex->update($data);
 		}
         if ($redirect) {
-            return ['redirect' => route('admin.sexes.edit', [$sex->id])];
+            return ['redirect' => route('admin.genders.edit', [$sex->id])];
         } else {
             return ['success' => true, 'msg' => 'Изменения сохранены'];
         }
@@ -60,7 +60,7 @@ class AdminSexesController extends AdminController {
     {
 		$sorted = Request::input('sorted', []);
 		foreach ($sorted as $order => $id) {
-			DB::table('sexes')->where('id', $id)
+			DB::table('genders')->where('id', $id)
                 ->update(array('order' => $order));
 		}
 		return ['success' => true];
@@ -68,7 +68,7 @@ class AdminSexesController extends AdminController {
 
 	public function postDelete($id): array
     {
-		$sex = Sex::find($id);
+		$sex = Gender::find($id);
 		$sex->delete();
 
 		return ['success' => true];

@@ -132,7 +132,7 @@ class Catalog extends Model {
 	}
 
 	public function products(): HasMany {
-		return $this->hasMany('Fanky\Admin\Models\Product', 'catalog_id');
+		return $this->hasMany(Product::class, 'catalog_id');
 	}
 
     public function params(): HasMany {
@@ -151,7 +151,7 @@ class Catalog extends Model {
     }
 
 	public function public_products() {
-		return $this->hasMany('Fanky\Admin\Models\Product', 'catalog_id')
+		return $this->hasMany(Product::class, 'catalog_id')
 			->public()->orderBy('order');
 	}
 

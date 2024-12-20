@@ -14,13 +14,13 @@
 @section('breadcrumb')
 	<ol class="breadcrumb">
 		<li><a href="#"><i class="fa fa-dashboard"></i> Главная</a></li>
-		<li><a href="{{ route('admin.sexes') }}">Пол</a></li>
+		<li><a href="{{ route('admin.genders') }}">Пол</a></li>
 		<li class="active">{{ $sex->id ? 'Редактировать' : 'Новый' }}</li>
 	</ol>
 @stop
 
 @section('content')
-	<form action="{{ route('admin.sexes.save') }}" onsubmit="return itemSave(this, event)">
+	<form action="{{ route('admin.genders.save') }}" onsubmit="return itemSave(this, event)">
 		<input type="hidden" name="id" value="{{ $sex->id }}">
 
 		<div class="box box-solid">

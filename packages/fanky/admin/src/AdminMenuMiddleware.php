@@ -30,8 +30,8 @@ class AdminMenuMiddleware {
                 ->active('/admin/seasons/*');
             $menu->filters->add('Бренд', ['route' => 'admin.brands', 'icon' => 'fa-tag'])
                 ->active('/admin/brands/*');
-            $menu->filters->add('Пол', ['route' => 'admin.sexes', 'icon' => 'fa-venus-mars'])
-                ->active('/admin/sexes/*');
+            $menu->filters->add('Пол', ['route' => 'admin.genders', 'icon' => 'fa-venus-mars'])
+                ->active('/admin/genders/*');
             $menu->filters->add('Тип обуви', ['route' => 'admin.types', 'icon' => 'fa-crosshairs'])
                 ->active('/admin/types/*');
 

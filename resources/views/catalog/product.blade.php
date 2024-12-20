@@ -97,13 +97,15 @@
                                             </svg>
                                             <span>В корзину</span>
                                         </button>
-                                        <a class="btn btn--small btn--message" href="javascript:void(0)" target="_blank"
-                                           rel="noopener">
-                                            <span>Заказать по</span>
-                                            <svg class="svg-sprite-icon icon-wa">
-                                                <use xlink:href="/static/images/sprite/symbol/sprite.svg#wa"></use>
-                                            </svg>
-                                        </a>
+                                        @if($wa = S::get('soc_wa'))
+                                            <a class="btn btn--small btn--message" href="{{ $wa . '?text=' . $product->name }}" target="_blank"
+                                               rel="noopener">
+                                                <span>Заказать по</span>
+                                                <svg class="svg-sprite-icon icon-wa">
+                                                    <use xlink:href="/static/images/sprite/symbol/sprite.svg#wa"></use>
+                                                </svg>
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

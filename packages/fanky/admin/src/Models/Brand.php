@@ -3,7 +3,7 @@
 namespace Fanky\Admin\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Brand extends Model
 {
@@ -11,8 +11,8 @@ class Brand extends Model
 
     public $timestamps = false;
 
-    public function product(): HasMany
+    public function product(): HasOne
     {
-        return $this->hasMany(Product::class);
+        return $this->hasOne(Product::class);
     }
 }

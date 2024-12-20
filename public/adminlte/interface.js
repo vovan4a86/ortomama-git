@@ -104,6 +104,32 @@ function applyFormValidate(form, ErrMsg){
 	$(form).find('.invalid').eq(0).trigger('focus');
 }
 
+function siteClearCache(elem, e) {
+	e.preventDefault();
+	const url = $(elem).attr('href');
+	$('.fa-refresh').addClass('rotate');
+	sendAjax(url, {}, function (json) {
+		if (json.success) {
+			alert('Кэш очищен! 🤨');
+		}
+		$('.fa-refresh').removeClass('rotate');
+	})
+}
+
+function updateSearchIndex(elem, e) {
+	e.preventDefault();
+	if (!confirm('Обновляем поисковый индекс?')) return false;
+	const url = $(elem).attr('href');
+	$('.search-index').addClass('rotate');
+	sendAjax(url, {}, function (json) {
+		if (json.success) {
+			alert('Поисковый индекс обновлен!');
+			// location.reload();
+		}
+		$('.search-index').removeClass('rotate');
+	})
+}
+
 var autoHideMsgNextId = 0;
 function autoHideMsg(color, text, time){
 	if (typeof time == 'undefined') time = 5000;

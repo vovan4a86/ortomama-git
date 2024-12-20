@@ -11,7 +11,7 @@ use Fanky\Admin\Models\Document;
 use Fanky\Admin\Models\Product;
 use Fanky\Admin\Models\ProductImage;
 use Fanky\Admin\Models\Season;
-use Fanky\Admin\Models\Sex;
+use Fanky\Admin\Models\Gender;
 use Fanky\Admin\Models\Size;
 use Fanky\Admin\Models\Type;
 use Fanky\Admin\Pagination;
@@ -172,8 +172,8 @@ class AdminCatalogController extends AdminController {
         $product_types = $product->types()->pluck('types.id')->all();
         $seasons = Season::query()->orderBy('order')->get();
         $product_seasons = $product->seasons()->pluck('seasons.id')->all();
-        $sexes = Sex::query()->orderBy('order')->get();
-        $product_sexes = $product->sexes()->pluck('sexes.id')->all();
+        $genders = Gender::query()->orderBy('order')->get();
+        $product_genders = $product->genders()->pluck('genders.id')->all();
         $cats = Category::query()->orderBy('order')->get();
         $product_cats = $product->categories()->pluck('categories.id')->all();
 
@@ -187,8 +187,8 @@ class AdminCatalogController extends AdminController {
             'product_types' => $product_types,
             'seasons' => $seasons,
             'product_seasons' => $product_seasons,
-            'sexes' => $sexes,
-            'product_sexes' => $product_sexes,
+            'genders' => $genders,
+            'product_genders' => $product_genders,
             'cats' => $cats,
             'product_cats' => $product_cats
         ];
@@ -206,10 +206,10 @@ class AdminCatalogController extends AdminController {
 
     public function postProductSave(): array {
         $id = Request::get('id');
-        $data = Request::except(['id', 'sizes', 'types', 'chars', 'sexes', 'seasons']);
+        $data = Request::except(['id', 'sizes', 'types', 'chars', 'genders', 'seasons']);
         $sizes = Request::get('sizes');
         $types = Request::get('types');
-        $sexes = Request::get('sexes');
+        $sexes = Request::get('genders');
         $seasons = Request::get('seasons');
         $cats = Request::get('cats');
 
