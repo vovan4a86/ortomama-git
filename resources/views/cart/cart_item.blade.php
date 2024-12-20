@@ -32,7 +32,7 @@
     </div>
     @include('cart.cart_item_price')
     <div class="tbl-order__col tbl-order__col--discount">
-        <span>{{ $item['discount'] ?: '-' }}</span>
+        <span>{{ $item['discount_delivery'] + $item['discount_payment'] }}</span>
     </div>
     @include('cart.cart_item_price_total')
 </div>

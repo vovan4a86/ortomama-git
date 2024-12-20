@@ -25,7 +25,7 @@
 					<tbody id="items-list">
 					@foreach ($items as $item)
 						<tr data-id="{{ $item->id }}">
-							<td width="40"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></td>
+							<td width="40">{{ $loop->iteration }}</td>
 							<td>{{ $item->name }}</td>
 							<td width="50"><a class="glyphicon glyphicon-edit" href="{{ route('admin.deliveries.edit', [$item->id]) }}"
 											  style="font-size:20px; color:orange;"></a></td>
@@ -38,16 +38,16 @@
 					</tbody>
 				</table>
 
-				<script type="text/javascript">
-					$("#items-list").sortable({
-						update: function( event, ui ) {
-							var url = "{{ route('admin.deliveries.reorder') }}";
-							var data = {};
-							data.sorted = ui.item.closest('#items-list').sortable( "toArray", {attribute: 'data-id'} );
-							sendAjax(url, data);
-						}
-					}).disableSelection();
-				</script>
+{{--				<script type="text/javascript">--}}
+{{--					$("#items-list").sortable({--}}
+{{--						update: function( event, ui ) {--}}
+{{--							var url = "{{ route('admin.deliveries.reorder') }}";--}}
+{{--							var data = {};--}}
+{{--							data.sorted = ui.item.closest('#items-list').sortable( "toArray", {attribute: 'data-id'} );--}}
+{{--							sendAjax(url, data);--}}
+{{--						}--}}
+{{--					}).disableSelection();--}}
+{{--				</script>--}}
 			@else
 				<p>Нет способов доставки!</p>
 			@endif

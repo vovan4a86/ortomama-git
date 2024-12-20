@@ -161,12 +161,12 @@ class Product extends Model {
             ->orderBy('order');
     }
 
-    public function single_image(): HasOne {
+    public function image(): HasOne {
         return $this->hasOne(ProductImage::class, 'product_id')
             ->orderBy('order');
     }
 
-    public function image(): HasOne {
+    public function single_image(): HasOne {
         return $this->hasOne(ProductImage::class, 'product_id')
             ->orderBy('order');
     }
@@ -513,7 +513,6 @@ class Product extends Model {
         if ($this->discount_payment) {
             return $this->discount_payment;
         } elseif($this->catalog->discount_payment) {
-            \Debugbar::log($this->catalog->discount_payment);
             return $this->catalog->discount_payment;
         } else {
             return null;
@@ -521,6 +520,14 @@ class Product extends Model {
     }
 
     public function getSize() {
-        $this->sizes()->first();
+        if(!count($this->sizes)) {
+            return 0;
+        }
+
+        $size_id = $this->sizes()->first()->id;
+        $size = Size::find($size_id);
+
+        return $size->value;
+
     }
 }

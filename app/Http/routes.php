@@ -16,6 +16,15 @@ use App\Http\Controllers\AjaxController;
 Route::get('robots.txt', 'PageController@robots')->name('robots');
 
 Route::group(['prefix' => 'ajax', 'as' => 'ajax.'], function () {
+    Route::post('send-form', [AjaxController::class, 'postSendForm'])->name('send-form');
+    Route::post('purge-cart', [AjaxController::class, 'postPurgeCart'])->name('purge-cart');
+
+    Route::post('apply-discount-payment', [AjaxController::class, 'postApplyDiscountPayment'])->name('apply-discount-payment');
+    Route::post('discard-discount-payment', [AjaxController::class, 'postDiscardDiscountPayment'])->name('discard-discount-payment');
+
+    Route::post('apply-discount-delivery', [AjaxController::class, 'postApplyDiscountDelivery'])->name('apply-discount-delivery');
+    Route::post('discard-discount-delivery', [AjaxController::class, 'postDiscardDiscountDelivery'])->name('discard-discount-delivery');
+
     Route::post('add-to-cart', [AjaxController::class, 'postAddToCart'])->name('add-to-cart');
     Route::post('update-to-cart', [AjaxController::class, 'postUpdateToCart'])->name('update-to-cart');
     Route::post('remove-from-cart', [AjaxController::class, 'postRemoveFromCart'])->name('remove-from-cart');

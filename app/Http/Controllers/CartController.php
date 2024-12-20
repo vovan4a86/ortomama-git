@@ -23,8 +23,8 @@ class CartController extends Controller {
         ];
 
         $points = Point::orderBy('order')->get();
-        $payments = Payment::orderBy('order')->get();
-        $deliveries = Delivery::orderBy('order')->get();
+        $payments = Payment::all();
+        $deliveries = Delivery::all();
 
         $all_regions = SxgeoRegion::where('country', 'RU')
             ->orderBy('name_ru')->get(['id', 'name_ru']);

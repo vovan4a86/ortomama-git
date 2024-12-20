@@ -36,7 +36,9 @@
                 </svg>
                 <span>Быстрый просмотр</span>
             </button>
-            <button class="catalog-card__action btn-reset" type="button" data-product="{{ $product->id }}" data-size="{{ $product->getSize() }}" data-create-order
+            <button class="catalog-card__action btn-reset" type="button" data-product="{{ $product->id }}"
+{{--                    data-size="{{ $product->getSize() }}" --}}
+                    data-create-order
                     data-src="#create-order" onclick="addItemToCart(this, event)">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32"
                      height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"

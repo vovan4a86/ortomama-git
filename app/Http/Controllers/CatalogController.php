@@ -163,7 +163,6 @@ class CatalogController extends Controller {
         $sizes = $product->sizes;
         $chars = $product->chars;
 
-
         Auth::init();
         if (Auth::user() && Auth::user()->isAdmin) {
             View::share('admin_edit_link', route('admin.catalog.productEdit', [$product->id]));

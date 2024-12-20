@@ -117,14 +117,92 @@ function addItemToCart(elem, e) {
     const id = $(elem).attr('data-product');
     const size = $('.radios__input:checked').val();
     if (!size) {
-        alert('Не выбран размер');
+        Fancybox.show([
+            {
+                src: '#size-error',
+                type: 'inline'
+            }
+        ]);
         e.preventDefault();
     }
-    Cart.add(id, 1, size, function(res) {
-        if (res.success) {
-            $('.header__column--basket').replaceWith(res.header_cart);
-            // var lazyLoadInstance = new LazyLoad();
-            // lazyLoadInstance.update();
+    Cart.add(id, 1, size, function(json) {
+        if (json.success) {
+            $('.header__column--basket').replaceWith(json.header_cart);
         }
     });
+}
+
+function purgeCart(elem, e) {
+    e.preventDefault();
+    const form = $(elem).closest('form');
+    const url = '/ajax/purge-cart'
+    const cartContainer = $('.cart__container')
+
+    resetForm(form);
+
+    sendAjax(url, {}, function(json) {
+        if (json.success) {
+            $('.header__column--basket').replaceWith(json.header_cart);
+            cartContainer.empty();
+            cartContainer.append('<div class="cart__title centered">Корзина</div><div><div>Ни одного товара не добавлено...</div></div>')
+        }
+    })
+}
+
+//меняем скидку в корзине при изменении способа оплаты
+function paymentChange(elem) {
+    const value = $(elem).val();
+    const urlApplyDiscount = '/ajax/apply-discount-payment';
+    const urlDiscardDiscount = '/ajax/discard-discount-payment';
+
+    const containerItems = $('.cart-items');
+    const footer = $('.tbl-order__row--footer');
+
+    //1 - безналичный расчет
+    if(value == 1) {
+        sendAjax(urlApplyDiscount, {}, function(json) {
+            if (json.success) {
+                containerItems.html(json.items);
+                footer.html(json.footer_total);
+                initCounter();
+            }
+        })
+    } else {
+        sendAjax(urlDiscardDiscount, {}, function(json) {
+            if (json.success) {
+                containerItems.html(json.items);
+                footer.html(json.footer_total);
+                initCounter();
+            }
+        })
+    }
+}
+
+//меняем скидку в корзине при изменении способа доставки
+function deliveryChange(elem) {
+    const value = $(elem).val();
+    const urlApplyDiscount = '/ajax/apply-discount-delivery';
+    const urlDiscardDiscount = '/ajax/discard-discount-delivery';
+
+    const containerItems = $('.cart-items');
+    const footer = $('.tbl-order__row--footer');
+
+    //1 - забрать в пункте выдачи
+    if(value == 1) {
+        sendAjax(urlApplyDiscount, {}, function(json) {
+            if (json.success) {
+                containerItems.html(json.items);
+                footer.html(json.footer_total);
+                initCounter();
+            }
+        })
+    } else {
+        sendAjax(urlDiscardDiscount, {}, function(json) {
+            if (json.success) {
+                containerItems.html(json.items);
+                footer.html(json.footer_total);
+                initCounter();
+            }
+        })
+    }
 }

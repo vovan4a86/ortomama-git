@@ -15,7 +15,6 @@ mix.sourcemaps = true;
 //     proxy: 'levering.test'
 // });
 mix.scripts([
-        'public/adminlte/fancybox.umd.js',
         'resources/assets/js/libs.js',
         'resources/assets/js/main.js',
         'resources/assets/js/custom.js',

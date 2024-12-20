@@ -28,7 +28,8 @@
                                     @if ($product->compensation)
                                         <a class="product__fss" href="{{ route('compensation') }}" target="_blank">
                                             <img class="lazy" data-src="/static/images/common/fss.png"
-                                                 src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Компенсация ФСС" title="Компенсация ФСС"/>
+                                                 src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                                 alt="Компенсация ФСС" title="Компенсация ФСС"/>
                                             <span>Компенсация ФСС</span>
                                         </a>
                                     @endif
@@ -40,12 +41,13 @@
                             <div class="product__code">Артикул:
                                 <span>{{ $product->article }}</span>
                             </div>
-                            <h2 class="product__subtitle">Описание</h2>
-                            <div class="product__text">
-                                @if ($product->text)
+                            @if ($product->text)
+                                <h2 class="product__subtitle">Описание</h2>
+                                <div class="product__text">
                                     {!! $product->text !!}
-                                @endif
-                            </div>
+
+                                </div>
+                            @endif
                             <div class="product__summary">
                                 <div class="product__price price-product">Цена без скидки
                                     <span data-end="₽">{{ $product->price }}</span>
@@ -118,8 +120,8 @@
                         </div>
                     </div>
                     @include('catalog.blocks.points')
-                    <h2 class="product__subtitle">Характеристики</h2>
                     @if (count($chars))
+                    <h2 class="product__subtitle">Характеристики</h2>
                         <div class="product__params">
                             @foreach($chars as $char)
                                 <dl class="param">
@@ -130,8 +132,6 @@
                                 </dl>
                             @endforeach
                         </div>
-                    @else
-                        <div>Не указаны</div>
                     @endif
                 </section>
             </main>

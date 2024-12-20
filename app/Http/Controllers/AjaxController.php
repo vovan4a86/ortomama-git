@@ -44,6 +44,7 @@ class AjaxController extends Controller
             $product_item['size'] = $size;
             $product_item['sizes'] = $product->sizes->toArray();
             $product_item['discount_delivery'] = $product->getDiscountDelivery();
+            $product_item['discount_payment'] = 0;
             $product_item['url'] = $product->url;
 
             $prodImage = $product->single_image;
@@ -121,12 +122,101 @@ class AjaxController extends Controller
     public function postPurgeCart(): array
     {
         Cart::purge();
-        $total = view('cart.table_row_total')->render();
-        $header_cart = view('blocks.header_cart', ['innerPage' => true])->render();
+        $footer_total = view('cart.footer_total')->render();
+        $header_cart = view('blocks.header_cart')->render();
         return [
             'success' => true,
-            'total' => $total,
+            'footer_total' => $footer_total,
             'header_cart' => $header_cart
+        ];
+    }
+
+    //применение скидок в зависимости от способа оплаты/доставки
+    public function postApplyDiscountPayment()
+    {
+        $items = Cart::all();
+        $view_items = [];
+
+        foreach ($items as $item) {
+            $product = Product::find($item['id']);
+            $discount = $product->getDiscountPayment();
+            Cart::updateDiscountPayment($item['id'], $discount);
+            $updated_item = Cart::getItem($item['id']);
+
+            $view_items[] = view('cart.cart_item', ['item' => $updated_item])->render();
+        }
+
+        $footer_total = view('cart.footer_total')->render();
+
+        return [
+            'success' => true,
+            'items' => $view_items,
+            'footer_total' => $footer_total
+        ];
+    }
+
+    public function postDiscardDiscountPayment()
+    {
+        $items = Cart::all();
+        $view_items = [];
+        foreach ($items as $item) {
+            $discount = 0;
+            Cart::updateDiscountPayment($item['id'], $discount);
+            $updated_item = Cart::getItem($item['id']);
+
+            $view_items[] = view('cart.cart_item', ['item' => $updated_item])->render();
+        }
+
+        $footer_total = view('cart.footer_total')->render();
+
+        return [
+            'success' => true,
+            'items' => $view_items,
+            'footer_total' => $footer_total
+        ];
+    }
+
+    public function postApplyDiscountDelivery()
+    {
+        $items = Cart::all();
+        $view_items = [];
+
+        foreach ($items as $item) {
+            $product = Product::find($item['id']);
+            $discount = $product->getDiscountDelivery();
+            Cart::updateDiscountDelivery($item['id'], $discount);
+            $updated_item = Cart::getItem($item['id']);
+
+            $view_items[] = view('cart.cart_item', ['item' => $updated_item])->render();
+        }
+
+        $footer_total = view('cart.footer_total')->render();
+
+        return [
+            'success' => true,
+            'items' => $view_items,
+            'footer_total' => $footer_total
+        ];
+    }
+
+    public function postDiscardDiscountDelivery()
+    {
+        $items = Cart::all();
+        $view_items = [];
+        foreach ($items as $item) {
+            $discount = 0;
+            Cart::updateDiscountDelivery($item['id'], $discount);
+            $updated_item = Cart::getItem($item['id']);
+
+            $view_items[] = view('cart.cart_item', ['item' => $updated_item])->render();
+        }
+
+        $footer_total = view('cart.footer_total')->render();
+
+        return [
+            'success' => true,
+            'items' => $view_items,
+            'footer_total' => $footer_total
         ];
     }
 
@@ -312,20 +402,19 @@ class AjaxController extends Controller
     }
 
     //ОФОРМЛЕНИЕ ЗАКАЗА
-    public function postOrder(Request $request)
+    public function postSendForm(Request $request)
     {
         $data = $request->only([
-            'name',
+            'payment',
+            'delivery',
+            'address',
+            'lastname',
+            'firstname',
             'phone',
             'email',
-            'company',
-            'delivery',
+            'region',
             'city',
-            'code',
-            'street',
-            'home-number',
-            'apartment-number',
-            'comment',
+            'delivery-address',
         ]);
 
         array_get($data, 'callback') == 'on' ? $data['callback'] = 1 : $data['callback'] = 0;
@@ -390,6 +479,11 @@ class AjaxController extends Controller
         Cart::purge();
 
         return ['success' => true];
+    }
+
+    //ОЧИСТКА ФОРМЫ ЗАКАЗА
+    public function postResetForm() {
+
     }
 
     public function search(Request $request)

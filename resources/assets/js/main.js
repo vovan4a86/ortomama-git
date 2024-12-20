@@ -353,6 +353,7 @@ function initCounter() {
   counters &&
     counters.forEach(counter => {
       counter.addEventListener('click', function (e) {
+        e.preventDefault();
         const input = this.querySelector('[data-count]');
         const target = e.target;
         const row = input.closest('.tbl-order__row--body');
@@ -370,7 +371,7 @@ function initCounter() {
         });
 
 
-        input.addEventListener('change', function () {
+        input.addEventListener('change', function (e) {
           if (this.value < 0 || this.value === '0' || this.value === '') {
             this.value = 1;
           }
