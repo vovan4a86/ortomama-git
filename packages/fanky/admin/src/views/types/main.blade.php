@@ -26,7 +26,7 @@
 						@foreach ($types as $item)
 							<tr data-id="{{ $item->id }}">
 								<td width="40"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></td>
-								<td>{{ $item->name }}</td>
+								<td>{{ $item->value }}</td>
 								<td width="50"><a class="glyphicon glyphicon-edit" href="{{ route('admin.types.edit', [$item->id]) }}"
 												  style="font-size:20px; color:orange;"></a></td>
 								<td width="50">

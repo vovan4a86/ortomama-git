@@ -35,7 +35,7 @@
         @endif
     </aside>
     <div class="container__divider"></div>
-    <form class="filter" action="{{ $category->url }}">
+    <form class="filter" action="{{ isset($category) ? $category->url : route('catalog.index') }}">
         <div class="filter__show" data-filter-open>
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
                  viewBox="0 0 16 16">
@@ -63,7 +63,7 @@
                                         <label class="radios__label">
                                             <input class="radios__input" type="checkbox" name="sizes[]"
                                                    value="{{ $size->value }}"
-                                                    {{ in_array($size->id, $filter_data['sizes']) ? 'checked' : null }}
+                                                    {{ isset($filter_data['sizes']) && in_array($size->value, $filter_data['sizes']) ? 'checked' : null }}
                                             />
                                             <span class="radios__box">{{ $size->value }}</span>
                                         </label>
@@ -92,8 +92,8 @@
                         <div class="filter__list">
                             @foreach($filter_seasons as $season)
                                 <label class="checkbox">
-                                    <input class="checkbox__input" type="checkbox" name="seasons[]" value="{{ $season->id }}"
-                                            {{ isset($filter_data['seasons']) && in_array($season->id, $filter_data['seasons']) ? 'checked' : null }}
+                                    <input class="checkbox__input" type="checkbox" name="seasons[]" value="{{ $season->value }}"
+                                            {{ isset($filter_data['seasons']) && in_array($season->value, $filter_data['seasons']) ? 'checked' : null }}
                                     />
                                     <span class="checkbox__box"></span>{{ $season->value }}
                                 </label>
@@ -122,10 +122,10 @@
                                 @foreach($filter_brands as $brand)
                                     <label class="checkbox">
                                         <input class="checkbox__input" type="checkbox" name="brand[]"
-                                               value="{{ $brand->id }}"
-                                                {{ in_array($brand->id, $filter_brand) ? 'checked' : null }}
+                                               value="{{ $brand->value }}"
+                                                {{ isset($filter_brand) && in_array($brand->value, $filter_brand) ? 'checked' : null }}
                                         />
-                                        <span class="checkbox__box"></span>{{ $brand->name }}
+                                        <span class="checkbox__box"></span>{{ $brand->value }}
                                     </label>
                                 @endforeach
                             </div>
@@ -151,8 +151,8 @@
                         <div class="filter__list">
                             @foreach($filter_genders as $gender)
                                 <label class="checkbox">
-                                    <input class="checkbox__input" type="checkbox" name="genders[]" value="{{ $gender->id }}"
-                                    {{ isset($filter_data['genders']) && in_array($gender->id, $filter_data['genders']) ? 'checked' : null }}
+                                    <input class="checkbox__input" type="checkbox" name="genders[]" value="{{ $gender->value }}"
+                                    {{ isset($filter_data['genders']) && in_array($gender->value, $filter_data['genders']) ? 'checked' : null }}
                                     />
                                     <span class="checkbox__box"></span>{{ $gender->value }}
                                 </label>
@@ -181,10 +181,10 @@
                                 @foreach($filter_types as $type)
                                     <label class="checkbox">
                                         <input class="checkbox__input" type="checkbox" name="types[]"
-                                               value="{{ $type->id }}"
-                                                {{ isset($filter_data['types']) && in_array($type->id, $filter_data['types']) ? 'checked' : null }}
+                                               value="{{ $type->value }}"
+                                                {{ isset($filter_data['types']) && in_array($type->value, $filter_data['types']) ? 'checked' : null }}
                                         />
-                                        <span class="checkbox__box"></span>{{ $type->name }}
+                                        <span class="checkbox__box"></span>{{ $type->value }}
                                     </label>
                                 @endforeach
                             </div>

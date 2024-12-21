@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Brand extends Model
 {
-    protected $fillable = ['name', 'order'];
+    protected $fillable = ['value', 'order'];
 
     public $timestamps = false;
 

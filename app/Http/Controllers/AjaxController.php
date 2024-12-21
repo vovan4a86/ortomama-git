@@ -11,6 +11,7 @@ use Fanky\Admin\Models\Page;
 use Fanky\Admin\Models\Product;
 use Fanky\Admin\Models\ProductChar;
 use Fanky\Admin\Models\Setting;
+use Fanky\Admin\Models\Subscriber;
 use Illuminate\Http\Request;
 use Mail;
 use Mailer;
@@ -220,7 +221,7 @@ class AjaxController extends Controller
         ];
     }
 
-    //заявка в свободной форме
+    //заказать сейчас/оставить заявку
     public function postRequest(Request $request)
     {
         $data = $request->only(['name', 'email', 'text']);
@@ -251,153 +252,41 @@ class AjaxController extends Controller
         }
     }
 
-    //заказать звонок
-    public function postCallback(Request $request)
+    //подписка
+    public function postSubscribe(Request $request)
     {
-        $data = $request->only(['name', 'phone', 'time']);
+        $data = $request->only('email');
         $valid = Validator::make($data, [
-            'name' => 'required',
-            'phone' => 'required',
+            'email' => 'required'
         ], [
-            'name.required' => 'Не заполнено поле Имя',
-            'phone.required' => 'Не заполнено поле Телефон',
+            'email.required' => 'Не заполнено поле Email'
         ]);
 
         if ($valid->fails()) {
             return ['errors' => $valid->messages()];
         } else {
-            $feedback_data = [
-                'type' => 3,
-                'data' => $data
-            ];
-            $feedback = Feedback::create($feedback_data);
-            Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Заказать звонок | LEVERING';
-                $message->from($this->fromMail, $this->fromName)
-                    ->to(Settings::get('feedback_email'))
-                    ->subject($title);
-            });
-
-            return ['success' => true];
-        }
-    }
-
-    //консультация с файлом
-    public function postProductConsult(Request $request)
-    {
-        $data = $request->only(['name', 'phone', 'message']);
-        $file = $request->file('dfile');
-        $valid = Validator::make($data, [
-            'name' => 'required',
-            'phone' => 'required',
-        ], [
-            'name.required' => 'Не заполнено поле имя',
-            'phone.required' => 'Не заполнено поле телефон',
-        ]);
-
-        if ($valid->fails()) {
-            return ['errors' => $valid->messages()];
-        } else {
-            if ($file) {
-                $file_name = md5(uniqid(rand(), true)) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path(Feedback::UPLOAD_URL), $file_name);
-                $data['file'] = '<a target="_blanc" href=\'' . Feedback::UPLOAD_URL . $file_name . '\'>' . $file_name . '</a>';
-            }
-
             $feedback_data = [
                 'type' => 2,
                 'data' => $data
             ];
 
-            $feedback = Feedback::create($feedback_data);
-            Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Консультация по товару | LEVERING';
-                $message->from($this->fromMail, $this->fromName)
-                    ->to(Settings::get('feedback_email'))
-                    ->subject($title);
-            });
+            $subscriber = Subscriber::whereEmail($data['email'])->first();
+            if(!$subscriber) {
+                $feedback = Feedback::create($feedback_data);
+                Subscriber::create($data);
 
-            return ['success' => true];
-        }
-    }
+                Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
+                    $title = $feedback->id . ' | Новый подписчик | OrtoMama';
+                    $message->from($this->fromMail, $this->fromName)
+                        ->to(Settings::get('feedback_email'))
+                        ->subject($title);
+                });
 
-    //получить прайс
-    public function postGetPrice(Request $request)
-    {
-        $data = $request->only(['name', 'email', 'phone']);
-        $file = $request->file('fileprice');
-        $valid = Validator::make($data, [
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required',
-        ], [
-            'name.required' => 'Не заполнено поле имя',
-            'email.required' => 'Не заполнено поле email',
-            'phone.required' => 'Не заполнено поле телефон',
-        ]);
-
-        if ($valid->fails()) {
-            return ['errors' => $valid->messages()];
-        } else {
-            if ($file) {
-                $file_name = md5(uniqid(rand(), true)) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path(Feedback::UPLOAD_URL), $file_name);
-                $data['file'] = '<a target="_blanc" href=\'' . Feedback::UPLOAD_URL . $file_name . '\'>' . $file_name . '</a>';
+                return ['success' => true];
+            } else {
+                return ['success' => false, 'msg' => 'Вы уже подписаны на нашу рассылку.'];
             }
 
-            $feedback_data = [
-                'type' => 8,
-                'data' => $data
-            ];
-
-            $feedback = Feedback::create($feedback_data);
-            Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Запрос прайс-листа | LEVERING';
-                $message->from($this->fromMail, $this->fromName)
-                    ->to(Settings::get('feedback_email'))
-                    ->subject($title);
-            });
-
-            return ['success' => true];
-        }
-    }
-
-    //запрос менеджеру
-    public function postManagerRequest(Request $request)
-    {
-        $data = $request->only(['name', 'phone', 'email', 'message']);
-        $file = $request->file('mfile');
-        $valid = Validator::make($data, [
-            'name' => 'required',
-            'phone' => 'required',
-            'email' => 'required',
-        ], [
-            'name.required' => 'Не заполнено поле Имя',
-            'phone.required' => 'Не заполнено поле Телефон',
-            'email.required' => 'Не заполнено поле Email',
-        ]);
-
-        if ($valid->fails()) {
-            return ['errors' => $valid->messages()];
-        } else {
-            if ($file) {
-                $file_name = md5(uniqid(rand(), true)) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path(Feedback::UPLOAD_URL), $file_name);
-                $data['file'] = '<a target="_blanc" href=\'' . Feedback::UPLOAD_URL . $file_name . '\'>' . $file_name . '</a>';
-            }
-            $feedback_data = [
-                'type' => 6,
-                'data' => $data
-            ];
-            $feedback = Feedback::create($feedback_data);
-            Mail::send('mail.feedback', ['feedback' => $feedback], function ($message) use ($feedback) {
-                $title = $feedback->id . ' | Запрос менеджеру | LEVERING';
-                $message->from($this->fromMail, $this->fromName)
-                    ->to(Settings::get('feedback_email'))
-                    ->subject($title);
-            });
-
-            return ['success' => true];
         }
     }
 

@@ -272,22 +272,19 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
             ->name('.reorder');
     });
 
-    Route::group(['as' => '.offers', 'prefix' => 'offers'], function () {
-		$controller = 'AdminOffersController@';
-		Route::get('/', $controller . 'getIndex');
+    Route::group(['as' => '.subscribers', 'prefix' => 'subscribers'], function () {
+        $controller = 'AdminSubscribersController@';
+        Route::get('/', $controller . 'getIndex');
 
-		Route::get('edit/{id?}', $controller . 'getEdit')
-			->name('.edit');
+        Route::get('edit/{id?}', $controller . 'getEdit')
+            ->name('.edit');
 
-		Route::post('save', $controller . 'postSave')
-			->name('.save');
+        Route::post('save', $controller . 'postSave')
+            ->name('.save');
 
-		Route::post('delete/{id}', $controller . 'postDelete')
-			->name('.delete');
-
-		Route::post('delete-image/{id}', $controller . 'postDeleteImage')
-			->name('.delete-image');
-	});
+        Route::post('delete/{id}', $controller . 'postDelete')
+            ->name('.del');
+    });
 
     Route::group(['as' => '.orders', 'prefix' => 'orders'], function () {
 		$controller = 'AdminOrdersController@';
@@ -298,21 +295,6 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 
 		Route::post('del/{id}', $controller . 'postDelete')
 			->name('.del');
-	});
-
-	Route::group(['as' => '.publications', 'prefix' => 'publications'], function () {
-		$controller = 'AdminPublicationsController@';
-		Route::get('/', $controller . 'getIndex');
-
-		Route::get('edit/{id?}', $controller . 'getEdit')
-			->name('.edit');
-
-		Route::post('save', $controller . 'postSave')
-			->name('.save');
-
-		Route::post('delete/{id}', $controller . 'postDelete')
-			->name('.delete');
-
 	});
 
 	Route::group(['as' => '.gallery', 'prefix' => 'gallery'], function () {

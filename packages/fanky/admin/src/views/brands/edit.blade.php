@@ -25,7 +25,7 @@
 
 		<div class="box box-solid">
 			<div class="box-body">
-				{!! Form::groupText('name', $brand->name, 'Название') !!}
+				{!! Form::groupText('value', $brand->value, 'Название') !!}
 			</div>
 
 			<div class="box-footer">

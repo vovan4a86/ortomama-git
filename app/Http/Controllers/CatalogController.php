@@ -1,17 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use Cache;
-use Cookie;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Fanky\Admin\Models\Catalog;
-use Fanky\Admin\Models\City;
 use Fanky\Admin\Models\Page;
 use Fanky\Admin\Models\Product;
 use Fanky\Admin\Models\SearchIndex;
 use Fanky\Admin\Settings;
 use Fanky\Auth\Auth;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Response;
 use SEOMeta;
 use Session;
 use Request;
@@ -26,16 +21,45 @@ class CatalogController extends Controller {
         $page->h1 = $page->getH1();
         $page->setSeo();
 
-//        $per_page = Request::get('per_page', 6);
-//        $per_page = is_numeric($per_page) ? $per_page : \Settings::get('product_per_page');
         if (!$per_page = session('per_page')) {
             $per_page = 6;
             session(['per_page' => $per_page]);
         }
 
         $categories = Catalog::getTopLevelOnList();
-        $products = Product::public()->paginate($per_page);
-        $products_count = Product::public()->count();
+
+        $filter_data = request()->except(['page', 'brand']);
+        $filter_brand = request()->only('brand');
+        \Debugbar::log($filter_data);
+        \Debugbar::log($filter_brand);
+
+        $appends = [];
+        $query = SearchIndex::query();
+        if(count($filter_data) || count($filter_brand)) {
+            if($filter_brand) {
+                $query = $query->whereIn('brand', $filter_brand['brand']);
+                $appends[] = ['brand' => $filter_brand];
+            }
+
+            foreach ($filter_data as $name => $values) {
+                $query = $query->whereIn($name, $values);
+                $appends[] = [$name => $values];
+            }
+
+            $products_ids = $query->pluck('product_id')->all();
+
+            $products = Product::public()
+                ->whereIn('id', $products_ids)
+                ->with(['brand', 'catalog', 'single_image'])
+                ->paginate($per_page)
+                ->appends($appends);
+            $products_count = count($products);
+        } else {
+            $products = Product::public()
+                ->with(['brand', 'catalog', 'single_image'])
+                ->paginate($per_page);
+            $products_count = Product::public()->count();
+        }
 
         return view('catalog.index', [
             'h1' => $page->h1,
@@ -45,7 +69,9 @@ class CatalogController extends Controller {
             'categories' => $categories,
             'products' => $products,
             'products_count' => $products_count,
-            'per_page' => $per_page
+            'per_page' => $per_page,
+            'filter_data' => $filter_data,
+            'filter_brand' => $filter_brand ? $filter_brand['brand'] : []
         ]);
     }
 
@@ -92,10 +118,7 @@ class CatalogController extends Controller {
         }
 
         $filter_data = request()->except(['page', 'brand']);
-        $filter_brand = request()->get('brand');
-
-        \Debugbar::log($filter_data['sizes']);
-        \Debugbar::log($filter_brand);
+        $filter_brand = request()->only('brand');
 
         $query = SearchIndex::query();
         if($filter_brand) {

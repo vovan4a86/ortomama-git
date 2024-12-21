@@ -209,7 +209,7 @@ class AdminCatalogController extends AdminController {
         $data = Request::except(['id', 'sizes', 'types', 'chars', 'genders', 'seasons']);
         $sizes = Request::get('sizes');
         $types = Request::get('types');
-        $sexes = Request::get('genders');
+        $genders = Request::get('genders');
         $seasons = Request::get('seasons');
         $cats = Request::get('cats');
 
@@ -262,7 +262,7 @@ class AdminCatalogController extends AdminController {
         $product->article = $product->makeArticle($product->id);
         $product->sizes()->sync($sizes);
         $product->types()->sync($types);
-        $product->sexes()->sync($sexes);
+        $product->genders()->sync($genders);
         $product->seasons()->sync($seasons);
         $product->categories()->sync($cats);
 

@@ -716,6 +716,31 @@ function sendRequest(frm, e) {
     });
 }
 
+function sendSubscribe(frm, e) {
+    e.preventDefault();
+    var form = $(frm);
+    var data = form.serialize();
+    var url = form.attr('action');
+    sendAjax(url, data, function (json) {
+        if (typeof json.errors !== 'undefined') {
+            let focused = false;
+            for (let key in json.errors) {
+                if (!focused) {
+                    form.find('#' + key).focus();
+                    focused = true;
+                }
+                form.find('#' + key).after('<span class="has-error">' + json.errors[key] + '</span>');
+            }
+            form.find('.err').html('<div class="err-msg-block has-error">Заполните, пожалуйста, обязательные поля.</div>');
+        }
+        if (json.success) {
+            showThankDialog('#subscribe-success');
+        } else {
+            form.find('.err').html('<div class="err-msg-block has-error">' + json.msg + '</div>');
+        }
+    });
+}
+
 function addItemToCart(elem, e) {
     //e.preventDefault();
     const id = $(elem).attr('data-product');

@@ -1,7 +1,7 @@
 <div class="catalog__item">
     <div class="catalog-card">
         <a class="catalog-card__brand" href="javascript:void(0)"
-           title="{{ $product->brand->name }}">{{ $product->brand->name }}</a>
+           title="{{ $product->brand->name }}">{{ $product->brand->value }}</a>
         <div class="catalog-card__id">Арт.:&nbsp;
             <span>{{ $product->article }}</span>
         </div>

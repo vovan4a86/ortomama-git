@@ -82,11 +82,11 @@ class SearchIndex extends Model {
                              ->get() as $product){
 					self::create([
 						'product_id' => $product->id,
-                        'sizes' => $product->sizes()->pluck('size_id')->all(),
-                        'seasons' => $product->seasons()->pluck('season_id')->all(),
-                        'brand' => $product->brand->id,
-                        'genders' => $product->genders()->pluck('gender_id')->all(),
-                        'types' => $product->types()->pluck('type_id')->all(),
+                        'sizes' => $product->sizes()->pluck('value')->all(),
+                        'seasons' => $product->seasons()->pluck('value')->all(),
+                        'brand' => $product->brand->value,
+                        'genders' => $product->genders()->pluck('value')->all(),
+                        'types' => $product->types()->pluck('value')->all()
 					]);
 				}
 			}

@@ -26,13 +26,13 @@ class AdminTypesController extends AdminController {
 	public function postSave(): array
     {
 		$id = Request::input('id');
-		$data = Request::only(['name', 'order']);
+		$data = Request::only(['value', 'order']);
 
 		// валидация данных
 		$validator = Validator::make(
 		    $data,
 		    [
-		    	'name' => 'required'
+		    	'value' => 'required'
 		    ]
 		);
 		if ($validator->fails()) {

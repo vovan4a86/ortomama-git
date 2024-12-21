@@ -52,6 +52,7 @@ class Feedback extends Model {
 
 	public static $types = array(
         1 => 'Заявка',
+        2 => 'Новый подписчик'
     );
 
     private static $fields = [

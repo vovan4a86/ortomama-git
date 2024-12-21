@@ -122,13 +122,15 @@
                     <p>Чтобы быть в курсе наших последних новостей, получать рекомендации и информацию о полезных
                         статьях</p>
                 </div>
-                <form class="mailing__form form" action="#" data-mailing>
+                <form class="mailing__form form" action="{{ route('ajax.subscribe') }}" data-mailing
+                        onsubmit="sendSubscribe(this, event)">
                     <div class="mailing__row">
                         <input class="form__input" type="text" name="email" placeholder="Введите ваш e-mail" required>
                         <button class="form__btn btn">
                             <span>Подписаться</span>
                         </button>
                     </div>
+                    <div class="err"></div>
                 </form>
             </div>
         </div>

@@ -14,8 +14,7 @@ class AdminMenuMiddleware {
 	 * @return mixed
 	 */
 	public function handle($request, Closure $next) {
-		$cur_user = Auth::user();
-		Menu::make('main_menu', function (\Lavary\Menu\Builder $menu) use($cur_user, $request) {
+		Menu::make('main_menu', function (\Lavary\Menu\Builder $menu) use($request) {
 			$menu->add('Структура сайта', ['route' => 'admin.pages', 'icon' => 'fa-sitemap'])
 				->active('/admin/pages/*');
 
@@ -58,6 +57,10 @@ class AdminMenuMiddleware {
 
 			$menu->add('Отзывы', ['route' => 'admin.reviews', 'icon' => 'fa-star'])
 				->active('/admin/reviews/*');
+
+
+			$menu->add('Подписчики', ['route' => 'admin.subscribers', 'icon' => 'fa-envelope-o'])
+				->active('/admin/subscribers/*');
 
 			$menu->add('Настройки', ['icon' => 'fa-cogs'])
 				->nickname('settings');

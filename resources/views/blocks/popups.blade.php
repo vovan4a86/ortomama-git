@@ -34,6 +34,10 @@
     <div class="popup__title">Выберите размер</div>
     <div class="popup__text">Чтобы сделать заказ необходимо выбрать размер обуви.</div>
 </div>
+<div class="popup" id="subscribe-success" style="display:none">
+    <div class="popup__title">Подписка!</div>
+    <div class="popup__text">Вы успешно подписались на рассылку новостей.</div>
+</div>
 <div class="popup" id="create-order" style="display:none"></div>
 <div class="scrolltop">
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">

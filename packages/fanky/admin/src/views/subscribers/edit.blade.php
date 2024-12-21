@@ -6,26 +6,26 @@
 
 @section('page_name')
 	<h1>
-		Типы обуви
-		<small>{{ $type->id ? 'Редактировать' : 'Новый' }}</small>
+		Подписчики
+		<small>{{ $subscriber->id ? 'Редактировать' : 'Новый' }}</small>
 	</h1>
 @stop
 
 @section('breadcrumb')
 	<ol class="breadcrumb">
 		<li><a href="#"><i class="fa fa-dashboard"></i> Главная</a></li>
-		<li><a href="{{ route('admin.types') }}">Типы обуви</a></li>
-		<li class="active">{{ $type->id ? 'Редактировать' : 'Новый' }}</li>
+		<li><a href="{{ route('admin.subscribers') }}">Подписчики</a></li>
+		<li class="active">{{ $subscriber->id ? 'Редактировать' : 'Новый' }}</li>
 	</ol>
 @stop
 
 @section('content')
-	<form action="{{ route('admin.types.save') }}" onsubmit="return itemSave(this, event)">
-		<input type="hidden" name="id" value="{{ $type->id }}">
+	<form action="{{ route('admin.subscribers.save') }}" onsubmit="return itemSave(this, event)">
+		<input type="hidden" name="id" value="{{ $subscriber->id }}">
 
 		<div class="box box-solid">
 			<div class="box-body">
-				{!! Form::groupText('value', $type->value, 'Название') !!}
+				{!! Form::groupText('email', $subscriber->email, 'Email') !!}
 			</div>
 
 			<div class="box-footer">

@@ -21,6 +21,6 @@
 </div>
 @else
     <div class="infos">
-        <h4>В разделе нет товаров</h4>
+        <h4>Пусто</h4>
     </div>
 @endif

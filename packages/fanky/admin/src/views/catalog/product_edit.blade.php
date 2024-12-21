@@ -100,19 +100,19 @@
                 <hr>
                 <label class="control-label">Пол:</label>
                 <div style="max-width: 440px;">
-                    @foreach($sexes as $sex)
-                        <input type="checkbox" name="$sexes[]" id="sex_{{ $sex->id }}" value="{{$sex->id}}"
-                                {{ in_array($sex->id, $product_sexes) ? 'checked' : '' }}>
-                        <label for="season_{{ $sex->id }}" style="margin-right: 10px;">{{$sex->value}}</label>
+                    @foreach($genders as $gender)
+                        <input type="checkbox" name="genders[]" id="gender_{{ $gender->id }}" value="{{$gender->id}}"
+                                {{ in_array($gender->id, $product_genders) ? 'checked' : '' }}>
+                        <label for="season_{{ $gender->id }}" style="margin-right: 10px;">{{$gender->value}}</label>
                     @endforeach
                 </div>
                 <hr>
                 <label class="control-label">Тип товара:</label>
                 @foreach($types as $type)
                     <div>
-                        <input type="checkbox" name="types[]" id="type_{{ $type->name }}" value="{{$type->id}}"
+                        <input type="checkbox" name="types[]" id="type_{{ $type->value }}" value="{{$type->id}}"
                                 {{ in_array($type->id, $product_types) ? 'checked' : '' }}>
-                        <label for="type_{{ $type->name }}">{{$type->name}}</label>
+                        <label for="type_{{ $type->value }}">{{$type->value}}</label>
                     </div>
                 @endforeach
             </div>
