@@ -106,8 +106,6 @@ class CatalogController extends Controller {
             $canonical = null;
         }
 
-        $category->load('parent');
-
         Auth::init();
         if (Auth::user() && Auth::user()->isAdmin) {
             View::share('admin_edit_link', route('admin.catalog.catalogEdit', [$category->id]));

@@ -6,3 +6,7 @@
 .tbl-order__col--name {
     flex: 1 0 calc(200px + 12.5vw)
 }
+
+.err {
+    color: red;
+}

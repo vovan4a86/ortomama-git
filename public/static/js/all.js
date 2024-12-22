@@ -626,6 +626,19 @@ function sendAjax(url, data, callback, type){
     });
 }
 
+var autoHideMsgNextId = 0;
+function autoHideMsg(color, text, time){
+    if (typeof time == 'undefined') time = 5000;
+    var id = 'auto-hide-msg-'+(autoHideMsgNextId++);
+    var msg = '<span id="'+id+'" class="auto-hide-msg text-'+color+'">'+text+'</span>';
+    setTimeout(function(){ $('#'+id).fadeOut(500, function(){ $(this).remove(); }); }, time);
+    return msg;
+}
+
+function urldecode(str) {
+    return decodeURIComponent((str+'').replace(/\+/g, '%20'));
+}
+
 let Cart = {
     add: function (id, count, size, callback) {
         sendAjax('/ajax/add-to-cart',
@@ -716,11 +729,12 @@ function sendRequest(frm, e) {
     });
 }
 
-function sendSubscribe(frm, e) {
+function sendSubscribe(btn, e) {
     e.preventDefault();
-    var form = $(frm);
+    var form = $(btn).closest('form');
     var data = form.serialize();
     var url = form.attr('action');
+
     sendAjax(url, data, function (json) {
         if (typeof json.errors !== 'undefined') {
             let focused = false;
@@ -734,9 +748,15 @@ function sendSubscribe(frm, e) {
             form.find('.err').html('<div class="err-msg-block has-error">Заполните, пожалуйста, обязательные поля.</div>');
         }
         if (json.success) {
-            showThankDialog('#subscribe-success');
+            Fancybox.show([
+                {
+                    src: '#subscribe-success',
+                    type: 'inline'
+                }
+            ]);
+            resetForm(form);
         } else {
-            form.find('.err').html('<div class="err-msg-block has-error">' + json.msg + '</div>');
+            $('.err').append(autoHideMsg('red', urldecode(json.msg)));
         }
     });
 }
