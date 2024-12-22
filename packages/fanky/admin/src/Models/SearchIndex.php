@@ -97,7 +97,6 @@ class SearchIndex extends Model {
             \Debugbar::log($e->getMessage());
 			DB::rollBack();
 		}
-
 	}
 
 	public function getAnnounceAttribute() {

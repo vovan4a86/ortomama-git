@@ -246,6 +246,7 @@ class Catalog extends Model {
 			'url'  => $this->url,
 		];
 		$catalog = $this;
+        $catalog->load('parent');
 		while ($catalog = $catalog->parent) {
 			$bread[] = [
 				'name' => $catalog->name,

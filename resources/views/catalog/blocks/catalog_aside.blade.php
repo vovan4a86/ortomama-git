@@ -196,6 +196,10 @@
                         </div>
                     </div>
                 @endif
+                <button class="btn reset-filter" style="background-color: red;"
+                        onclick="clearFilter(this, event)" data-url="{{ URL::current() }}">
+                    <span>Сбросить</span>
+                </button>
             </div>
         </div>
     </form>

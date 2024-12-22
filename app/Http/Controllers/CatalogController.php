@@ -30,8 +30,6 @@ class CatalogController extends Controller {
 
         $filter_data = request()->except(['page', 'brand']);
         $filter_brand = request()->only('brand');
-        \Debugbar::log($filter_data);
-        \Debugbar::log($filter_brand);
 
         $appends = [];
         $query = SearchIndex::query();
@@ -42,7 +40,7 @@ class CatalogController extends Controller {
             }
 
             foreach ($filter_data as $name => $values) {
-                $query = $query->whereIn($name, $values);
+                $query = $query->whereJsonContains($name, $values);
                 $appends[] = [$name => $values];
             }
 
@@ -67,8 +65,8 @@ class CatalogController extends Controller {
             'title' => $page->title,
             'bread' => $bread,
             'categories' => $categories,
-            'products' => $products,
-            'products_count' => $products_count,
+            'products' => $products ?? [],
+            'products_count' => $products_count ?? 0,
             'per_page' => $per_page,
             'filter_data' => $filter_data,
             'filter_brand' => $filter_brand ? $filter_brand['brand'] : []
@@ -108,6 +106,8 @@ class CatalogController extends Controller {
             $canonical = null;
         }
 
+        $category->load('parent');
+
         Auth::init();
         if (Auth::user() && Auth::user()->isAdmin) {
             View::share('admin_edit_link', route('admin.catalog.catalogEdit', [$category->id]));
@@ -130,14 +130,10 @@ class CatalogController extends Controller {
         }
 
         $products_ids = $query->pluck('product_id')->all();
-
-//        News::find(20)->media()->where(function ($q) {
-//            $q->where("id",36)->orWhere("type",1);
-//        })->get();
-
         $children_ids = $this->getChildrenIds($category);
 
         $products = Product::whereIn('catalog_id', $children_ids)
+            ->whereIn('id', $products_ids)
             ->public()
             ->with(['single_image', 'catalog', 'brand'])
             ->paginate($per_page);

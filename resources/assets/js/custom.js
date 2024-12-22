@@ -231,3 +231,9 @@ function deliveryChange(elem) {
         })
     }
 }
+
+//сброс фильтра
+function clearFilter(btn, e) {
+    e.preventDefault();
+    location.href = $(btn).data('url');
+}

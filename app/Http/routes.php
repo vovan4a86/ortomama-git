@@ -32,17 +32,15 @@ Route::group(['prefix' => 'ajax', 'as' => 'ajax.'], function () {
     Route::post('edit-cart-product', [AjaxController::class, 'postEditCartProduct'])->name('edit-cart-product');
     Route::post('order', [AjaxController::class, 'postOrder'])->name('order');
 	Route::post('request', 'AjaxController@postRequest')->name('request');
-	Route::post('writeback', 'AjaxController@postWriteback')->name('writeback');
-	Route::post('manager-request', 'AjaxController@postManagerRequest')->name('manager-request');
-	Route::post('callback', 'AjaxController@postCallback')->name('callback');
 	Route::post('subscribe', 'AjaxController@postSubscribe')->name('subscribe');
-	Route::post('get-price', 'AjaxController@postGetPrice')->name('get-price');
+
     Route::post('update-char-value', [AjaxController::class, 'postUpdateProductCharValue'])->name('update-char-value');
     Route::post('add-product-char', [AjaxController::class, 'postAddProductChar'])->name('add-product-char');
     Route::post('delete-product-char', [AjaxController::class, 'postDeleteProductChar'])->name('delete-product-char');
     Route::post('per-page-select', [AjaxController::class, 'postPerPageSelect'])
         ->name('per-page-select');
-    Route::get('get-products', 'AjaxController@postGetProducts')->name('get-products');
+
+
 });
 
 Route::group(['middleware' => ['redirects']], function() {
