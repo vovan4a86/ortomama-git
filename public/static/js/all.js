@@ -707,6 +707,35 @@ function selectPerPage(count) {
     });
 }
 
+function sendOrder(btn, e) {
+    e.preventDefault();
+    var form = $(btn).closest('form');
+    var data = form.serialize();
+    var url = form.attr('action');
+    sendAjax(url, data, function (json) {
+        if (typeof json.errors !== 'undefined') {
+            let focused = false;
+            for (var key in json.errors) {
+                if (!focused) {
+                    form.find('#' + key).focus();
+                    focused = true;
+                }
+                form.find('#' + key).after('<span class="has-error">' + json.errors[key] + '</span>');
+            }
+            form.find('.cart__action').after('<div class="err-msg-block has-error">Заполните, пожалуйста, обязательные поля.</div>');
+        } else {
+            Fancybox.show([
+                {
+                    src: '#order-success',
+                    type: 'inline'
+                }
+            ]);
+            resetForm(form);
+            location.reload();
+        }
+    });
+}
+
 function sendRequest(frm, e) {
     e.preventDefault();
     var form = $(frm);

@@ -40,7 +40,7 @@ Route::group(['prefix' => 'ajax', 'as' => 'ajax.'], function () {
     Route::post('per-page-select', [AjaxController::class, 'postPerPageSelect'])
         ->name('per-page-select');
 
-
+    Route::get('get-products', 'AjaxController@postGetProducts')->name('get-products');
 });
 
 Route::group(['middleware' => ['redirects']], function() {

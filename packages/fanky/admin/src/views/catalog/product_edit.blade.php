@@ -103,7 +103,7 @@
                     @foreach($genders as $gender)
                         <input type="checkbox" name="genders[]" id="gender_{{ $gender->id }}" value="{{$gender->id}}"
                                 {{ in_array($gender->id, $product_genders) ? 'checked' : '' }}>
-                        <label for="season_{{ $gender->id }}" style="margin-right: 10px;">{{$gender->value}}</label>
+                        <label for="gender_{{ $gender->id }}" style="margin-right: 10px;">{{$gender->value}}</label>
                     @endforeach
                 </div>
                 <hr>

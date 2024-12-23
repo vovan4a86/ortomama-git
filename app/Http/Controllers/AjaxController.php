@@ -294,45 +294,49 @@ class AjaxController extends Controller
     public function postSendForm(Request $request)
     {
         $data = $request->only([
-            'payment',
-            'delivery',
-            'address',
             'lastname',
             'firstname',
             'phone',
             'email',
-            'region',
-            'city',
-            'delivery-address',
+            'address',
         ]);
+
+        $data['payment_id'] = $request->get('payment');
+        $data['delivery_id'] = $request->get('delivery');
+        $data['point_id'] = $request->get('point');
+        $data['sxgeo_region_id'] = $request->get('region');
+        $data['city_id'] = $request->get('city');
 
         array_get($data, 'callback') == 'on' ? $data['callback'] = 1 : $data['callback'] = 0;
 
         $messages = array(
-            'name.required' => 'Не заполнено поле Имя',
+            'lastname.required' => 'Не заполнено поле Фамилия',
+            'firstname.required' => 'Не заполнено поле Имя',
             'phone.required' => 'Не заполнено поле Телефон',
-            'company.required' => 'Не заполнено поле Компания',
-            'delivery.required' => 'Не выбран способ доставки',
+            'email.required' => 'Не выбран способ Email',
+            'region.required' => 'Не заполнено поле Область',
             'city.required' => 'Не заполнено поле Город',
-            'code.required' => 'Не заполнено поле Индекс',
-            'street.required' => 'Не заполнено поле Улица',
-            'home-number.required' => 'Не заполнено поле Дом',
+            'point.required' => 'Не заполнено поле Адрес пункта выдачи',
+            'address.required' => 'Не заполнено поле Адрес доставки'
         );
 
         $valid = Validator::make($data, [
-            'name' => 'required',
+            'lastname' => 'required',
+            'firstname' => 'required',
             'phone' => 'required',
-            'company' => 'required',
-            'city' => 'required_if:delivery,1',
-            'code' => 'required_if:delivery,1',
-            'street' => 'required_if:delivery,1',
-            'home-number' => 'required_if:delivery,1',
+            'email' => 'required',
+            'point_id' => 'required_if:delivery,1',
+            'sxgeo_region_id' => 'required_if:delivery,2',
+            'city_id' => 'required_if:delivery,2',
+            'address' => 'required_if:delivery,2'
         ], $messages);
         if ($valid->fails()) {
             return ['errors' => $valid->messages()];
         }
 
         $data['summ'] = Cart::sum();
+        $data['discount_delivery'] = Cart::discount_delivery();
+        $data['discount_payment'] = Cart::discount_payment();
 
         $order = Order::create($data);
         $items = Cart::all();
@@ -342,24 +346,29 @@ class AjaxController extends Controller
             $order->products()->attach($item['id'], [
                 'count' => $item['count'],
                 'price' => $itemPrice,
+                'discount_delivery' => $item['discount_delivery'],
+                'discount_payment' => $item['discount_payment']
             ]);
         }
 
         $order_items = $order->products;
         $all_count = 0;
         $all_summ = 0;
+        $all_discount = 0;
         foreach ($order_items as $item) {
             $all_summ += $item->pivot->price;
             $all_count += $item->pivot->count;
+            $all_discount += $item->pivot->discount_payment + $item->pivot->discount_delivery;
         }
 
         Mail::send('mail.new_order_table', [
             'order' => $order,
             'items' => $order_items,
             'all_count' => $all_count,
-            'all_summ' => $all_summ
+            'all_summ' => $all_summ,
+            'all_discount' => $all_discount,
         ], function ($message) use ($order) {
-            $title = $order->id . ' | Новый заказ | LEVERING';
+            $title = $order->id . ' | Новый заказ | OrtoMama';
             $message->from($this->fromMail, $this->fromName)
                 ->to(Settings::get('feedback_email'))
                 ->subject($title);
@@ -368,11 +377,6 @@ class AjaxController extends Controller
         Cart::purge();
 
         return ['success' => true];
-    }
-
-    //ОЧИСТКА ФОРМЫ ЗАКАЗА
-    public function postResetForm() {
-
     }
 
     public function search(Request $request)

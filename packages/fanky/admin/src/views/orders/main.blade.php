@@ -23,17 +23,14 @@
                     <thead>
                     <tr>
                         <th width="150">Дата заказа</th>
-                        <th>Доставка</th>
-                        <th>Сумма</th>
-                        <th>Имя</th>
-                        <th>Email</th>
+                        <th>Фамилия</th>
                         <th>Телефон</th>
-                        <th>Компания</th>
-                        <th>Город</th>
-                        <th>Индекс</th>
-                        <th>Улица</th>
-                        <th>Дом</th>
-                        <th>Квартира</th>
+                        <th>Email</th>
+                        <th>Оплата</th>
+                        <th>Доставка</th>
+                        <th>Пункт выдачи</th>
+                        <th>Сумма без скидки</th>
+                        <th>Скидка (Самовывоз/Предоплата)</th>
                         <th width="50"></th>
                     </tr>
                     </thead>
@@ -41,17 +38,14 @@
                     @foreach ($orders as $item)
                         <tr>
                             <td>{{ $item->dateFormat() }} @if($item->new)<span class="label label-danger">NEW</span>@endif</td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->delivery == 1 ? 'Да' : 'Нет' }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->summ }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->name }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->email }}</a></td>
+                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->lastname }}</a></td>
                             <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->phone }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->company }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->city }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->code }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->street }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->home_number }}</a></td>
-                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->apartment_number }}</a></td>
+                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->email }}</a></td>
+                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->payment->name }}</a></td>
+                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->delivery->name }}</a></td>
+                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->point ? $item->point->address : '-' }}</a></td>
+                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->summ }}</a></td>
+                            <td><a href="{{ route('admin.orders.view', [$item->id]) }}">{{ $item->discount_delivery . '/' . $item->discount_payment }}</a></td>
                             <td>
                                 <a class="glyphicon glyphicon-trash" href="{{ route('admin.orders.del', [$item->id]) }}" style="font-size:20px; color:red;" title="Удалить" onclick="return orderDel(this)"></a>
                             </td>
@@ -65,4 +59,9 @@
             @endif
         </div>
     </div>
+    <style>
+        th, td {
+            text-align: center;
+        }
+    </style>
 @stop

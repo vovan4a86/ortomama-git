@@ -1,5 +1,6 @@
 <?php namespace Fanky\Admin\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,19 +13,24 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name_en
  * @property string $timezone
  * @property string $okato
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion query()
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion whereCountry($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion whereIso($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion whereNameEn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion whereNameRu($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion whereOkato($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Fanky\Admin\Models\SxgeoRegion whereTimezone($value)
+ * @method static Builder|SxgeoRegion newModelQuery()
+ * @method static Builder|SxgeoRegion newQuery()
+ * @method static Builder|SxgeoRegion query()
+ * @method static Builder|SxgeoRegion whereCountry($value)
+ * @method static Builder|SxgeoRegion whereId($value)
+ * @method static Builder|SxgeoRegion whereIso($value)
+ * @method static Builder|SxgeoRegion whereNameEn($value)
+ * @method static Builder|SxgeoRegion whereNameRu($value)
+ * @method static Builder|SxgeoRegion whereOkato($value)
+ * @method static Builder|SxgeoRegion whereTimezone($value)
  * @mixin \Eloquent
  */
 class SxgeoRegion extends Model {
 
 	protected $table = 'sxgeo_regions';
+
+    public function order(): void
+    {
+        $this->hasOne(Order::class);
+    }
 }

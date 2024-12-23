@@ -2,6 +2,8 @@
 
 use Auth;
 use Closure;
+use Fanky\Admin\Models\Order;
+use Lavary\Menu\Builder;
 use Menu;
 
 class AdminMenuMiddleware {
@@ -14,7 +16,9 @@ class AdminMenuMiddleware {
 	 * @return mixed
 	 */
 	public function handle($request, Closure $next) {
-		Menu::make('main_menu', function (\Lavary\Menu\Builder $menu) use($request) {
+        $new_order_count = Order::where('new', 1)->count();
+        $order_title = $new_order_count > 0  ? 'Заказы <span class="label label-danger">' . $new_order_count . '</span>' : 'Заказы';
+		Menu::make('main_menu', function (Builder $menu) use($request, $order_title) {
 			$menu->add('Структура сайта', ['route' => 'admin.pages', 'icon' => 'fa-sitemap'])
 				->active('/admin/pages/*');
 
@@ -34,7 +38,7 @@ class AdminMenuMiddleware {
             $menu->filters->add('Тип обуви', ['route' => 'admin.types', 'icon' => 'fa-crosshairs'])
                 ->active('/admin/types/*');
 
-			$menu->add('Заказы', ['route' => 'admin.orders', 'icon' => 'fa-dollar'])
+			$menu->add($order_title, ['route' => 'admin.orders', 'icon' => 'fa-dollar'])
 				->active('/admin/orders/*');
 
 //			$menu->add('Региональность', ['route' => 'admin.cities', 'icon' => 'fa-globe'])

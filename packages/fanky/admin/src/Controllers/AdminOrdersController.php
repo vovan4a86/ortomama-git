@@ -18,10 +18,12 @@ class AdminOrdersController extends AdminController {
         $items = $order->products;
         $all_count = 0;
         $all_summ = 0;
+        $all_discount = 0;
 
         foreach ($items as $item) {
             $all_summ += $item->pivot->price;
             $all_count += $item->pivot->count;
+            $all_discount += $item->pivot->discount_payment + $item->pivot->discount_delivery;
         }
 
         return view('admin::orders.view', [
@@ -29,6 +31,7 @@ class AdminOrdersController extends AdminController {
             'items'     => $items,
             'all_count' => $all_count,
             'all_summ'  => $all_summ,
+            'all_discount' => $all_discount
         ]);
     }
 

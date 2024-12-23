@@ -65,11 +65,11 @@
                                                     <div class="shops__title">Выбрать пункт выдачи:</div>
                                                     @if (count($points))
                                                         <div class="shops__select">
-                                                            <select class="select" name="address" data-map-select>
+                                                            <select class="select" name="point" data-map-select>
                                                                 <!-- https://slimselectjs.com/options-->
                                                                 @foreach($points as $point)
                                                                     <option class="select__option"
-                                                                            value="{{ $point->address }}"
+                                                                            value="{{ $point->id }}"
                                                                             data-label="{{ $point->address }}"
                                                                             data-longitude="{{ $point->longitude }}"
                                                                             data-latitude="{{ $point->latitude }}">
@@ -82,10 +82,12 @@
                                                         <div>Нет пунктов выдачи</div>
                                                     @endif
                                                 </div>
+                                                @if (count($points))
                                                 <div class="shops__map" id="map" data-map
                                                      data-latitude="{{ $points[0]->latitude }}"
                                                      data-longitude="{{ $points[0]->longitude }}"
                                                      data-label="{{ $points[0]->address }}"></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -129,20 +131,21 @@
                                                 @endforeach
                                             </select>
                                         @endif
-                                        <textarea class="cart__input" name="delivery-address" rows="4"
+                                        <textarea class="cart__input" name="address" rows="4"
                                                   placeholder="Адрес доставки"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="cart__action">
-                            <button class="btn" type="submit">
+                            <button class="btn" onclick="sendOrder(this, event)">
                                 <span>Оформить заказ</span>
                             </button>
                             <button class="btn reset-form" style="margin-left: 20px; background-color: red;" onclick="purgeCart(this, event)">
                                 <span>Очистить корзину</span>
                             </button>
                         </div>
+                        <div class="err" style="text-align: center; margin-top: 10px"></div>
                     @else
                         <div>Ни одного товара не добавлено...</div>
                     @endif

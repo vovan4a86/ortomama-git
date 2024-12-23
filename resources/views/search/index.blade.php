@@ -2,7 +2,7 @@
 @section('content')
     @include('blocks.bread')
     <div class="container container--inner">
-        @include('catalog.blocks.product_aside')
+{{--        @include('catalog.blocks.product_aside')--}}
         <div class="container__main">
             <main>
                 <section class="catalog">

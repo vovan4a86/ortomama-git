@@ -216,8 +216,13 @@ class CatalogController extends Controller {
     }
 
     public function search() {
+        $bread[] = [
+            'url' => route('search'),
+            'name' => 'Поиск'
+        ];
+
         $see = Request::get('see', 'all');
-        $products_inst = Product::query();
+        $products_inst = Product::query()->with(['brand', 'catalog', 'single_image']);
         if (!$per_page = session('per_page')) {
             $per_page = 6;
             session(['per_page' => $per_page]);
@@ -225,38 +230,38 @@ class CatalogController extends Controller {
         if ($s = Request::get('search')) {
             $products_inst->where(function ($query) use ($s) {
                 /** @var QueryBuilder $query */
-                //сначала ищем точное совпадение с началом названия товара
-                return $query->orWhere('name', 'LIKE',  $s . '%');
+                return $query->where('name', 'LIKE', '%' . $s . '%')
+                    ->orWhere('article', 'LIKE', '%' . $s . '%');
             });
 
-            if (Request::ajax()) {
-                //если нашлось больше 10 товаров, показываем их
-                if($products_inst->count() >= 10) {
-                    $products = $products_inst->limit(10)->get()->transform(function ($item) {
-                        return [
-                            'name' => $item->name . ' [' . $item->article . ']',
-                            'url' => $item->url
-                        ];
-                    });
-                } else {
-                    //если меньше 10, разницу дополняем с совпадением по всему названию товара и артиклу
-                    $count_before = $products_inst->count();
-                    $sub = 10 - $count_before;
-                    $adds_query = Product::query()
-                        ->orWhere('name', 'LIKE', '%' . str_replace(' ', '%', $s) . '%')
-                        ->orWhere('article', 'LIKE', '%' . str_replace(' ', '%', $s) . '%');
-                    $adds_prod = $adds_query->limit($sub)->get();
-                    $prods_before = $products_inst->limit($count_before)->get();
-                    $all_prods = $prods_before->merge($adds_prod);
-                    $products = $all_prods->transform(function ($item) {
-                        return [
-                            'name' => $item->name . ' [' . $item->article . ']',
-                            'url' => $item->url
-                        ];
-                    });
-                }
-                return ['data' => $products];
-            }
+//            if (Request::ajax()) {
+//                //если нашлось больше 10 товаров, показываем их
+//                if($products_inst->count() >= 10) {
+//                    $products = $products_inst->limit(10)->get()->transform(function ($item) {
+//                        return [
+//                            'name' => $item->name . ' [' . $item->article . ']',
+//                            'url' => $item->url
+//                        ];
+//                    });
+//                } else {
+//                    //если меньше 10, разницу дополняем с совпадением по всему названию товара и артиклу
+//                    $count_before = $products_inst->count();
+//                    $sub = 10 - $count_before;
+//                    $adds_query = Product::query()
+//                        ->orWhere('name', 'LIKE', '%' . str_replace(' ', '%', $s) . '%')
+//                        ->orWhere('article', 'LIKE', '%' . str_replace(' ', '%', $s) . '%');
+//                    $adds_prod = $adds_query->limit($sub)->get();
+//                    $prods_before = $products_inst->limit($count_before)->get();
+//                    $all_prods = $prods_before->merge($adds_prod);
+//                    $products = $all_prods->transform(function ($item) {
+//                        return [
+//                            'name' => $item->name . ' [' . $item->article . ']',
+//                            'url' => $item->url
+//                        ];
+//                    });
+//                }
+//                return ['data' => $products];
+//            }
 
             if ($see == 'all' || !is_numeric($see)) {
                 $products = $products_inst->paginate(Settings::get('search_per_page'));
@@ -269,13 +274,14 @@ class CatalogController extends Controller {
         } else {
             $products = collect();
         }
+
         $products_count = $products_inst->count();
+        SEOMeta::setTitle('Результат поиска «' . $s . '»');
 
         return view('search.index', [
+            'bread' => $bread,
             'products' => $products,
             'h1' => 'Результат поиска «' . $s . '»',
-            'query' => $see,
-            'name' => 'Поиск ' . $s,
             'keywords' => 'Поиск',
             'description' => 'Поиск',
             'products_count' => $products_count,

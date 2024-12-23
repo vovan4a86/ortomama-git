@@ -117,4 +117,22 @@ class Cart {
         }
         return $sum;
     }
+
+    public static function discount_delivery(): int {
+        $cart = self::all();
+        $sum = 0;
+        foreach ($cart as $item) {
+            $sum += $item['discount_delivery'];
+        }
+        return $sum;
+    }
+
+    public static function discount_payment(): int {
+        $cart = self::all();
+        $sum = 0;
+        foreach ($cart as $item) {
+            $sum += $item['discount_payment'];
+        }
+        return $sum;
+    }
 }

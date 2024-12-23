@@ -23,8 +23,9 @@ class Delivery extends Model {
 
 	public $timestamps = false;
 
-	public function order() {
-	    $this->hasMany(Order::class, 'payment_item_id');
+    public function order(): void
+    {
+        $this->hasOne(Order::class);
     }
 
 }

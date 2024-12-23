@@ -123,7 +123,8 @@ class Product extends Model {
 
     public function sizes(): BelongsToMany
     {
-        return $this->belongsToMany(Size::class);
+        return $this->belongsToMany(Size::class)
+            ->orderByRaw("CAST(value as UNSIGNED) ASC");
     }
 
     public function categories(): BelongsToMany
