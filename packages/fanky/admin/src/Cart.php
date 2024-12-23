@@ -1,6 +1,5 @@
 <?php namespace Fanky\Admin;
 
-use Fanky\Admin\Models\Product;
 use Session;
 
 class Cart {
@@ -51,9 +50,9 @@ class Cart {
         Session::put(self::$key, $cart);
     }
 
-    public static function ifInCart($id): bool {
+    public static function ifInCart($id, $size): bool {
         $cart = self::all();
-        return isset($cart[$id]);
+        return isset($cart[$id]) && ($cart[$id]['size'] == $size);
     }
 
     public static function updateCount($id, $count): void

@@ -55,6 +55,8 @@ Route::group(['middleware' => ['redirects']], function() {
 
     Route::any('search', ['as' => 'search', 'uses' => 'CatalogController@search']);
 
+    Route::any('points', ['as' => 'points', 'uses' => 'PointsController@index']);
+
     Route::get('cart', ['as' => 'cart', 'uses' => 'CartController@getIndex']);
 
     Route::get('create-order', ['as' => 'create-order', 'uses' => 'CartController@getCreateOrder']);

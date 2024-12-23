@@ -165,7 +165,7 @@ class AdminCatalogController extends AdminController {
             $product->save();
         }
         $catalogs = Catalog::getCatalogList();
-        $brands = Brand::all()->pluck('name', 'id');
+        $brands = Brand::all()->pluck('value', 'id');
         $sizes = Size::all();
         $product_sizes = $product->sizes()->pluck('sizes.id')->all();
         $types = Type::all();

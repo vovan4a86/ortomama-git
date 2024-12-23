@@ -17,14 +17,16 @@
                                          title="{{ $product->name }}">
                                 </a>
                             </div>
-                            @if(count($product->docs))
+                            @if(count($product->docs) || $product->compensation)
                                 <div class="product__links text-content">
-                                    @foreach($product->docs as $doc)
-                                        <a class="download download--doc" href="{{ $doc->doc_src }}" data-fancybox
-                                           data-type="ajax">
-                                            {{ $doc->name }}
-                                        </a>
-                                    @endforeach
+                                    @if(count($product->docs))
+                                        @foreach($product->docs as $doc)
+                                            <a class="download download--doc" href="{{ $doc->doc_src }}" data-fancybox
+                                               data-type="ajax">
+                                                {{ $doc->name }}
+                                            </a>
+                                        @endforeach
+                                    @endif
                                     @if ($product->compensation)
                                         <a class="product__fss" href="{{ route('compensation') }}" target="_blank">
                                             <img class="lazy" data-src="/static/images/common/fss.png"
@@ -76,7 +78,9 @@
                                                 @foreach($sizes as $size)
                                                     <label class="radios__label">
                                                         <input class="radios__input" type="radio" name="size"
-                                                               value="{{ $size->value }}">
+                                                               value="{{ $size->value }}"
+                                                                {{ \Fanky\Admin\Cart::ifInCart($product->id, $size->value) ? 'checked' : null }}
+                                                        >
                                                         <span class="radios__box">{{ $size->value }}</span>
                                                     </label>
                                                 @endforeach
@@ -98,7 +102,8 @@
                                             <span>В корзину</span>
                                         </button>
                                         @if($wa = S::get('soc_wa'))
-                                            <a class="btn btn--small btn--message" href="{{ $wa . '?text=' . $product->name }}" target="_blank"
+                                            <a class="btn btn--small btn--message"
+                                               href="{{ $wa . '?text=' . $product->name }}" target="_blank"
                                                rel="noopener">
                                                 <span>Заказать по</span>
                                                 <svg class="svg-sprite-icon icon-wa">
@@ -121,9 +126,11 @@
                             </div>
                         </div>
                     </div>
+
                     @include('catalog.blocks.points')
+
                     @if (count($chars))
-                    <h2 class="product__subtitle">Характеристики</h2>
+                        <h2 class="product__subtitle">Характеристики</h2>
                         <div class="product__params">
                             @foreach($chars as $char)
                                 <dl class="param">

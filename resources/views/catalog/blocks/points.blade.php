@@ -11,7 +11,7 @@
                 @endforeach
             </div>
             <div class="points__links lazy" data-bg="/static/images/common/child.png">
-                <a class="points__link" href="javascript:void(0)" title="Все адреса">
+                <a class="points__link" href="{{ route('points') }}" title="Все адреса">
                     <span>Все адреса</span>
                     <svg width="15" height="9" viewBox="0 0 15 9" fill="none"
                          xmlns="http://www.w3.org/2000/svg">

@@ -216,8 +216,8 @@ class Product extends Model {
     }
 
     public function getImageSrcAttribute() {
-        return ($this->image()->first())
-            ? ProductImage::UPLOAD_URL . $this->image()->first()->image
+        return ($this->single_image)
+            ? ProductImage::UPLOAD_URL . $this->single_image->image
             : null;
     }
 

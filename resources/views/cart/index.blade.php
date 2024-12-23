@@ -1,6 +1,5 @@
 @extends('template')
 @section('content')
-    <title>Корзина</title>
     @include('blocks.bread')
     <main>
         <section class="cart">

@@ -43,7 +43,6 @@ class AjaxController extends Controller
             $product_item['price'] = $product->price;
             $product_item['count'] = $count;
             $product_item['size'] = $size;
-            $product_item['sizes'] = $product->sizes->toArray();
             $product_item['discount_delivery'] = $product->getDiscountDelivery();
             $product_item['discount_payment'] = 0;
             $product_item['url'] = $product->url;
