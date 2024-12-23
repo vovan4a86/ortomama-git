@@ -1,8 +1,10 @@
 <?php namespace Fanky\Admin\Controllers;
 
+use App\Imports\ProductsImport;
 use Carbon\Carbon;
 use DB;
 use Exception;
+use Fanky\Admin\Models\AdminLog;
 use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\Category;
@@ -15,6 +17,7 @@ use Fanky\Admin\Models\Gender;
 use Fanky\Admin\Models\Size;
 use Fanky\Admin\Models\Type;
 use Fanky\Admin\Pagination;
+use Illuminate\Support\Facades\File;
 use Request;
 use Settings;
 use Text;
@@ -25,8 +28,21 @@ class AdminCatalogController extends AdminController {
     public function getIndex() {
         $catalogs = Catalog::orderBy('order')->get();
 
+        $last_update = Carbon::createFromTimestamp(0);
+        $last_update_file = resource_path('.last_update');
+        if (File::exists($last_update_file)) {
+            $last_update = Carbon::createFromTimestamp(File::lastModified($last_update_file));
+        }
+        $content = view(
+            'admin::catalog.index',
+            [
+                'last_update' => $last_update
+            ]
+        );
+
         return view('admin::catalog.main', [
-            'catalogs' => $catalogs
+            'catalogs' => $catalogs,
+            'content' => $content
         ]);
     }
 
@@ -413,6 +429,52 @@ class AdminCatalogController extends AdminController {
         $image->name = $data['name'];
         $image->save();
         return ['success' => true];
+    }
+
+    //export|import
+    public function getExportFile()
+    {
+        return response()
+            ->download('export/ortomama-price.xlsx', null, ['Cache-Control' => 'no-cache, must-revalidate']);
+    }
+
+    public function postImportPrice()
+    {
+        $file = Request::file('price');
+        $file_name = 'price.xlsx';
+        $file->move(resource_path('/'), $file_name);
+        AdminLog::add('Файл для обновления каталога загружен успешно. Ожидается обновление.');
+
+        $catalogs = Catalog::orderBy('order')->get();
+        $content = view('admin::catalog.upload_price')->render();
+        return view('admin::catalog.main', ['catalogs' => $catalogs, 'content' => $content]);
+    }
+
+    public function postImportPriceNow()
+    {
+        $file = resource_path('price.xlsx');
+
+        if (!File::exists($file)) {
+            return;
+        }
+        $last_update = Carbon::createFromTimestamp(0);
+        $last_update_file = resource_path('.last_update');
+        if (File::exists($last_update_file)) {
+            $last_update = Carbon::createFromTimestamp(File::get($last_update_file));
+        }
+        $file_modify = Carbon::createFromTimestamp(File::lastModified($file));
+        if ($file_modify->greaterThan($last_update)) {
+            AdminLog::$processLog = false;
+
+            (new ProductsImport())->import($file);
+
+            File::put($last_update_file, $file_modify->timestamp);
+
+            $catalogs = Catalog::orderBy('order')->get();
+            $content = view('admin::catalog.upload_price_done')->render();
+
+            return view('admin::catalog.main', ['catalogs' => $catalogs, 'content' => $content]);
+        }
     }
 
 }

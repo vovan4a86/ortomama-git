@@ -5,6 +5,7 @@
 /public/uploads/
 /public/test/
 /public/data-site/
+/resources/price.xlsx/
 .env
 .idea/
 /composer.lock

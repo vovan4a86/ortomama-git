@@ -58,6 +58,15 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		$controller  = 'AdminCatalogController@';
 		Route::get('/', [AdminCatalogController::class, 'getIndex']);
 
+        Route::get('export', $controller . 'getExportFile')
+            ->name('.export');
+
+        Route::post('import-price', $controller . 'postImportPrice')
+            ->name('.import-price');
+
+        Route::get('import-price-now', $controller . 'postImportPriceNow')
+            ->name('.import-price-now');
+
 		Route::get('products/{id?}', $controller . 'getProducts')
 			->name('.products');
 

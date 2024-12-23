@@ -16,16 +16,9 @@ class Kernel extends ConsoleKernel {
 	protected $commands = [
 		'App\Console\Commands\Inspire',
 		'App\Console\Commands\Test',
-        'App\Console\Commands\CableProducts',
-        'App\Console\Commands\CableSystems',
-        'App\Console\Commands\Uteplitel',
-        'App\Console\Commands\Vodostok',
-        'App\Console\Commands\SnowHolder',
-        'App\Console\Commands\Tubes',
-        'App\Console\Commands\Lights',
-        'App\Console\Commands\Arenda',
-		Commands\ImportOld::class,
 		Commands\SitemapCommand::class,
+		Commands\ImportCatalog::class,
+		Commands\ExportProductsCommand::class,
 	];
 
 	/**
@@ -36,6 +29,12 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected function schedule(Schedule $schedule)
 	{
+
+        $schedule->command('import:price')->everyMinute()->withoutOverlapping()->sendOutputTo(
+            storage_path() . '/logs/queue-jobs.log');
+
+        $schedule->command('export:products')->dailyAt('05:00')->withoutOverlapping()
+            ->sendOutputTo(storage_path() . '/logs/queue-jobs.log');
 
         $schedule->command('sitemap')->dailyAt('01:15');
 	}

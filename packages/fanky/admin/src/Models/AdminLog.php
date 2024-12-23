@@ -30,6 +30,7 @@ class AdminLog extends Model {
 
 	/* сколько дней хранить */
 	public static $store_days = 60;
+    public static $processLog = true;
 
 	public static function add($msg) {
 		$user = Auth::user();
