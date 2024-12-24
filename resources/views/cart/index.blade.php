@@ -82,10 +82,10 @@
                                                     @endif
                                                 </div>
                                                 @if (count($points))
-                                                <div class="shops__map" id="map" data-map
-                                                     data-latitude="{{ $points[0]->latitude }}"
-                                                     data-longitude="{{ $points[0]->longitude }}"
-                                                     data-label="{{ $points[0]->address }}"></div>
+                                                    <div class="shops__map" id="map" data-map
+                                                         data-latitude="{{ $points[0]->latitude }}"
+                                                         data-longitude="{{ $points[0]->longitude }}"
+                                                         data-label="{{ $points[0]->hint ?: $points[0]->address }}"></div>
                                                 @endif
                                             </div>
                                         </div>

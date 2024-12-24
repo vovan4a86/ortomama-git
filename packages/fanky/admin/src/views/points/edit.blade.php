@@ -36,13 +36,18 @@
 				</div>
 
 				<div class="form-group">
+					<label for="review-lat">Широта</label>
+					<input id="review-lat" class="form-control" type="text" name="latitude" value="{{ $item->latitude }}">
+				</div>
+
+				<div class="form-group">
 					<label for="review-long">Долгота</label>
 					<input id="review-long" class="form-control" type="text" name="longitude" value="{{ $item->longitude }}">
 				</div>
 
 				<div class="form-group">
-					<label for="review-lat">Широта</label>
-					<input id="review-lat" class="form-control" type="text" name="latitude" value="{{ $item->latitude }}">
+					<label for="review-hint">Подсказка</label>
+					<input id="review-hint" class="form-control" type="text" name="hint" value="{{ $item->hint }}">
 				</div>
 			</div>
 

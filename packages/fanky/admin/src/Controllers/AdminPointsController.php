@@ -26,8 +26,7 @@ class AdminPointsController extends AdminController
     public function postSave()
     {
         $id = Request::input('id');
-        $data = Request::only(['name', 'phone', 'address', 'longitude', 'latitude', 'order']);
-//        if(!array_get($data, 'order')) $data['order'] = 0;
+        $data = Request::only(['name', 'phone', 'address', 'longitude', 'latitude', 'order', 'hint']);
 
         // валидация данных
         $validator = Validator::make($data, [
@@ -50,7 +49,6 @@ class AdminPointsController extends AdminController
         return $redirect
             ? ['redirect' => route('admin.points')]
             : ['success' => true, 'msg' => 'Изменения сохранены'];
-//        return ['redirect' => route('admin.points')];
     }
 
     public function postDelete($id)

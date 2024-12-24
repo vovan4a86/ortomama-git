@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use Artesaos\SEOTools\Facades\SEOMeta;
 use Fanky\Admin\Models\City;
 use Fanky\Admin\Models\Delivery;
 use Fanky\Admin\Models\Payment;
@@ -21,6 +22,8 @@ class CartController extends Controller {
             'url'  => '/cart',
             'name' => 'Корзина'
         ];
+
+        SEOMeta::setTitle('Корзина');
 
         $points = Point::orderBy('order')->get();
         $payments = Payment::all();

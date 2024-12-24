@@ -27,12 +27,11 @@ use Illuminate\Support\Str;
 class SearchIndex extends Model {
 
 	protected $primaryKey = null;
-	protected $fillable = ['product_id','sizes', 'seasons', 'brand', 'genders', 'types'];
+	protected $fillable = ['product_id','size', 'seasons', 'brand', 'genders', 'types'];
 	public $incrementing = false;
     public $timestamps = false;
 
     protected $casts = [
-        'sizes' => 'array',
         'seasons' => 'array',
         'genders' => 'array',
         'types' => 'array'
@@ -78,13 +77,13 @@ class SearchIndex extends Model {
 
 			foreach ($catalogs as $catalog){
 				foreach ($catalog->public_products()
-                             ->with(['sizes', 'seasons', 'brand', 'genders', 'types'])
+                             ->with(['seasons', 'brand', 'genders', 'types'])
                              ->get() as $product){
 					self::create([
 						'product_id' => $product->id,
-                        'sizes' => $product->sizes()->pluck('value')->all(),
+                        'size' => $product->size,
                         'seasons' => $product->seasons()->pluck('value')->all(),
-                        'brand' => $product->brand->value,
+                        'brand' => $product->brand ? $product->brand->value : null,
                         'genders' => $product->genders()->pluck('value')->all(),
                         'types' => $product->types()->pluck('value')->all()
 					]);

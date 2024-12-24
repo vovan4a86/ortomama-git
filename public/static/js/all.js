@@ -640,9 +640,9 @@ function urldecode(str) {
 }
 
 let Cart = {
-    add: function (id, count, size, callback) {
+    add: function (id, count, callback) {
         sendAjax('/ajax/add-to-cart',
-            {id, count, size}, (result) => {
+            {id, count}, (result) => {
                 if (typeof callback == 'function') {
                     callback(result);
                 }
@@ -793,19 +793,20 @@ function sendSubscribe(btn, e) {
 function addItemToCart(elem, e) {
     //e.preventDefault();
     const id = $(elem).attr('data-product');
-    const size = $('.radios__input:checked').val();
-    if (!size) {
-        Fancybox.show([
-            {
-                src: '#size-error',
-                type: 'inline'
-            }
-        ]);
-        e.preventDefault();
-    }
-    Cart.add(id, 1, size, function(json) {
+    // const size = $('.radios__input:checked').val();
+    // if (!size) {
+    //     Fancybox.show([
+    //         {
+    //             src: '#size-error',
+    //             type: 'inline'
+    //         }
+    //     ]);
+    //     e.preventDefault();
+    // }
+    Cart.add(id, 1, function(json) {
         if (json.success) {
             $('.header__column--basket').replaceWith(json.header_cart);
+            $(elem).replaceWith(json.btn);
         }
     });
 }

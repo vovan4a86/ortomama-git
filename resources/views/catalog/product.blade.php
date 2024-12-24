@@ -95,21 +95,9 @@
                                 </div>
                                 <div class="actions-product__column">
                                     <div class="actions-product__list">
-                                        <button class="btn btn--small btn--cart" type="button"
-                                                {{ \Fanky\Admin\Cart::ifInCart($product->id) ? 'style=background-color: grey' : null }}
-                                                {{ \Fanky\Admin\Cart::ifInCart($product->id) ? 'disabled' : null }}
-                                                data-product="{{ $product->id }}"
-                                                data-create-order data-src="#create-order"
-                                                onclick="addItemToCart(this, event)">
-                                            <svg class="svg-sprite-icon icon-basket">
-                                                <use xlink:href="/static/images/sprite/symbol/sprite.svg#basket"></use>
-                                            </svg>
-                                            @if(\Fanky\Admin\Cart::ifInCart($product->id))
-                                                <span>В корзине</span>
-                                            @else
-                                                <span>В корзину</span>
-                                            @endif
-                                        </button>
+
+                                        @include('cart.add_to_cart_btn')
+
                                         @if($wa = S::get('soc_wa'))
                                             <a class="btn btn--small btn--message"
                                                href="{{ $wa . '?text=' . $product->name }}" target="_blank"

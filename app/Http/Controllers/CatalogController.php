@@ -116,12 +116,16 @@ class CatalogController extends Controller {
             session(['per_page' => $per_page]);
         }
 
-        $filter_data = request()->except(['page', 'brand']);
+        $filter_data = request()->except(['page', 'brand', 'sizes']);
         $filter_brand = request()->only('brand');
+        $filter_sizes = request()->only('sizes');
 
         $query = SearchIndex::query();
         if($filter_brand) {
             $query = $query->whereIn('brand', $filter_brand);
+        }
+        if($filter_sizes) {
+            $query = $query->whereIn('size', $filter_sizes);
         }
 
         foreach ($filter_data as $name => $values) {
@@ -136,7 +140,8 @@ class CatalogController extends Controller {
             ->public()
             ->with(['single_image', 'catalog', 'brand'])
             ->paginate($per_page);
-        $products_count = $category->products->count();
+
+        $products_count = count($products);
 
         $data = [
             'bread' => $bread,
@@ -147,8 +152,8 @@ class CatalogController extends Controller {
             'products_count' => $products_count,
             'per_page' => $per_page,
             'filter_data' => $filter_data,
-            'filter_brand' => $filter_brand,
-            'filer_sizes' => $filter_data['sizes'] ?? []
+            'filter_query_brand' => $filter_brand['brand'] ?? [],
+            'filter_query_sizes' => $filter_sizes['sizes'] ?? []
         ];
 
         return view('catalog.category', $data);
@@ -194,6 +199,7 @@ class CatalogController extends Controller {
 
         return view('catalog.product', [
             'product' => $product,
+            'product_id' => $product->id,
             'categories' => $categories,
             'in_cart' => $in_cart,
             'bread' => $bread,

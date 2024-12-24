@@ -28,6 +28,7 @@
 								<td width="40"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></td>
 								<td width="250">{{ $item->name }}</td>
 								<td>{{ $item->address }}</td>
+								<td style="font-style: italic">Подсказка: {{ $item->hint ?: $item->address }}</td>
 								<td width="50"><a class="glyphicon glyphicon-edit" href="{{ route('admin.points.edit', [$item->id]) }}" style="font-size:20px; color:orange;"></a></td>
 								<td width="50">
 									<a class="glyphicon glyphicon-trash" href="{{ route('admin.points.delete', [$item->id]) }}" style="font-size:20px; color:red;" onclick="pointsDel(this, event)"></a>

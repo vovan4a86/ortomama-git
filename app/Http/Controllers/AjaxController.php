@@ -1,26 +1,16 @@
 <?php
 namespace App\Http\Controllers;
 
-use DB;
-use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\Char;
-use Fanky\Admin\Models\City;
 use Fanky\Admin\Models\Feedback;
 use Fanky\Admin\Models\Order as Order;
 use Fanky\Admin\Models\Page;
 use Fanky\Admin\Models\Product;
-use Fanky\Admin\Models\ProductChar;
-use Fanky\Admin\Models\Setting;
 use Fanky\Admin\Models\Subscriber;
 use Illuminate\Http\Request;
 use Mail;
-use Mailer;
-
-//use Settings;
-use Cart;
-use Session;
 use Settings;
-use SiteHelper;
+use Cart;
 use Validator;
 
 class AjaxController extends Controller
@@ -33,7 +23,6 @@ class AjaxController extends Controller
     {
         $id = $request->get('id');
         $count = $request->get('count');
-        $size = $request->get('size');
 
         /** @var Product $product */
         $product = Product::find($id);
@@ -42,23 +31,26 @@ class AjaxController extends Controller
             $product_item['name'] = $product->name;
             $product_item['price'] = $product->price;
             $product_item['count'] = $count;
-            $product_item['size'] = $size;
-            $product_item['discount_delivery'] = $product->getDiscountDelivery();
+            $product_item['size'] = $product->size;
+            $product_item['discount_delivery'] = $product->getDiscountDelivery($product->catalog_id);
             $product_item['discount_payment'] = 0;
-            $product_item['url'] = $product->url;
+            $product_item['url'] = $product->getUrl($product->catalog_id);
 
-            $prodImage = $product->single_image;
-            if ($prodImage) {
-                $product_item['image'] = $prodImage->thumb(1);
+            if ($product->single_image) {
+                $product_item['image'] = $product->single_image->thumb(1);
+            } else {
+                $product_item['image'] = Product::NO_IMAGE;
             }
 
             Cart::add($product_item);
         }
         $header_cart = view('blocks.header_cart')->render();
+        $btn = view('cart.add_to_cart_btn', ['product_id' => $product->id])->render();
 
         return [
             'success' => true,
             'header_cart' => $header_cart,
+            'btn' => $btn
         ];
     }
 
@@ -139,7 +131,7 @@ class AjaxController extends Controller
 
         foreach ($items as $item) {
             $product = Product::find($item['id']);
-            $discount = $product->getDiscountPayment();
+            $discount = $product->getDiscountPayment($product->catalog_id);
             Cart::updateDiscountPayment($item['id'], $discount);
             $updated_item = Cart::getItem($item['id']);
 
@@ -183,7 +175,7 @@ class AjaxController extends Controller
 
         foreach ($items as $item) {
             $product = Product::find($item['id']);
-            $discount = $product->getDiscountDelivery();
+            $discount = $product->getDiscountDelivery($product->catalog_id);
             Cart::updateDiscountDelivery($item['id'], $discount);
             $updated_item = Cart::getItem($item['id']);
 
@@ -508,7 +500,7 @@ class AjaxController extends Controller
         foreach ($prods as $prod) {
             $res[] = [
                 'id' => $prod->id,
-                'image' => $prod->image()->first()->thumb(2),
+                'image' => $prod->sigle_image ? $prod->single_image->thumb(2) : Product::NO_IMAGE,
                 'title' => $prod->name,
                 'data' => [
                     [

@@ -63,7 +63,7 @@
                                         <label class="radios__label">
                                             <input class="radios__input" type="checkbox" name="sizes[]"
                                                    value="{{ $size->value }}"
-                                                    {{ isset($filter_data['sizes']) && in_array($size->value, $filter_data['sizes']) ? 'checked' : null }}
+                                                    {{ isset($filter_query_sizes) && in_array($size->value, $filter_query_sizes) ? 'checked' : null }}
                                             />
                                             <span class="radios__box">{{ $size->value }}</span>
                                         </label>
@@ -123,7 +123,7 @@
                                     <label class="checkbox">
                                         <input class="checkbox__input" type="checkbox" name="brand[]"
                                                value="{{ $brand->value }}"
-                                                {{ isset($filter_brand) && in_array($brand->value, $filter_brand) ? 'checked' : null }}
+                                                {{ isset($filter_query_brand) && in_array($brand->value, $filter_query_brand) ? 'checked' : null }}
                                         />
                                         <span class="checkbox__box"></span>{{ $brand->value }}
                                     </label>
