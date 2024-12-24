@@ -5,8 +5,9 @@
         <div class="catalog-card__id">Арт.:&nbsp;
             <span>{{ $product->article }}</span>
         </div>
-        <a class="catalog-card__link" href="{{ $product->url }}">
-            <img class="catalog-card__picture lazy" src="/" data-src="{{ $product->single_image->thumb(2) }}"
+        <a class="catalog-card__link" href="{{ $product->getUrl() }}">
+            <img class="catalog-card__picture lazy" src="/"
+                 data-src="{{ $product->single_image ? $product->single_image->thumb(2) : \Fanky\Admin\Models\Product::NO_IMAGE }}"
                  width="330" height="200"
                  alt="{{ $product->name }}">
         </a>
@@ -49,7 +50,7 @@
 {{--                </svg>--}}
 {{--                <span>Купить</span>--}}
 {{--            </button>--}}
-            <a class="catalog-card__action btn-reset" href="{{ $product->url }}">
+            <a class="catalog-card__action btn-reset" href="{{ $product->getUrl() }}">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32"
                      height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"
                      style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);">

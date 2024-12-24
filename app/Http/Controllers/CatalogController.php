@@ -80,12 +80,13 @@ class CatalogController extends Controller {
         $end = array_pop($path);
         $category = Catalog::getByPath($path);
         if ($category && $category->published) {
-            $product = Product::whereAlias($end)
+            $product = Product::whereId($end)
                 ->public()
-                ->whereCatalogId($category->id)->first();
+                ->whereCatalogId($category->id)
+                ->first();
         }
         if ($product) {
-            return $this->product($product);
+            return $this->product($product, $category);
         } else {
             array_push($path, $end);
 
@@ -153,8 +154,8 @@ class CatalogController extends Controller {
         return view('catalog.category', $data);
     }
 
-    public function product(Product $product) {
-        $bread = $product->getBread();
+    public function product(Product $product, Catalog $category) {
+        $bread = $product->getBread($category);
         $product->generateTitle();
         $product->generateDescription();
         $product->generateText();
@@ -183,7 +184,7 @@ class CatalogController extends Controller {
         }
 
         $images = $product->images;
-        $sizes = $product->sizes;
+        $sizeProducts = Product::whereArticle($product->article)->get();
         $chars = $product->chars;
 
         Auth::init();
@@ -197,7 +198,7 @@ class CatalogController extends Controller {
             'in_cart' => $in_cart,
             'bread' => $bread,
             'images' => $images,
-            'sizes' => $sizes,
+            'sizeProducts' => $sizeProducts,
             'chars' => $chars,
             'viewed_products' => $viewed_products
         ]);

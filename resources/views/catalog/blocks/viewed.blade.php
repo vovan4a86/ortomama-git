@@ -8,11 +8,11 @@
                 <div class="viewed__wrapper swiper-wrapper">
                     @foreach($viewed_products as $item)
                         <div class="viewed__item swiper-slide">
-                        <a class="card" href="{{ $item->url }}"
+                        <a class="card" href="{{ $item->getUrl() }}"
                            title="{{ $item->name }}">
 									<span class="card__preview">
-										<img class="swiper-lazy" data-src="{{ $item->single_image->thumb(2) }}"
-                                             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+										<img class="swiper-lazy" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                             data-src="{{ $item->single_image ? $item->single_image->thumb(2) : \Fanky\Admin\Models\Product::NO_IMAGE }}"
                                              width="200" height="200" alt="{{ $item->name }}" title="{{ $item->name }}"/>
 									</span>
                             <span class="card__title">{{ $item->name }}</span>

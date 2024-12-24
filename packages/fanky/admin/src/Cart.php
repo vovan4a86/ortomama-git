@@ -50,9 +50,9 @@ class Cart {
         Session::put(self::$key, $cart);
     }
 
-    public static function ifInCart($id, $size): bool {
+    public static function ifInCart($id): bool {
         $cart = self::all();
-        return isset($cart[$id]) && ($cart[$id]['size'] == $size);
+        return isset($cart[$id]);
     }
 
     public static function updateCount($id, $count): void

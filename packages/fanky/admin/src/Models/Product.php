@@ -115,7 +115,7 @@ class Product extends Model {
 
     const UPLOAD_PATH = '/public/uploads/products/';
     const UPLOAD_URL = '/uploads/products/';
-    const NO_IMAGE = "/adminlte/no_image.png";
+    const NO_IMAGE = "/adminlte/no_image_335.jpg";
 
     public function catalog(): BelongsToMany
     {
@@ -240,10 +240,20 @@ class Product extends Model {
         return $this->_url;
     }
 
-    public function getParents($with_self = false, $reverse = false): array {
+    public function getUrl($catalog_id = null) {
+        if ($catalog_id) {
+            $catalog_url = $this->catalog()->whereCatalogId($catalog_id)->first()->url;
+        } else {
+            $catalog_url = $this->catalog->first()->url;
+        }
+
+        return $catalog_url . '/' . $this->id;
+    }
+
+    public function getParents(Catalog $catalog, $with_self = false, $reverse = false): array {
         $parents = [];
         if ($with_self) $parents[] = $this;
-        $parents = array_merge($parents, $this->catalog->getParents(true));
+        $parents = array_merge($parents, $catalog->getParents(true));
         $parents = array_merge($parents, $this->_parents);
         if ($reverse) {
             $parents = array_reverse($parents);
@@ -269,10 +279,11 @@ class Product extends Model {
         return $this->updated_at;
     }
 
-    public function getBread() {
-        $bread = $this->catalog->getBread();
+    public function getBread(Catalog $catalog): array
+    {
+        $bread = $catalog->getBread();
         $bread[] = [
-            'url' => $this->url,
+            'url' => $this->id,
             'name' => $this->name
         ];
 
@@ -506,21 +517,21 @@ class Product extends Model {
         return str_pad($id, 6, '0', STR_PAD_LEFT);
     }
 
-    public function getDiscountDelivery() {
+    public function getDiscountDelivery($catalog_id) {
         if ($this->discount_delivery) {
             return $this->discount_delivery;
         }
-        if($this->catalog->discount_delivery) {
-            return $this->catalog->discount_delivery;
+        if($this->catalog()->whereCatalogId($catalog_id)->first()->discount_delivery) {
+            return $this->catalog()->whereCatalogId($catalog_id)->first()->discount_delivery;
         }
-        return '123';
+        return null;
     }
 
-    public function getDiscountPayment() {
+    public function getDiscountPayment($catalog_id) {
         if ($this->discount_payment) {
             return $this->discount_payment;
-        } elseif($this->catalog->discount_payment) {
-            return $this->catalog->discount_payment;
+        } elseif($this->catalog()->whereCatalogId($catalog_id)->first()->discount_payment) {
+            return $this->catalog()->whereCatalogId($catalog_id)->first()->discount_payment;
         } else {
             return null;
         }

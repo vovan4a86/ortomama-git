@@ -2,16 +2,20 @@
 @section('content')
     @include('blocks.bread')
     <div class="container container--inner">
+
         @include('catalog.blocks.product_aside')
+
         <div class="container__main">
             <main>
                 <section class="product">
                     <form class="product__grid" action="#">
                         <div class="product__info">
                             <div class="product__preview">
-                                <a href="{{ $product->image_src }}" title="{{ $product->name }}" data-fancybox
+                                <a href="{{ $product->single_image ? $product->image_src : \Fanky\Admin\Models\Product::NO_IMAGE }}"
+                                   title="{{ $product->name }}" data-fancybox
                                    data-caption="{{ $product->name }}">
-                                    <img class="lazy" data-src="{{ $product->single_image->thumb(3) }}"
+                                    <img class="lazy"
+                                         data-src="{{ $product->single_image ? $product->single_image->thumb(3) : \Fanky\Admin\Models\Product::NO_IMAGE }}"
                                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                                          alt="{{ $product->name }}"
                                          title="{{ $product->name }}">
@@ -55,13 +59,13 @@
                                     <span data-end="₽">{{ $product->price }}</span>
                                 </div>
                                 <div class="product__discounts">
-                                    @if($value = $product->getDiscountDelivery())
+                                    @if($value = $product->getDiscountDelivery($product->catalog_id))
                                         <div class="product__discount discount-product">
                                             <div class="discount-product__label">Скидка за самовывоз</div>
                                             <div class="discount-product__value" data-end="₽">-{{ $value }}</div>
                                         </div>
                                     @endif
-                                    @if($value = $product->getDiscountPayment())
+                                    @if($value = $product->getDiscountPayment($product->catalog_id))
                                         <div class="product__discount discount-product">
                                             <div class="discount-product__label">Скидка по предоплате</div>
                                             <div class="discount-product__value" data-end="₽">-{{ $value }}</div>
@@ -73,33 +77,38 @@
                                 <div class="actions-product__column">
                                     <div class="actions-product__size">
                                         <span>Выбор размера</span>
-                                        @if (count($sizes))
+                                        @if (count($sizeProducts))
                                             <div class="radios">
-                                                @foreach($sizes as $size)
-                                                    <label class="radios__label">
-                                                        <input class="radios__input" type="radio" name="size"
-                                                               value="{{ $size->value }}"
-                                                                {{ \Fanky\Admin\Cart::ifInCart($product->id, $size->value) ? 'checked' : null }}
-                                                        >
-                                                        <span class="radios__box">{{ $size->value }}</span>
-                                                    </label>
+                                                @foreach($sizeProducts as $s_product)
+                                                    <a href="{{$s_product->getUrl($s_product->catalog_id)}}">
+{{--                                                        <label class="radios__label">--}}
+                                                            <input class="radios__input" type="radio" name="size"
+                                                                   value="{{ $s_product->size }}"
+                                                                   {{ $product->id == $s_product->id ? 'checked' : null }}>
+                                                            <span class="radios__box">{{ $s_product->size }}</span>
+{{--                                                        </label>--}}
+                                                    </a>
                                                 @endforeach
                                             </div>
-                                        @else
-                                            <div>Нет доступных размеров</div>
                                         @endif
                                     </div>
                                 </div>
                                 <div class="actions-product__column">
                                     <div class="actions-product__list">
                                         <button class="btn btn--small btn--cart" type="button"
+                                                {{ \Fanky\Admin\Cart::ifInCart($product->id) ? 'style=background-color: grey' : null }}
+                                                {{ \Fanky\Admin\Cart::ifInCart($product->id) ? 'disabled' : null }}
                                                 data-product="{{ $product->id }}"
                                                 data-create-order data-src="#create-order"
                                                 onclick="addItemToCart(this, event)">
                                             <svg class="svg-sprite-icon icon-basket">
                                                 <use xlink:href="/static/images/sprite/symbol/sprite.svg#basket"></use>
                                             </svg>
-                                            <span>В корзину</span>
+                                            @if(\Fanky\Admin\Cart::ifInCart($product->id))
+                                                <span>В корзине</span>
+                                            @else
+                                                <span>В корзину</span>
+                                            @endif
                                         </button>
                                         @if($wa = S::get('soc_wa'))
                                             <a class="btn btn--small btn--message"
@@ -146,5 +155,7 @@
             </main>
         </div>
     </div>
+
     @include('catalog.blocks.viewed')
+
 @endsection

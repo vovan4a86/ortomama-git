@@ -16,7 +16,7 @@
 
 <div class="box box-solid">
     <div class="box-body">
-        <a href="{{ route('admin.catalog.productEdit', ['catalog' => $catalog->id]) }}"
+        <a href="{{ route('admin.catalog.productEdit', ['catalog_id' => $catalog->id]) }}"
            class="btn btn-sm btn-primary"
            onclick="return catalogContent(this)">Добавить товар</a>
 
@@ -38,7 +38,8 @@
                                 <img src="{{ $img->thumb(1) }}" height="100" width="100">
                             @endif
                         </td>
-                        <td><a href="{{ route('admin.catalog.productEdit', [$item->id]) }}" onclick="return catalogContent(this)" style="{{ $item->published != 1 ? 'text-decoration:line-through;' : '' }}">{{ $item->name }}</a></td>
+                        <td><a href="{{ route('admin.catalog.productEdit', ['catalog_id' => $catalog->id, 'id' => $item->id]) }}"
+                               onclick="return catalogContent(this)" style="{{ $item->published != 1 ? 'text-decoration:line-through;' : '' }}">{{ $item->name }}</a></td>
                         <td>
                             <form class="input-group input-group-sm"
                                   action="{{ route('admin.catalog.update-order', [$item->id]) }}"
@@ -52,7 +53,8 @@
                             </form>
                         </td>
                         <td>
-                            <a class="glyphicon glyphicon-trash" href="{{ route('admin.catalog.productDel', [$item->id]) }}" style="font-size:20px; color:red;" title="Удалить" onclick="return productDel(this)"></a>
+                            <a class="glyphicon glyphicon-trash" href="{{ route('admin.catalog.productDel', ['catalog_id' => $catalog->id, 'id' => $item->id]) }}"
+                               style="font-size:20px; color:red;" title="Удалить" onclick="return productDel(this)"></a>
                         </td>
                     </tr>
                 @endforeach

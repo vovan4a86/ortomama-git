@@ -1,5 +1,6 @@
 <?php namespace App\Traits;
 
+use Fanky\Admin\Models\Product;
 use Illuminate\Support\Str;
 use Image;
 use Intervention\Image\ImageManager;
@@ -26,7 +27,8 @@ trait HasImage{
 	}
 
 	public function getImageSrcAttribute() {
-		return $this->{$this->image_field} ? url(self::UPLOAD_URL . $this->{$this->image_field}) : null;
+		return $this->{$this->image_field} ?
+            url(self::UPLOAD_URL . $this->{$this->image_field}) : null;
 	}
 
 	public function thumb($thumb) {

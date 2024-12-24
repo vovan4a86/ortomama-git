@@ -85,7 +85,7 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		Route::post('catalog-delete/{id}', $controller . 'postCatalogDelete')
 			->name('.catalogDel');
 
-		Route::get('product-edit/{id?}', $controller . 'getProductEdit')
+		Route::get('{catalog_id}/product-edit/{id?}', $controller . 'getProductEdit')
 			->name('.productEdit');
 
 		Route::post('product-save', $controller . 'postProductSave')
@@ -97,7 +97,7 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		Route::post('update-order/{id}', $controller . 'postUpdateOrder')
 			->name('.update-order');
 
-		Route::post('product-delete/{id}', $controller . 'postProductDelete')
+		Route::post('{catalog_id}/product-delete/{id}', $controller . 'postProductDelete')
 			->name('.productDel');
 
 		Route::post('product-image-upload/{id}', $controller . 'postProductImageUpload')

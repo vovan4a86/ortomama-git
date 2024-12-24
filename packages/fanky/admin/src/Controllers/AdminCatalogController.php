@@ -166,10 +166,10 @@ class AdminCatalogController extends AdminController {
         return ['success' => true];
     }
 
-    public function postProductEdit($id = null) {
+    public function postProductEdit($catalog_id, $id = null) {
         /** @var Product $product */
         if (!$id || !($product = Product::findOrFail($id))) {
-            $catalog_id = Request::get('catalog');
+//            $catalog_id = Request::get('catalog_id');
             $product = Product::create([
                 'catalog_id' => $catalog_id,
                 'published' => 1,
@@ -180,8 +180,9 @@ class AdminCatalogController extends AdminController {
             $product->save();
         }
 
-        dd($product->catalog()->whereCatalogId($catalog_id)->first());
+        $current_catalog = $product->catalog()->whereCatalogId($catalog_id)->first();
         $catalogs = Catalog::getCatalogList();
+
         $brands = Brand::all()->pluck('value', 'id');
         $sizes = Size::all();
         $product_sizes = $product->sizes()->pluck('sizes.id')->all();
@@ -197,6 +198,7 @@ class AdminCatalogController extends AdminController {
         $data = [
             'product' => $product,
             'catalogs' => $catalogs,
+            'current_catalog' => $current_catalog,
             'brands' => $brands,
             'sizes' => $sizes,
             'product_sizes' => $product_sizes,
@@ -212,12 +214,12 @@ class AdminCatalogController extends AdminController {
         return view('admin::catalog.product_edit', $data);
     }
 
-    public function getProductEdit($id = null) {
+    public function getProductEdit($catalog_id, $id = null) {
         $catalogs = Catalog::orderBy('order')->get();
 
         return view('admin::catalog.main', [
             'catalogs' => $catalogs,
-            'content' => $this->postProductEdit($id)
+            'content' => $this->postProductEdit($catalog_id, $id)
         ]);
     }
 

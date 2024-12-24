@@ -2,9 +2,9 @@
     <ol class="breadcrumb">
         <li><a href="{{ route('admin') }}"><i class="fa fa-dashboard"></i> Главная</a></li>
         <li><a href="{{ route('admin.catalog') }}"><i class="fa fa-list"></i> Каталог</a></li>
-{{--        @foreach($product->getParents(false, true) as $parent)--}}
-{{--            <li><a href="{{ route('admin.catalog.products', [$parent->id]) }}">{{ $parent->name }}</a></li>--}}
-{{--        @endforeach--}}
+        @foreach($product->getParents($current_catalog, false, true) as $parent)
+            <li><a href="{{ route('admin.catalog.products', [$parent->id]) }}">{{ $parent->name }}</a></li>
+        @endforeach
         <li class="active">{{ $product->id ? $product->name : 'Новый товар' }}</li>
     </ol>
 @stop
@@ -31,7 +31,7 @@
             </li>
             @if($product->id)
                 <li class="pull-right">
-                    <a href="{{ $product->url }}" target="_blank">Посмотреть</a>
+                    <a href="{{ $product->getUrl($product->catalog_id) }}" target="_blank">Посмотреть</a>
                 </li>
             @endif
         </ul>

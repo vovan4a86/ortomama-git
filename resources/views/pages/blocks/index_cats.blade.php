@@ -15,7 +15,7 @@
                             @if($cat->products)
                                 <div class="products__grid">
                                     @foreach($cat->products as $product)
-                                        <a class="products__card card" href="{{ $product->url }}"
+                                        <a class="products__card card" href="{{ $product->getUrl() }}"
                                        title="{{ $product->name }}">
 										<span class="card__preview">
 											<img class="lazy" data-src="{{ $product->single_image->thumb(4) }}"
