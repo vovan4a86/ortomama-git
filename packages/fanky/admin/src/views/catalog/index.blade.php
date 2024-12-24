@@ -20,8 +20,8 @@
     </div>
 </div>
 
-<div class="box box-solid">
-    <div class="box-body">
-        <a href="{{ route('admin.catalog.export') }}" target="_blank">Выгрузить каталог</a>
-    </div>
-</div>
+{{--<div class="box box-solid">--}}
+{{--    <div class="box-body">--}}
+{{--        <a href="{{ route('admin.catalog.export') }}" target="_blank">Выгрузить каталог</a>--}}
+{{--    </div>--}}
+{{--</div>--}}

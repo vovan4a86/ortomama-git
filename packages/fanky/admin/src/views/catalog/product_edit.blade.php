@@ -2,9 +2,9 @@
     <ol class="breadcrumb">
         <li><a href="{{ route('admin') }}"><i class="fa fa-dashboard"></i> Главная</a></li>
         <li><a href="{{ route('admin.catalog') }}"><i class="fa fa-list"></i> Каталог</a></li>
-        @foreach($product->getParents(false, true) as $parent)
-            <li><a href="{{ route('admin.catalog.products', [$parent->id]) }}">{{ $parent->name }}</a></li>
-        @endforeach
+{{--        @foreach($product->getParents(false, true) as $parent)--}}
+{{--            <li><a href="{{ route('admin.catalog.products', [$parent->id]) }}">{{ $parent->name }}</a></li>--}}
+{{--        @endforeach--}}
         <li class="active">{{ $product->id ? $product->name : 'Новый товар' }}</li>
     </ol>
 @stop
@@ -65,8 +65,7 @@
                 {!! Form::hidden('in_stock', 0) !!}
                 {!! Form::groupCheckbox('published', 1, $product->published, 'Показывать товар') !!}
                 {!! Form::groupCheckbox('in_stock', 1, $product->in_stock, 'В наличии') !!}
-                {!! Form::groupCheckbox('compensation', 1, $product->compensation, 'Показывать значок компенсации ФСС') !!}
-
+                {!! Form::groupCheckbox('fss', 1, $product->fss, 'Показывать компенсацию ФСС') !!}
             </div>
 
             <div class="tab-pane" id="tab_2">
@@ -80,14 +79,14 @@
             <div class="tab-pane" id="tab_filters">
                 {!! Form::groupSelect('brand_id', $brands, $product->brand_id, 'Бренд') !!}
                 <hr>
-                <label class="control-label">Размеры товара:</label>
-                <div style="max-width: 440px;">
-                    @foreach($sizes as $size)
-                        <input type="checkbox" name="sizes[]" id="size_{{ $size->value }}" value="{{$size->id}}"
-                                {{ in_array($size->id, $product_sizes) ? 'checked' : '' }}>
-                        <label for="size_{{ $size->value }}" style="margin-right: 10px;">{{$size->value}}</label>
-                    @endforeach
-                </div>
+{{--                <label class="control-label">Размеры товара:</label>--}}
+{{--                <div style="max-width: 440px;">--}}
+{{--                    @foreach($sizes as $size)--}}
+{{--                        <input type="checkbox" name="sizes[]" id="size_{{ $size->value }}" value="{{$size->id}}"--}}
+{{--                                {{ in_array($size->id, $product_sizes) ? 'checked' : '' }}>--}}
+{{--                        <label for="size_{{ $size->value }}" style="margin-right: 10px;">{{$size->value}}</label>--}}
+{{--                    @endforeach--}}
+{{--                </div>--}}
                 <hr>
                 <label class="control-label">Сезонность:</label>
                 <div style="max-width: 440px;">

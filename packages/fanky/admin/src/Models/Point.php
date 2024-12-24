@@ -5,6 +5,7 @@ namespace Fanky\Admin\Models;
 use App\Traits\HasH1;
 use App\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Point extends Model
 {
@@ -18,4 +19,10 @@ class Point extends Model
     {
         $this->hasOne(Order::class);
     }
+
+    public function product(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class);
+    }
+
 }

@@ -10,3 +10,4 @@
 .idea/
 /composer.lock
 .yarn
+/resources/price.xlsx

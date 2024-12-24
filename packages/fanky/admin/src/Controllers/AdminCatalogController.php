@@ -173,13 +173,14 @@ class AdminCatalogController extends AdminController {
             $product = Product::create([
                 'catalog_id' => $catalog_id,
                 'published' => 1,
-                'brand_id' => 1,
+                'brand_id' => 0,
                 'in_stock' => 1,
                 'order' => Product::where('catalog_id', $catalog_id)->max('order') + 1
             ]);
-            $product->article = $product->makeArticle($product->id);
             $product->save();
         }
+
+        dd($product->catalog()->whereCatalogId($catalog_id)->first());
         $catalogs = Catalog::getCatalogList();
         $brands = Brand::all()->pluck('value', 'id');
         $sizes = Size::all();
@@ -233,7 +234,7 @@ class AdminCatalogController extends AdminController {
         if (!array_get($data, 'alias')) $data['alias'] = Text::translit($data['name']);
         if (!array_get($data, 'title')) $data['title'] = $data['name'];
         if (!array_get($data, 'h1')) $data['h1'] = $data['name'];
-        if (!array_get($data, 'compensation')) $data['compensation'] = 0;
+        if (!array_get($data, 'fss')) $data['fss'] = 0;
 
         //сохраняем Характеристики
         $param_data = Request::get('chars', []);
@@ -454,27 +455,25 @@ class AdminCatalogController extends AdminController {
     {
         $file = resource_path('price.xlsx');
 
-        if (!File::exists($file)) {
-            return;
-        }
-        $last_update = Carbon::createFromTimestamp(0);
-        $last_update_file = resource_path('.last_update');
-        if (File::exists($last_update_file)) {
-            $last_update = Carbon::createFromTimestamp(File::get($last_update_file));
-        }
-        $file_modify = Carbon::createFromTimestamp(File::lastModified($file));
-        if ($file_modify->greaterThan($last_update)) {
-            AdminLog::$processLog = false;
+        if (File::exists($file)) {
+            $last_update = Carbon::createFromTimestamp(0);
+            $last_update_file = resource_path('.last_update');
+            if (File::exists($last_update_file)) {
+                $last_update = Carbon::createFromTimestamp(File::get($last_update_file));
+            }
+            $file_modify = Carbon::createFromTimestamp(File::lastModified($file));
+            if ($file_modify->greaterThan($last_update)) {
+                AdminLog::$processLog = false;
 
-            (new ProductsImport())->import($file);
+                (new ProductsImport())->import($file);
 
-            File::put($last_update_file, $file_modify->timestamp);
+                File::put($last_update_file, $file_modify->timestamp);
 
-            $catalogs = Catalog::orderBy('order')->get();
-            $content = view('admin::catalog.upload_price_done')->render();
+                $catalogs = Catalog::orderBy('order')->get();
+                $content = view('admin::catalog.upload_price_done')->render();
 
-            return view('admin::catalog.main', ['catalogs' => $catalogs, 'content' => $content]);
+                return view('admin::catalog.main', ['catalogs' => $catalogs, 'content' => $content]);
+            }
         }
     }
-
 }

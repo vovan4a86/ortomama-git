@@ -8,6 +8,7 @@ use Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use SiteHelper;
@@ -131,8 +132,8 @@ class Catalog extends Model {
 			->orderBy('order');
 	}
 
-	public function products(): HasMany {
-		return $this->hasMany(Product::class, 'catalog_id');
+	public function products(): BelongsToMany {
+		return $this->belongsToMany(Product::class);
 	}
 
     public function params(): HasMany {

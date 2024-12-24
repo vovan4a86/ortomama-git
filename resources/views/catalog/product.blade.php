@@ -17,7 +17,7 @@
                                          title="{{ $product->name }}">
                                 </a>
                             </div>
-                            @if(count($product->docs) || $product->compensation)
+                            @if(count($product->docs) || $product->fss)
                                 <div class="product__links text-content">
                                     @if(count($product->docs))
                                         @foreach($product->docs as $doc)
@@ -27,8 +27,8 @@
                                             </a>
                                         @endforeach
                                     @endif
-                                    @if ($product->compensation)
-                                        <a class="product__fss" href="{{ route('compensation') }}" target="_blank">
+                                    @if ($product->fss)
+                                        <a class="product__fss" href="{{ route('fss') }}" target="_blank">
                                             <img class="lazy" data-src="/static/images/common/fss.png"
                                                  src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                                                  alt="Компенсация ФСС" title="Компенсация ФСС"/>

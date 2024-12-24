@@ -65,7 +65,7 @@ Route::group(['middleware' => ['redirects']], function() {
 
     Route::get('policy', ['as' => 'policy', 'uses' => 'PageController@policy']);
 
-    Route::get('compensation', ['as' => 'compensation', 'uses' => 'PageController@compensation']);
+    Route::get('fss', ['as' => 'fss', 'uses' => 'PageController@fss']);
 
     Route::any('catalog', ['as' => 'catalog.index', 'uses' => 'CatalogController@index']);
 

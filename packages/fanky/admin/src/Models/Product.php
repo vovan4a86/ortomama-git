@@ -117,8 +117,9 @@ class Product extends Model {
     const UPLOAD_URL = '/uploads/products/';
     const NO_IMAGE = "/adminlte/no_image.png";
 
-    public function catalog() {
-        return $this->belongsTo(Catalog::class);
+    public function catalog(): BelongsToMany
+    {
+        return $this->belongsToMany(Catalog::class);
     }
 
     public function sizes(): BelongsToMany
@@ -140,6 +141,11 @@ class Product extends Model {
     public function genders(): BelongsToMany
     {
         return $this->belongsToMany(Gender::class);
+    }
+
+    public function points(): BelongsToMany
+    {
+        return $this->belongsToMany(Point::class);
     }
 
     public function seasons(): BelongsToMany

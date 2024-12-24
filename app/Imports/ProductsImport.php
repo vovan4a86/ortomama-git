@@ -2,8 +2,13 @@
 
 namespace App\Imports;
 
+use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
+use Fanky\Admin\Models\Char;
+use Fanky\Admin\Models\Gender;
+use Fanky\Admin\Models\Point;
 use Fanky\Admin\Models\Product;
+use Fanky\Admin\Models\Season;
 use Fanky\Admin\Text;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
@@ -25,29 +30,38 @@ class ProductsImport implements ToCollection, WithProgressBar,
     {
         foreach ($rows as $i => $row) {
             $row_arr = $row->toArray();
-            $catalog_name = array_only($row_arr, ['kategoriia']);
-            $catalog = $this->getCatalog($catalog_name);
-            if(!$catalog)  continue;
+
+            $catalogs_string = trim($row_arr['kategoriia_ili_spisok_kategorii_razdelennyx']);
+            $catalog_names = array_map('trim', explode('/', $catalogs_string));
+            $catalogs = [];
+            foreach ($catalog_names as $cat_name) {
+                $catalog = $this->getCatalog($cat_name);
+                $catalogs[] = $catalog;
+            }
 
             $points_string = $row_arr['gde_kupit'];
             $points = array_map('trim', explode('/', $points_string));
+
             $size = $row_arr['razmer'];
-            $gender = trim(strtolower($row_arr['pol']));
-            $brand = trim(strtolower($row_arr['marka']));
-            $season = trim(strtolower($row_arr['sezon']));
+            $gender = trim($row_arr['pol']);
+            $brand = trim($row_arr['marka']);
+            $seasons_string = $row_arr['sezon'];
+            $seasons = array_map('trim', explode('/', $seasons_string));
 
             $updateData = [
                 'catalog_id' => $catalog->id,
-                'name' => trim($row_arr['nazvanie']),
+                'name' => trim($row_arr['nazvanie']) . ' (' . $row_arr['artikul'] . ') ' . 'р.' . $size,
+                'brand_id' => $this->getBrandId($brand),
                 'h1' => trim($row_arr['nazvanie']),
-                'alias' => Text::translit($row_arr['nazvanie']),
-                'article' => $row_arr['artikulcvet'],
+                'alias' => Text::translit(trim($row_arr['nazvanie']) . '_' . $row_arr['artikul'] . '_' . $size),
+                'article' => $row_arr['artikul'],
                 'price' => $row_arr['cena'],
-                'old_price' => $row_arr['staraia_cena'],
-                'announce' => $row_arr['kratkoe_opisanie'],
+                'size' => $size,
+                'old_price' => $row_arr['staraia_cena_zacerknutaia'],
+                'announce_text' => $row_arr['kratkoe_opisanie'],
                 'text' => $row_arr['polnoe_opisanie'],
-                'compensation' => trim(strtolower($row_arr['fss'])) == 'да' ? 1 : 0,
-                'in_stock' => trim(strtolower($row_arr['nalicie_na_sklade'])) == 'да' ? 1 : 0,
+                'fss' => trim(mb_strtoupper($row_arr['fss'])) === 'ДА' ? 1 : 0,
+                'in_stock' => trim(mb_strtoupper($row_arr['nalicie_na_sklade'])) === 'ДА' ? 1 : 0,
             ];
 
             $chars = [
@@ -61,61 +75,64 @@ class ProductsImport implements ToCollection, WithProgressBar,
                 'Ширина ступни' => trim($row_arr['sirina_stupni']),
                 'Рекомендации' => trim($row_arr['rekomendacii']),
             ];
-            dd($chars);
 
-//            $product = Product::find($row['id'] ?? 0);
-//            if(!$product){
-//                $product = new Product();
-//                $updateData['order'] = $catalog->products()->max('order') + 1;
-//            }
-//            $product->fill($updateData);
-//            if(!$product->alias) $product->alias = $this->generateAlias($product);
-//            $product->save();
-//            $additional_catalog_ids = explode(',', $additional_catalogs);
-//            $additional_catalog_ids = array_map('trim', $additional_catalog_ids);
-//            $catalogs = Catalog::whereIn('id', $additional_catalog_ids)->get();
-//            $product->additional_catalogs()->sync($catalogs);
+            $product = Product::where('article', $row_arr['artikul'])
+                ->where('size', $size)
+                ->first();
+            if(!$product){
+                $product = new Product();
+                $updateData['order'] = $catalog->products()->max('order') + 1;
+            }
+            $product->fill($updateData);
+            $product->save();
+            $catalog->products()->attach($product->id);
+
+            $this->syncPointsWithProduct($product, $points);
+            $this->syncGenderWithProduct($product, $gender);
+            $this->syncSeasonsWithProduct($product, $seasons);
+
+            foreach ($chars as $name => $value) {
+                if ($value) {
+                    $ch = Char::whereProductId($product->id)->whereName($name)->first();
+                    if(!$ch) {
+                        Char::create([
+                            'product_id' => $product->id,
+                            'name' => $name,
+                            'value' => $value,
+                            'order' => Char::where('product_id')->max('order') + 1
+                        ]);
+                    } else {
+                        $ch->update(['value' => $value]);
+                    }
+                }
+            }
         }
     }
 
-    private function getCatalog($path)
+    private function getCatalog($name)
     {
-        $path = array_values(array_filter($path));
-        if(!count($path)) {return null;}
-        $key = implode(',', $path);
-        if (array_get($this->catalogCache, $key)) {
-            return array_get($this->catalogCache, $key);
-        }
-
-        $result = null;
         $parent_id = 0;
-        foreach ($path as $name) {
-            $catalog = Catalog::whereName($name)->whereParentId($parent_id)->first();
-            if (!$catalog) {
-                $catalog = Catalog::create([
-                    'parent_id' => $parent_id,
-                    'name' => $name,
-                    'h1' => $name,
-                    'og_title' => $name,
-                    'og_description' => $name,
-                    'alias' => Text::translit($name),
-                    'title' => $name,
-                    'published' => 1,
-                    'order' => Catalog::whereParentId($parent_id)->max('order') + 1
-                ]);
-            } else {
-                $catalog->update([
-                    'published' => 1,
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
-            }
-            $parent_id = $catalog->id;
-            $result = $catalog;
+        $catalog = Catalog::whereName($name)->whereParentId($parent_id)->first();
+        if (!$catalog) {
+            $catalog = Catalog::create([
+                'parent_id' => $parent_id,
+                'name' => $name,
+                'h1' => $name,
+                'og_title' => $name,
+                'og_description' => $name,
+                'alias' => Text::translit($name),
+                'title' => $name,
+                'published' => 1,
+                'order' => Catalog::whereParentId($parent_id)->max('order') + 1
+            ]);
+        } else {
+            $catalog->update([
+                'published' => 1,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
         }
 
-        $this->catalogCache[$key] = $result;
-
-        return $result;
+        return $catalog;
     }
 
     private function generateAlias($product): string {
@@ -134,5 +151,93 @@ class ProductsImport implements ToCollection, WithProgressBar,
                 Artisan::call('export:products');
             }
         ];
+    }
+
+    private function syncPointsWithProduct(Product $product, array $points): void
+    {
+        if (count($points)) {
+            $ids = [];
+            foreach ($points as $point) {
+                $address = $this->getPointAddressFromString($point);
+                $p = Point::where('address', $address)->first();
+                if(!$p) {
+                    $p = Point::create([
+                        'name' => $this->getPointNameFromString($point),
+                        'address' => $address,
+                        'order' => Point::max('order') + 1
+                    ]);
+                }
+                $ids[] = $p->id;
+            }
+            $product->points()->sync($ids);
+        }
+    }
+
+    private function syncGenderWithProduct(Product $product, string $gender) {
+        if ($gender) {
+            $g = Gender::where('value', $gender)->first();
+            if(!$g) {
+                $g = Gender::create([
+                    'value' => $gender,
+                    'order' => Gender::max('order') + 1
+                ]);
+            }
+            $product->genders()->sync($g->id);
+        }
+    }
+
+    private function syncSeasonsWithProduct(Product $product, array $seasons) {
+        if (count($seasons)) {
+            $ids = [];
+            foreach ($seasons as $season) {
+                $s = Season::where('value', $season)->first();
+                if(!$s) {
+                    $s = Season::create([
+                        'value' => $season,
+                        'order' => Season::max('order') + 1
+                    ]);
+                }
+                $ids[] = $s->id;
+            }
+            $product->seasons()->sync($ids);
+        }
+    }
+
+    private function getPointNameFromString(string $str) {
+        $i_start = stripos($str, '(');
+        $i_end = stripos($str, ')');
+
+        if($i_start && $i_end) {
+            return substr($str, $i_start + 1, $i_end - $i_start - 1);
+        }
+
+        return '-';
+    }
+
+    private function getPointAddressFromString(string $str) {
+        $i_start = stripos($str, '(');
+        $i_end = stripos($str, ')');
+
+        if($i_start && $i_end) {
+            $cut_name = substr($str,$i_start, $i_end - $i_start + 1);
+            if ($cut_name) {
+                return (trim(str_replace($cut_name, '', $str)));
+            }
+        }
+
+        return $str;
+    }
+
+    private function getBrandId(string $brand) {
+        if ($brand) {
+            $b = Brand::where('value', $brand)->first();
+            if (!$b) {
+                $b = Brand::create([
+                    'value' => $brand,
+                    'order' => Brand::max('order') + 1
+                ]);
+            }
+            return $b->id;
+        }
     }
 }

@@ -122,9 +122,9 @@ class PageController extends Controller {
         ]);
     }
 
-    public function compensation()
+    public function fss()
     {
-        $page = Page::whereAlias('compensation')->first();
+        $page = Page::whereAlias('fss')->first();
         if (!$page)
             abort(404, 'Страница не найдена');
         $bread = $page->getBread();
