@@ -105,10 +105,32 @@ class Catalog extends Model {
 	public function delete() {
 		$this->deleteImage();
 		foreach ($this->children as $product) {
-			$product->delete();
+            if (count($product->catalog) == 1) {
+                Char::whereProductId($product->id)->delete;
+                $ids = $product->points()->pluck('point_id')->all();
+                $product->points()->detach($ids);
+                $ids = $product->genders()->pluck('gender_id')->all();
+                $product->genders()->detach($ids);
+                $ids = $product->seasons()->pluck('season_id')->all();
+                $product->saesons()->detach($ids);
+                $product->delete();
+            } else {
+                $this->products()->detach($product->id);
+            }
 		}
 		foreach ($this->products as $product) {
-			$product->delete();
+            if (count($product->catalog) == 1) {
+                Char::whereProductId($product->id)->delete;
+                $ids = $product->points()->pluck('point_id')->all();
+                $product->points()->detach($ids);
+                $ids = $product->genders()->pluck('gender_id')->all();
+                $product->genders()->detach($ids);
+                $ids = $product->seasons()->pluck('season_id')->all();
+                $product->saesons()->detach($ids);
+                $product->delete();
+            } else {
+                $this->products()->detach($product->id);
+            }
 		}
 
 		parent::delete();
@@ -152,7 +174,7 @@ class Catalog extends Model {
     }
 
 	public function public_products() {
-		return $this->hasMany(Product::class, 'catalog_id')
+		return $this->products()
 			->public()->orderBy('order');
 	}
 

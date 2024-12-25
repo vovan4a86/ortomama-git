@@ -27,6 +27,8 @@ class AdminMenuMiddleware {
 
             $menu->add('Фильтры', ['icon' => 'fa-bars'])
                 ->nickname('filters');
+            $menu->filters->add('Цвет', ['route' => 'admin.colors', 'icon' => 'fa-paint-brush'])
+                ->active('/admin/colors/*');
             $menu->filters->add('Размер', ['route' => 'admin.sizes', 'icon' => 'fa-arrows-h'])
                 ->active('/admin/sizes/*');
             $menu->filters->add('Сезон', ['route' => 'admin.seasons', 'icon' => 'fa-thermometer'])

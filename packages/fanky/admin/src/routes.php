@@ -131,6 +131,23 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 			->name('.get_catalogs');
 	});
 
+    Route::group(['as' => '.colors', 'prefix' => 'colors'], function () {
+        $controller = 'AdminColorsController@';
+        Route::get('/', $controller . 'getIndex');
+
+        Route::get('edit/{id?}', $controller . 'getEdit')
+            ->name('.edit');
+
+        Route::post('save', $controller . 'postSave')
+            ->name('.save');
+
+        Route::post('delete/{id}', $controller . 'postDelete')
+            ->name('.del');
+
+        Route::post('reorder', $controller . 'postReorder')
+            ->name('.reorder');
+    });
+
     Route::group(['as' => '.brands', 'prefix' => 'brands'], function () {
         $controller = 'AdminBrandsController@';
         Route::get('/', $controller . 'getIndex');

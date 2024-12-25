@@ -10,6 +10,7 @@ use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\Category;
 use Fanky\Admin\Models\Char;
+use Fanky\Admin\Models\Color;
 use Fanky\Admin\Models\Document;
 use Fanky\Admin\Models\Product;
 use Fanky\Admin\Models\ProductImage;
@@ -52,8 +53,8 @@ class AdminCatalogController extends AdminController
     public function postProducts($catalog_id)
     {
         $catalog = Catalog::findOrFail($catalog_id);
-//        $products = $catalog->products()->orderBy('order')->paginate(20);
-        $products = Pagination::init($catalog->products()->orderBy('order'), 20)->get();
+        $products = Pagination::init($catalog->products()->orderBy('order'), 20)
+            ->get();
 
         return view('admin::catalog.products', [
             'catalog' => $catalog,
@@ -206,9 +207,7 @@ class AdminCatalogController extends AdminController
     {
         /** @var Product $product */
         if (!$id || !($product = Product::findOrFail($id))) {
-//            $catalog_id = Request::get('catalog_id');
             $product = new Product([
-                'catalog_id' => $catalog_id,
                 'published' => 1,
                 'brand_id' => 0,
                 'in_stock' => 1,
@@ -219,7 +218,9 @@ class AdminCatalogController extends AdminController
         $current_catalog = Catalog::find($catalog_id);
         $catalogs = Catalog::getCatalogList();
 
-        $brands = Brand::all()->pluck('value', 'id');
+        $brands = Brand::pluck('value', 'id')->all();
+        $colors = Color::pluck('value', 'id')->all();
+
         $sizes = Size::all();
         $product_sizes = $product->sizes()->pluck('sizes.id')->all();
         $types = Type::all();
@@ -236,6 +237,7 @@ class AdminCatalogController extends AdminController
             'catalogs' => $catalogs,
             'current_catalog' => $current_catalog,
             'brands' => $brands,
+            'colors' => $colors,
             'sizes' => $sizes,
             'product_sizes' => $product_sizes,
             'types' => $types,
@@ -253,12 +255,13 @@ class AdminCatalogController extends AdminController
     public function postProductSave(): array
     {
         $id = Request::get('id');
-        $data = Request::except(['id', 'sizes', 'types', 'chars', 'genders', 'seasons']);
+        $data = Request::except(['id', 'sizes', 'types', 'chars', 'genders', 'seasons', 'catalog_id']);
         $sizes = Request::get('sizes');
         $types = Request::get('types');
         $genders = Request::get('genders');
         $seasons = Request::get('seasons');
         $cats = Request::get('cats');
+        $catalog_id = Request::get('catalog_id');
 
         if (!array_get($data, 'published')) {
             $data['published'] = 0;
@@ -297,8 +300,8 @@ class AdminCatalogController extends AdminController
         ];
 
         $rules['alias'] = $id
-            ? 'required|unique:products,alias,' . $id . ',id,catalog_id,' . $data['catalog_id']
-            : 'required|unique:products,alias,null,id,catalog_id,' . $data['catalog_id'];
+            ? 'required|unique:products,alias,' . $id . ',id'
+            : 'required|unique:products,alias,null,id';
         // валидация данных
         $validator = Validator::make(
             $data,
@@ -314,15 +317,15 @@ class AdminCatalogController extends AdminController
         if (!$product) {
             $data['order'] = Product::whereCatalogId($data['catalog_id'])->max('order') + 1;
             $product = Product::create($data);
-            $catalog = Catalog::find($product->catalog_id);
-
-            $catalog_product_ids = $catalog->products()->pluck('product_id')->all();
-            if (!in_array($product->id, $catalog_product_ids)) {
-                $catalog->products()->attach($product->id);
-            }
             $redirect = true;
         } else {
             $product->update($data);
+        }
+
+        $catalog = Catalog::find($catalog_id);
+        $catalog_product_ids = $catalog->products()->pluck('product_id')->all();
+        if (!in_array($product->id, $catalog_product_ids)) {
+            $catalog->products()->attach($product->id);
         }
 
         $product->sizes()->sync($sizes);

@@ -1,7 +1,9 @@
 <div class="catalog__item">
     <div class="catalog-card">
-        <a class="catalog-card__brand" href="javascript:void(0)"
-           title="{{ $product->brand->name }}">{{ $product->brand->value }}</a>
+        @if ($product->brand)
+            <a class="catalog-card__brand" href="{{ route('search-brand', ['s' => $product->brand->id]) }}"
+               title="{{ $product->brand->name }}">{{ $product->brand->value }}</a>
+        @endif
         <div class="catalog-card__id">Арт.:&nbsp;
             <span>{{ $product->article }}</span>
         </div>
@@ -14,7 +16,8 @@
         <div class="catalog-card__text">{{ $product->name }}</div>
         @if ($product->fss)
             <a class="catalog-card__fss" href="{{ route('fss') }}" data-fancybox data-type="ajax">
-                <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43" alt="Компенсация ФСС">
+                <img class="lazy" src="/" data-src="/static/images/common/fss.png" width="50" height="43"
+                     alt="Компенсация ФСС">
                 <span>Компенсация ФСС</span>
             </a>
         @endif
@@ -37,19 +40,19 @@
                 </svg>
                 <span>Быстрый просмотр</span>
             </button>
-{{--            <button class="catalog-card__action btn-reset" type="button" data-product="{{ $product->id }}"--}}
-{{--                    data-size="{{ $product->getSize() }}" --}}
-{{--                    data-create-order--}}
-{{--                    data-src="#create-order" onclick="addItemToCart(this, event)">--}}
-{{--                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32"--}}
-{{--                     height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"--}}
-{{--                     style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);">--}}
-{{--                    <path fill="currentColor"--}}
-{{--                          d="M16 3.094L7.094 12H2v6h1.25l2.781 9.281l.219.719h19.5l.219-.719L28.75 18H30v-6h-5.094zm0 2.844L22.063 12H9.938zM4 14h24v2h-.75l-.219.719L24.25 26H7.75l-2.781-9.281L4.75 16H4zm7 3v7h2v-7zm4 0v7h2v-7zm4 0v7h2v-7z"--}}
-{{--                    />--}}
-{{--                </svg>--}}
-{{--                <span>Купить</span>--}}
-{{--            </button>--}}
+            {{--            <button class="catalog-card__action btn-reset" type="button" data-product="{{ $product->id }}"--}}
+            {{--                    data-size="{{ $product->getSize() }}" --}}
+            {{--                    data-create-order--}}
+            {{--                    data-src="#create-order" onclick="addItemToCart(this, event)">--}}
+            {{--                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32"--}}
+            {{--                     height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"--}}
+            {{--                     style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);">--}}
+            {{--                    <path fill="currentColor"--}}
+            {{--                          d="M16 3.094L7.094 12H2v6h1.25l2.781 9.281l.219.719h19.5l.219-.719L28.75 18H30v-6h-5.094zm0 2.844L22.063 12H9.938zM4 14h24v2h-.75l-.219.719L24.25 26H7.75l-2.781-9.281L4.75 16H4zm7 3v7h2v-7zm4 0v7h2v-7zm4 0v7h2v-7z"--}}
+            {{--                    />--}}
+            {{--                </svg>--}}
+            {{--                <span>Купить</span>--}}
+            {{--            </button>--}}
             <a class="catalog-card__action btn-reset" href="{{ $product->getUrl() }}">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32"
                      height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"

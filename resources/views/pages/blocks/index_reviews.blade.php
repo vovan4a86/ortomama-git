@@ -6,7 +6,9 @@
                 <div class="reviews__wrapper swiper-wrapper">
                     @foreach($index_reviews as $review)
                         <div class="reviews__item swiper-slide">
-                            <div class="reviews__avatar lazy" data-bg="{{ $review->thumb(1) ?: \Fanky\Admin\Models\Review::NO_IMAGE }}"></div>
+                            @if($review->image)
+                                <div class="reviews__avatar lazy" data-bg="{{ $review->thumb(1) }}"></div>
+                            @endif
                             <div class="reviews__content">
                                 <div class="reviews__text">
                                     {{ $review->text }}

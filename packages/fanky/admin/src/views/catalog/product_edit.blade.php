@@ -37,11 +37,13 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="tab_1">
-
                 {!! Form::groupText('name', $product->name, 'Название') !!}
                 {!! Form::groupText('h1', $product->h1, 'H1') !!}
-                {!! Form::groupSelect('catalog_id', $catalogs, $product->catalog_id, 'Каталог') !!}
+                {!! Form::groupSelect('catalog_id', $catalogs, $current_catalog->id, 'Каталог') !!}
                 {!! Form::groupText('article', $product->article, 'Артикул') !!}
+                {!! Form::groupText('size', $product->size, 'Размер') !!}
+                {!! Form::groupSelect('brand_id', array_merge([0 => 'Не указано'], $brands), $product->brand_id, 'Бренд') !!}
+                {!! Form::groupSelect('color_id', array_merge([0 => 'Не указано'], $colors), $product->color_id, 'Цвет') !!}
                 {!! Form::groupText('alias', $product->alias, 'Alias') !!}
                 {!! Form::groupText('title', $product->title, 'Title') !!}
                 {!! Form::groupText('keywords', $product->keywords, 'keywords') !!}
@@ -77,7 +79,7 @@
             </div>
 
             <div class="tab-pane" id="tab_filters">
-                {!! Form::groupSelect('brand_id', $brands, $product->brand_id, 'Бренд') !!}
+{{--                {!! Form::groupSelect('brand_id', $brands, $product->brand_id, 'Бренд') !!}--}}
                 <hr>
 {{--                <label class="control-label">Размеры товара:</label>--}}
 {{--                <div style="max-width: 440px;">--}}

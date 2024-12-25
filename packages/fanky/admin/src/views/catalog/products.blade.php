@@ -20,10 +20,6 @@
            class="btn btn-sm btn-primary"
            onclick="return catalogContent(this)">Добавить новый товар</a>
 
-        <a href="{{ route('admin.catalog.productAddExist', ['catalog_id' => $catalog->id]) }}"
-           class="btn btn-sm btn-primary"
-           onclick="return catalogContent(this)">Добавить существующий товар</a>
-
         @if (count($products))
             <table class="table table-striped table-v-middle">
                 <thead>

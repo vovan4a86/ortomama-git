@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\Page;
 use Fanky\Admin\Models\Product;
@@ -289,6 +290,53 @@ class CatalogController extends Controller {
             'bread' => $bread,
             'products' => $products,
             'h1' => 'Результат поиска «' . $s . '»',
+            'keywords' => 'Поиск',
+            'description' => 'Поиск',
+            'products_count' => $products_count,
+            'per_page' => $per_page,
+        ]);
+    }
+
+    public function searchByBrand() {
+        $bread[] = [
+            'url' => route('search-brand'),
+            'name' => 'Поиск по бренду'
+        ];
+
+        $see = Request::get('see', 'all');
+        $products_inst = Product::query()->with(['brand', 'catalog', 'single_image']);
+        if (!$per_page = session('per_page')) {
+            $per_page = 6;
+            session(['per_page' => $per_page]);
+        }
+        if ($s = Request::get('s')) {
+            $brand = Brand::find($s);
+            $products_inst->where(function ($query) use ($s) {
+                /** @var QueryBuilder $query */
+                return $query->where('brand_id', $s);
+            });
+
+            if ($see == 'all' || !is_numeric($see)) {
+                $products = $products_inst->paginate(Settings::get('search_per_page'));
+            } else {
+                $products = $products_inst->paginate($see);
+                $filter_query = Request::only(['see', 'price', 'in_stock']);
+                $filter_query = array_filter($filter_query);
+                $products->appends($filter_query);
+            }
+            $h1 = 'Товары с брендом «' . $brand->value . '»';
+        } else {
+            $h1 = 'Ничего не найдено';
+            $products = collect();
+        }
+        SEOMeta::setTitle($h1);
+
+        $products_count = $products_inst->count();
+
+        return view('search.index', [
+            'bread' => $bread,
+            'products' => $products,
+            'h1' => $h1,
             'keywords' => 'Поиск',
             'description' => 'Поиск',
             'products_count' => $products_count,

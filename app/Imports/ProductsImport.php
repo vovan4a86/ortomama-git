@@ -5,6 +5,7 @@ namespace App\Imports;
 use Fanky\Admin\Models\Brand;
 use Fanky\Admin\Models\Catalog;
 use Fanky\Admin\Models\Char;
+use Fanky\Admin\Models\Color;
 use Fanky\Admin\Models\Gender;
 use Fanky\Admin\Models\Point;
 use Fanky\Admin\Models\Product;
@@ -30,7 +31,7 @@ class ProductsImport implements ToCollection, WithProgressBar,
             $row_arr = $row->toArray();
 
             $catalogs_string = trim($row_arr['kategoriia_ili_spisok_kategorii_razdelennyx']);
-            $catalog_names = array_map('trim', explode('/', $catalogs_string));
+            $catalog_names = array_map('trim', explode(';', $catalogs_string));
             $catalogs = [];
             foreach ($catalog_names as $cat_name) {
                 $catalog = $this->getCatalog($cat_name);
@@ -41,15 +42,16 @@ class ProductsImport implements ToCollection, WithProgressBar,
             $points = array_map('trim', explode('/', $points_string));
 
             $size = $row_arr['razmer'];
+            $color_name = trim($row_arr['cvet']);
             $gender = trim($row_arr['pol']);
             $brand = trim($row_arr['marka']);
             $seasons_string = $row_arr['sezon'];
             $seasons = array_map('trim', explode('/', $seasons_string));
 
             $updateData = [
-                'catalog_id' => $catalog->id,
                 'name' => trim($row_arr['nazvanie']) . ' (' . $row_arr['artikul'] . ') ' . 'р.' . $size,
                 'brand_id' => $this->getBrandId($brand),
+                'color_id' => $this->getColorId($color_name),
                 'h1' => trim($row_arr['nazvanie']),
                 'alias' => Text::translit(trim($row_arr['nazvanie']) . '_' . $row_arr['artikul'] . '_' . $size),
                 'article' => $row_arr['artikul'],
@@ -63,7 +65,6 @@ class ProductsImport implements ToCollection, WithProgressBar,
             ];
 
             $chars = [
-                'Цвет' => trim($row_arr['cvet']),
                 'Материал верха' => trim($row_arr['material_verxa']),
                 'Материал внутренней части' => trim($row_arr['material_vnutrennei_casti']),
                 'Внутренняя стелька, см' => trim($row_arr['sm_vnutrennei_stelki']),
@@ -74,8 +75,9 @@ class ProductsImport implements ToCollection, WithProgressBar,
                 'Рекомендации' => trim($row_arr['rekomendacii']),
             ];
 
-            $product = Product::where('article', $row_arr['artikul'])
-                ->where('size', $size)
+            $product = Product::whereArticle($row_arr['artikul'])
+                ->whereColorId($updateData['color_id'])
+                ->whereSize($size)
                 ->first();
             if (!$product) {
                 $product = new Product();
@@ -109,11 +111,10 @@ class ProductsImport implements ToCollection, WithProgressBar,
 
     private function getCatalog($name)
     {
-        $parent_id = 0;
-        $catalog = Catalog::whereName($name)->whereParentId($parent_id)->first();
+        $catalog = Catalog::whereName($name)->first();
         if (!$catalog) {
             $catalog = Catalog::create([
-                'parent_id' => $parent_id,
+                'parent_id' => 0,
                 'name' => $name,
                 'h1' => $name,
                 'og_title' => $name,
@@ -121,7 +122,7 @@ class ProductsImport implements ToCollection, WithProgressBar,
                 'alias' => Text::translit($name),
                 'title' => $name,
                 'published' => 1,
-                'order' => Catalog::whereParentId($parent_id)->max('order') + 1
+                'order' => Catalog::whereParentId(0)->max('order') + 1
             ]);
         } else {
             $catalog->update([
@@ -209,8 +210,8 @@ class ProductsImport implements ToCollection, WithProgressBar,
     {
         foreach ($catalogs as $cat) {
             $catalog_product_ids = $cat->products()->pluck('product_id')->all();
-            if (!in_array($product->catalog_id, $catalog_product_ids)) {
-                $cat->products()->attach($product->catalog_id);
+            if (!in_array($product->id, $catalog_product_ids)) {
+                $cat->products()->attach($product->id);
             }
         }
     }
@@ -242,10 +243,10 @@ class ProductsImport implements ToCollection, WithProgressBar,
         return $str;
     }
 
-    private function getBrandId(string $brand)
+    private function getBrandId (string $brand)
     {
         if ($brand) {
-            $b = Brand::where('value', $brand)->first();
+            $b = Brand::whereValue($brand)->first();
             if (!$b) {
                 $b = Brand::create([
                     'value' => $brand,
@@ -254,5 +255,20 @@ class ProductsImport implements ToCollection, WithProgressBar,
             }
             return $b->id;
         }
+        return 0;
+    }
+
+    private function getColorId (string $color_name) {
+        if($color_name) {
+            $color = Color::whereValue($color_name)->first();
+            if (!$color) {
+                $color = Color::create([
+                    'value' => $color_name,
+                    'order' => Color::max('order') + 1
+                ]);
+            }
+            return $color->id;
+        }
+        return 0;
     }
 }

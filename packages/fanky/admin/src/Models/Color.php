@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @method static whereValue(string $brand)
+ * @method static whereValue(string $color)
  */
-class Brand extends Model
+class Color extends Model
 {
     protected $fillable = ['value', 'order'];
 

@@ -163,6 +163,11 @@ class Product extends Model {
         return $this->belongsTo(Brand::class);
     }
 
+    public function color(): BelongsTo
+    {
+        return $this->belongsTo(Color::class);
+    }
+
     public function images(): HasMany {
         return $this->hasMany(ProductImage::class, 'product_id')
             ->orderBy('order');

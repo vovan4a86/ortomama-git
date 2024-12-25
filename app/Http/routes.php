@@ -54,6 +54,7 @@ Route::group(['middleware' => ['redirects']], function() {
     Route::any('suppliers', ['as' => 'suppliers', 'uses' => 'SuppliersController@index']);
 
     Route::any('search', ['as' => 'search', 'uses' => 'CatalogController@search']);
+    Route::any('search-brand', ['as' => 'search-brand', 'uses' => 'CatalogController@searchByBrand']);
 
     Route::any('points', ['as' => 'points', 'uses' => 'PointsController@index']);
 

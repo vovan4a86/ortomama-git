@@ -1,26 +1,26 @@
 <?php namespace Fanky\Admin\Controllers;
 
-use Fanky\Admin\Models\Brand;
+use Fanky\Admin\Models\Color;
 use Request;
 use Validator;
 use DB;
 
-class AdminBrandsController extends AdminController {
+class AdminColorsController extends AdminController {
 
 	public function getIndex()
 	{
-		$brands = Brand::orderBy('order')->get();
+		$colors = Color::orderBy('order')->get();
 
-		return view('admin::brands.main', ['brands' => $brands]);
+		return view('admin::colors.main', ['colors' => $colors]);
 	}
 
 	public function getEdit($id = null)
 	{
-		if (!$id || !($brand = Brand::findOrFail($id))) {
-			$brand = new Brand;
+		if (!$id || !($color = Color::findOrFail($id))) {
+			$color = new Color;
 		}
 
-		return view('admin::brands.edit', ['brand' => $brand]);
+		return view('admin::colors.edit', ['color' => $color]);
 	}
 
 	public function postSave(): array
@@ -40,17 +40,17 @@ class AdminBrandsController extends AdminController {
 		}
 
 		// сохраняем страницу
-		$brand = Brand::find($id);
+		$color = Color::find($id);
         $redirect = false;
-		if (!$brand) {
-			$data['order'] = Brand::max('order') + 1;
-			$brand = Brand::create($data);
+		if (!$color) {
+			$data['order'] = Color::max('order') + 1;
+			$color = Color::create($data);
             $redirect = true;
 		} else {
-            $brand->update($data);
+            $color->update($data);
 		}
         if ($redirect) {
-            return ['redirect' => route('admin.brands.edit', [$brand->id])];
+            return ['redirect' => route('admin.colors.edit', [$color->id])];
         } else {
             return ['success' => true, 'msg' => 'Изменения сохранены'];
         }
@@ -60,7 +60,7 @@ class AdminBrandsController extends AdminController {
     {
 		$sorted = Request::input('sorted', []);
 		foreach ($sorted as $order => $id) {
-			DB::table('brands')->where('id', $id)
+			DB::table('colors')->where('id', $id)
                 ->update(array('order' => $order));
 		}
 		return ['success' => true];
@@ -68,13 +68,12 @@ class AdminBrandsController extends AdminController {
 
 	public function postDelete($id): array
     {
-		$brand = Brand::find($id);
-        if (!$brand->product) {
-            $brand  ->delete();
+		$color = Color::find($id);
+        if (!$color->product) {
+            $color->delete();
             return ['success' => true];
         } else {
-            return ['success' => false, 'msg' => 'Нельзя удалить бренд, если он принадлежит одному из товаров.'];
-
+            return ['success' => false, 'msg' => 'Нельзя удалить цвет, если он принадлежит одному из товаров.'];
         }
-	}
+    }
 }
