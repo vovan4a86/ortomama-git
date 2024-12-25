@@ -13,8 +13,6 @@ class Char extends Model
 {
     protected $fillable = ['product_id', 'name', 'value', 'order'];
 
-    public $timestamps = false;
-
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

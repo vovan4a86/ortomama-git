@@ -1,4 +1,5 @@
-<?php namespace Fanky\Admin\Controllers;
+<?php
+namespace Fanky\Admin\Controllers;
 
 use App\Imports\ProductsImport;
 use Carbon\Carbon;
@@ -23,9 +24,11 @@ use Settings;
 use Text;
 use Validator;
 
-class AdminCatalogController extends AdminController {
+class AdminCatalogController extends AdminController
+{
 
-    public function getIndex() {
+    public function getIndex()
+    {
         $catalogs = Catalog::orderBy('order')->get();
 
         $last_update = Carbon::createFromTimestamp(0);
@@ -46,7 +49,8 @@ class AdminCatalogController extends AdminController {
         ]);
     }
 
-    public function postProducts($catalog_id) {
+    public function postProducts($catalog_id)
+    {
         $catalog = Catalog::findOrFail($catalog_id);
 //        $products = $catalog->products()->orderBy('order')->paginate(20);
         $products = Pagination::init($catalog->products()->orderBy('order'), 20)->get();
@@ -57,7 +61,8 @@ class AdminCatalogController extends AdminController {
         ]);
     }
 
-    public function getProducts($catalog_id) {
+    public function getProducts($catalog_id)
+    {
         $catalogs = Catalog::orderBy('order')->get();
 
         return view('admin::catalog.main', [
@@ -66,7 +71,18 @@ class AdminCatalogController extends AdminController {
         ]);
     }
 
-    public function postCatalogEdit($id = null) {
+    public function getCatalogEdit($id = null)
+    {
+        $catalogs = Catalog::orderBy('order')->get();
+
+        return view('admin::catalog.main', [
+            'catalogs' => $catalogs,
+            'content' => $this->postCatalogEdit($id)
+        ]);
+    }
+
+    public function postCatalogEdit($id = null)
+    {
         /** @var Catalog $catalog */
         if (!$id || !($catalog = Catalog::findOrFail($id))) {
             $catalog = new Catalog([
@@ -89,32 +105,40 @@ class AdminCatalogController extends AdminController {
         ]);
     }
 
-    public function getCatalogEdit($id = null) {
-        $catalogs = Catalog::orderBy('order')->get();
-
-        return view('admin::catalog.main', [
-            'catalogs' => $catalogs,
-            'content' => $this->postCatalogEdit($id)
-        ]);
-    }
-
-    public function postCatalogSave(): array {
+    public function postCatalogSave(): array
+    {
         $id = Request::input('id');
         $data = Request::except(['id']);
-        if (!array_get($data, 'alias')) $data['alias'] = Text::translit($data['name']);
-        if (!array_get($data, 'title')) $data['title'] = $data['name'];
-        if (!array_get($data, 'h1')) $data['h1'] = $data['name'];
-        if (!array_get($data, 'on_main')) $data['on_main'] = 0;
-        if (!array_get($data, 'on_menu')) $data['on_menu'] = 0;
-        if (!array_get($data, 'on_footer_menu')) $data['on_footer_menu'] = 0;
-        if (!array_get($data, 'discount_delivery')) $data['discount_delivery'] = 0;
+        if (!array_get($data, 'alias')) {
+            $data['alias'] = Text::translit($data['name']);
+        }
+        if (!array_get($data, 'title')) {
+            $data['title'] = $data['name'];
+        }
+        if (!array_get($data, 'h1')) {
+            $data['h1'] = $data['name'];
+        }
+        if (!array_get($data, 'on_main')) {
+            $data['on_main'] = 0;
+        }
+        if (!array_get($data, 'on_menu')) {
+            $data['on_menu'] = 0;
+        }
+        if (!array_get($data, 'on_footer_menu')) {
+            $data['on_footer_menu'] = 0;
+        }
+        if (!array_get($data, 'discount_delivery')) {
+            $data['discount_delivery'] = 0;
+        }
         $image = Request::file('image');
 
         // валидация данных
         $validator = Validator::make(
-            $data, [
-            'name' => 'required',
-        ]);
+            $data,
+            [
+                'name' => 'required',
+            ]
+        );
         if ($validator->fails()) {
             return ['errors' => $validator->messages()];
         }
@@ -142,7 +166,19 @@ class AdminCatalogController extends AdminController {
         }
     }
 
-    public function postCatalogReorder(): array {
+    /**
+     * @throws Exception
+     */
+    public function postCatalogDelete($id): array
+    {
+        $catalog = Catalog::findOrFail($id);
+        $catalog->delete();
+
+        return ['success' => true];
+    }
+
+    public function postCatalogReorder(): array
+    {
         // изменение родителя
         $id = Request::input('id');
         $parent = Request::input('parent');
@@ -156,31 +192,31 @@ class AdminCatalogController extends AdminController {
         return ['success' => true];
     }
 
-    /**
-     * @throws Exception
-     */
-    public function postCatalogDelete($id): array {
-        $catalog = Catalog::findOrFail($id);
-        $catalog->delete();
+    public function getProductEdit($catalog_id, $id = null)
+    {
+        $catalogs = Catalog::orderBy('order')->get();
 
-        return ['success' => true];
+        return view('admin::catalog.main', [
+            'catalogs' => $catalogs,
+            'content' => $this->postProductEdit($catalog_id, $id)
+        ]);
     }
 
-    public function postProductEdit($catalog_id, $id = null) {
+    public function postProductEdit($catalog_id, $id = null)
+    {
         /** @var Product $product */
         if (!$id || !($product = Product::findOrFail($id))) {
 //            $catalog_id = Request::get('catalog_id');
-            $product = Product::create([
+            $product = new Product([
                 'catalog_id' => $catalog_id,
                 'published' => 1,
                 'brand_id' => 0,
                 'in_stock' => 1,
                 'order' => Product::where('catalog_id', $catalog_id)->max('order') + 1
             ]);
-            $product->save();
         }
 
-        $current_catalog = $product->catalog()->whereCatalogId($catalog_id)->first();
+        $current_catalog = Catalog::find($catalog_id);
         $catalogs = Catalog::getCatalogList();
 
         $brands = Brand::all()->pluck('value', 'id');
@@ -214,16 +250,8 @@ class AdminCatalogController extends AdminController {
         return view('admin::catalog.product_edit', $data);
     }
 
-    public function getProductEdit($catalog_id, $id = null) {
-        $catalogs = Catalog::orderBy('order')->get();
-
-        return view('admin::catalog.main', [
-            'catalogs' => $catalogs,
-            'content' => $this->postProductEdit($catalog_id, $id)
-        ]);
-    }
-
-    public function postProductSave(): array {
+    public function postProductSave(): array
+    {
         $id = Request::get('id');
         $data = Request::except(['id', 'sizes', 'types', 'chars', 'genders', 'seasons']);
         $sizes = Request::get('sizes');
@@ -232,11 +260,21 @@ class AdminCatalogController extends AdminController {
         $seasons = Request::get('seasons');
         $cats = Request::get('cats');
 
-        if (!array_get($data, 'published')) $data['published'] = 0;
-        if (!array_get($data, 'alias')) $data['alias'] = Text::translit($data['name']);
-        if (!array_get($data, 'title')) $data['title'] = $data['name'];
-        if (!array_get($data, 'h1')) $data['h1'] = $data['name'];
-        if (!array_get($data, 'fss')) $data['fss'] = 0;
+        if (!array_get($data, 'published')) {
+            $data['published'] = 0;
+        }
+        if (!array_get($data, 'alias')) {
+            $data['alias'] = Text::translit($data['name']);
+        }
+        if (!array_get($data, 'title')) {
+            $data['title'] = $data['name'];
+        }
+        if (!array_get($data, 'h1')) {
+            $data['h1'] = $data['name'];
+        }
+        if (!array_get($data, 'fss')) {
+            $data['fss'] = 0;
+        }
 
         //сохраняем Характеристики
         $param_data = Request::get('chars', []);
@@ -246,15 +284,16 @@ class AdminCatalogController extends AdminController {
         $params = [];
         foreach ($param_ids as $key => $param_id) {
             $params[] = [
-                'id'	=> $param_id,
-                'name'	=> trim(array_get($param_names, $key)),
-                'value'	=> trim(array_get($param_values, $key)),
+                'id' => $param_id,
+                'name' => trim(array_get($param_names, $key)),
+                'value' => trim(array_get($param_values, $key)),
             ];
         }
         array_pop($params);
 
         $rules = [
-            'name' => 'required'
+            'name' => 'required',
+            'size' => 'required'
         ];
 
         $rules['alias'] = $id
@@ -262,7 +301,8 @@ class AdminCatalogController extends AdminController {
             : 'required|unique:products,alias,null,id,catalog_id,' . $data['catalog_id'];
         // валидация данных
         $validator = Validator::make(
-            $data, $rules
+            $data,
+            $rules
         );
         if ($validator->fails()) {
             return ['errors' => $validator->messages()];
@@ -272,13 +312,19 @@ class AdminCatalogController extends AdminController {
         // сохраняем страницу
         $product = Product::find($id);
         if (!$product) {
-//            $data['order'] = Product::where('catalog_id', $data['catalog_id'])->max('order') + 1;
+            $data['order'] = Product::whereCatalogId($data['catalog_id'])->max('order') + 1;
             $product = Product::create($data);
+            $catalog = Catalog::find($product->catalog_id);
+
+            $catalog_product_ids = $catalog->products()->pluck('product_id')->all();
+            if (!in_array($product->id, $catalog_product_ids)) {
+                $catalog->products()->attach($product->id);
+            }
             $redirect = true;
         } else {
             $product->update($data);
         }
-        $product->article = $product->makeArticle($product->id);
+
         $product->sizes()->sync($sizes);
         $product->types()->sync($types);
         $product->genders()->sync($genders);
@@ -288,7 +334,9 @@ class AdminCatalogController extends AdminController {
         $start_update = Carbon::now();
         foreach ($params as $key => $char) {
             $p = Char::findOrNew(array_get($char, 'id'));
-            if(!$p->id) $redirect = false;
+            if (!$p->id) {
+                $redirect = false;
+            }
             $char['product_id'] = $product->id;
             $char['order'] = $key;
             $char['updated_at'] = $start_update;
@@ -299,11 +347,17 @@ class AdminCatalogController extends AdminController {
             ->delete();
 
         return $redirect
-            ? ['redirect' => route('admin.catalog.productEdit', [$product->id])]
+            ? [
+                'redirect' => route('admin.catalog.productEdit', [
+                    'catalog_id' => $product->catalog_id,
+                    'id' => $product->id
+                ])
+            ]
             : ['success' => true, 'msg' => 'Изменения сохранены'];
     }
 
-    public function postProductReorder(): array {
+    public function postProductReorder(): array
+    {
         $sorted = Request::input('sorted', []);
         foreach ($sorted as $order => $id) {
             DB::table('products')->where('id', $id)->update(array('order' => $order));
@@ -312,33 +366,42 @@ class AdminCatalogController extends AdminController {
         return ['success' => true];
     }
 
-    public function postUpdateOrder($id): array {
+    public function postUpdateOrder($id): array
+    {
         $order = Request::get('order');
         Product::whereId($id)->update(['order' => $order]);
 
         return ['success' => true];
     }
 
-    public function postProductDelete($id): array {
-        $product = Product::findOrFail($id);
-        foreach ($product->images as $item) {
-            $item->deleteImage();
-            $item->delete();
+    public function postProductDelete($catalog_id, $id): array
+    {
+        $product = Product::whereCatalogId($catalog_id)->whereId($id)->first();
+        if (count($product->images)) {
+            foreach ($product->images as $item) {
+                $item->deleteImage();
+                $item->delete();
+            }
         }
+        $c = Catalog::find($catalog_id);
+        $c->products()->detach($id);
         $product->delete();
 
         return ['success' => true];
     }
 
-    public function postProductImageUpload($product_id): array {
+    public function postProductImageUpload($product_id): array
+    {
         $product = Product::findOrFail($product_id);
         $images = Request::file('images');
         $items = [];
-        if ($images) foreach ($images as $image) {
-            $file_name = ProductImage::uploadImage($image);
-            $order = ProductImage::where('product_id', $product_id)->max('order') + 1;
-            $item = ProductImage::create(['product_id' => $product_id, 'image' => $file_name, 'order' => $order]);
-            $items[] = $item;
+        if ($images) {
+            foreach ($images as $image) {
+                $file_name = ProductImage::uploadImage($image);
+                $order = ProductImage::where('product_id', $product_id)->max('order') + 1;
+                $item = ProductImage::create(['product_id' => $product_id, 'image' => $file_name, 'order' => $order]);
+                $items[] = $item;
+            }
         }
 
         $html = '';
@@ -349,7 +412,8 @@ class AdminCatalogController extends AdminController {
         return ['html' => $html];
     }
 
-    public function postProductImageOrder(): array {
+    public function postProductImageOrder(): array
+    {
         $sorted = Request::get('sorted', []);
         foreach ($sorted as $order => $id) {
             ProductImage::whereId($id)->update(['order' => $order]);
@@ -361,7 +425,8 @@ class AdminCatalogController extends AdminController {
     /**
      * @throws Exception
      */
-    public function postProductImageDelete($id): array {
+    public function postProductImageDelete($id): array
+    {
         /** @var ProductImage $item */
         $item = ProductImage::findOrFail($id);
         $item->deleteImage();
@@ -370,7 +435,8 @@ class AdminCatalogController extends AdminController {
         return ['success' => true];
     }
 
-    public function getGetCatalogs($id = 0): array {
+    public function getGetCatalogs($id = 0): array
+    {
         $catalogs = Catalog::whereParentId($id)->orderBy('order')->get();
         $result = [];
         foreach ($catalogs as $catalog) {
@@ -386,14 +452,17 @@ class AdminCatalogController extends AdminController {
         return $result;
     }
 
-    public function postProductDocUpload($product_id): array {
+    public function postProductDocUpload($product_id): array
+    {
         $docs = Request::file('docs');
         $items = [];
-        if ($docs) foreach ($docs as $doc) {
-            $file_name = Document::uploadFile($doc);
-            $order = Document::where('product_id', $product_id)->max('order') + 1;
-            $item = Document::create(['product_id' => $product_id, 'src' => $file_name, 'order' => $order]);
-            $items[] = $item;
+        if ($docs) {
+            foreach ($docs as $doc) {
+                $file_name = Document::uploadFile($doc);
+                $order = Document::where('product_id', $product_id)->max('order') + 1;
+                $item = Document::create(['product_id' => $product_id, 'src' => $file_name, 'order' => $order]);
+                $items[] = $item;
+            }
         }
 
         $html = '';
@@ -404,7 +473,8 @@ class AdminCatalogController extends AdminController {
         return ['html' => $html];
     }
 
-    public function postProductDocOrder(): array {
+    public function postProductDocOrder(): array
+    {
         $sorted = Request::get('sorted', []);
         foreach ($sorted as $order => $id) {
             Document::whereId($id)->update(['order' => $order]);
@@ -413,7 +483,8 @@ class AdminCatalogController extends AdminController {
         return ['success' => true];
     }
 
-    public function postProductDocDelete($id): array {
+    public function postProductDocDelete($id): array
+    {
         $item = Document::findOrFail($id);
         $item->deleteSrcFile();
         $item->delete();
@@ -421,12 +492,14 @@ class AdminCatalogController extends AdminController {
         return ['success' => true];
     }
 
-    public function postProductDocEdit($id) {
+    public function postProductDocEdit($id)
+    {
         $doc = Document::findOrFail($id);
         return view('admin::catalog.product_doc_edit', ['doc' => $doc]);
     }
 
-    public function postProductDocDataSave($id) {
+    public function postProductDocDataSave($id)
+    {
         $image = Document::findOrFail($id);
         $data = Request::only('name');
         $image->name = $data['name'];
@@ -435,11 +508,11 @@ class AdminCatalogController extends AdminController {
     }
 
     //export|import
-    public function getExportFile()
-    {
-        return response()
-            ->download('export/ortomama-price.xlsx', null, ['Cache-Control' => 'no-cache, must-revalidate']);
-    }
+//    public function getExportFile()
+//    {
+//        return response()
+//            ->download('export/ortomama-price.xlsx', null, ['Cache-Control' => 'no-cache, must-revalidate']);
+//    }
 
     public function postImportPrice()
     {

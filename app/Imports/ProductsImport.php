@@ -24,8 +24,6 @@ class ProductsImport implements ToCollection, WithProgressBar,
 {
     use Importable;
 
-    private $catalogCache = [];
-
     public function collection(Collection $rows)
     {
         foreach ($rows as $i => $row) {
@@ -79,14 +77,14 @@ class ProductsImport implements ToCollection, WithProgressBar,
             $product = Product::where('article', $row_arr['artikul'])
                 ->where('size', $size)
                 ->first();
-            if(!$product){
+            if (!$product) {
                 $product = new Product();
                 $updateData['order'] = $catalog->products()->max('order') + 1;
             }
             $product->fill($updateData);
             $product->save();
-            $catalog->products()->attach($product->id);
 
+            $this->syncCatalogsWithProduct($catalogs, $product);
             $this->syncPointsWithProduct($product, $points);
             $this->syncGenderWithProduct($product, $gender);
             $this->syncSeasonsWithProduct($product, $seasons);
@@ -94,7 +92,7 @@ class ProductsImport implements ToCollection, WithProgressBar,
             foreach ($chars as $name => $value) {
                 if ($value) {
                     $ch = Char::whereProductId($product->id)->whereName($name)->first();
-                    if(!$ch) {
+                    if (!$ch) {
                         Char::create([
                             'product_id' => $product->id,
                             'name' => $name,
@@ -135,21 +133,23 @@ class ProductsImport implements ToCollection, WithProgressBar,
         return $catalog;
     }
 
-    private function generateAlias($product): string {
+    private function generateAlias($product): string
+    {
         $result = $alias = Text::translit($product->name);
         $i = 1;
-        while(Product::where('catalog_id', $product->catalog_id)->where('alias', $result)->exists()){
+        while (Product::where('catalog_id', $product->catalog_id)->where('alias', $result)->exists()) {
             $result = $alias . '_' . $i++;
         }
 
         return $result;
     }
 
-    public function registerEvents(): array {
+    public function registerEvents(): array
+    {
         return [
-            AfterImport::class => function(AfterImport $event) {
-                Artisan::call('export:products');
-            }
+//            AfterImport::class => function(AfterImport $event) {
+//                Artisan::call('export:products');
+//            }
         ];
     }
 
@@ -160,7 +160,7 @@ class ProductsImport implements ToCollection, WithProgressBar,
             foreach ($points as $point) {
                 $address = $this->getPointAddressFromString($point);
                 $p = Point::where('address', $address)->first();
-                if(!$p) {
+                if (!$p) {
                     $p = Point::create([
                         'name' => $this->getPointNameFromString($point),
                         'address' => $address,
@@ -173,10 +173,11 @@ class ProductsImport implements ToCollection, WithProgressBar,
         }
     }
 
-    private function syncGenderWithProduct(Product $product, string $gender) {
+    private function syncGenderWithProduct(Product $product, string $gender): void
+    {
         if ($gender) {
             $g = Gender::where('value', $gender)->first();
-            if(!$g) {
+            if (!$g) {
                 $g = Gender::create([
                     'value' => $gender,
                     'order' => Gender::max('order') + 1
@@ -186,12 +187,13 @@ class ProductsImport implements ToCollection, WithProgressBar,
         }
     }
 
-    private function syncSeasonsWithProduct(Product $product, array $seasons) {
+    private function syncSeasonsWithProduct(Product $product, array $seasons): void
+    {
         if (count($seasons)) {
             $ids = [];
             foreach ($seasons as $season) {
                 $s = Season::where('value', $season)->first();
-                if(!$s) {
+                if (!$s) {
                     $s = Season::create([
                         'value' => $season,
                         'order' => Season::max('order') + 1
@@ -203,23 +205,35 @@ class ProductsImport implements ToCollection, WithProgressBar,
         }
     }
 
-    private function getPointNameFromString(string $str) {
+    private function syncCatalogsWithProduct(array $catalogs, Product $product): void
+    {
+        foreach ($catalogs as $cat) {
+            $catalog_product_ids = $cat->products()->pluck('product_id')->all();
+            if (!in_array($product->catalog_id, $catalog_product_ids)) {
+                $cat->products()->attach($product->catalog_id);
+            }
+        }
+    }
+
+    private function getPointNameFromString(string $str): string
+    {
         $i_start = stripos($str, '(');
         $i_end = stripos($str, ')');
 
-        if($i_start && $i_end) {
+        if ($i_start && $i_end) {
             return substr($str, $i_start + 1, $i_end - $i_start - 1);
         }
 
         return '-';
     }
 
-    private function getPointAddressFromString(string $str) {
+    private function getPointAddressFromString(string $str): string
+    {
         $i_start = stripos($str, '(');
         $i_end = stripos($str, ')');
 
-        if($i_start && $i_end) {
-            $cut_name = substr($str,$i_start, $i_end - $i_start + 1);
+        if ($i_start && $i_end) {
+            $cut_name = substr($str, $i_start, $i_end - $i_start + 1);
             if ($cut_name) {
                 return (trim(str_replace($cut_name, '', $str)));
             }
@@ -228,7 +242,8 @@ class ProductsImport implements ToCollection, WithProgressBar,
         return $str;
     }
 
-    private function getBrandId(string $brand) {
+    private function getBrandId(string $brand)
+    {
         if ($brand) {
             $b = Brand::where('value', $brand)->first();
             if (!$b) {

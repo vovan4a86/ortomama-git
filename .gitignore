@@ -11,3 +11,4 @@
 /composer.lock
 .yarn
 /resources/price.xlsx
+/resources/.last_update

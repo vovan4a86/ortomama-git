@@ -240,14 +240,14 @@ class Product extends Model {
         return $this->_url;
     }
 
-    public function getUrl($catalog_id = null) {
+    public function getUrl($catalog_id = null): string
+    {
         if ($catalog_id) {
-            $catalog_url = $this->catalog()->whereCatalogId($catalog_id)->first()->url;
+            $c = Catalog::find($catalog_id);
+            return  $c->url . '/' . $this->id;
         } else {
-            $catalog_url = $this->catalog->first()->url;
+            return '';
         }
-
-        return $catalog_url . '/' . $this->id;
     }
 
     public function getParents(Catalog $catalog, $with_self = false, $reverse = false): array {

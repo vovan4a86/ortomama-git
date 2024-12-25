@@ -88,6 +88,9 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		Route::get('{catalog_id}/product-edit/{id?}', $controller . 'getProductEdit')
 			->name('.productEdit');
 
+		Route::get('{catalog_id}/product-add-exist/{id?}', $controller . 'getProductAddExist')
+			->name('.productAddExist');
+
 		Route::post('product-save', $controller . 'postProductSave')
 			->name('.productSave');
 

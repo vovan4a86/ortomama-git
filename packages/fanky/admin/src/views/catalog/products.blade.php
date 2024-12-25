@@ -18,7 +18,11 @@
     <div class="box-body">
         <a href="{{ route('admin.catalog.productEdit', ['catalog_id' => $catalog->id]) }}"
            class="btn btn-sm btn-primary"
-           onclick="return catalogContent(this)">Добавить товар</a>
+           onclick="return catalogContent(this)">Добавить новый товар</a>
+
+        <a href="{{ route('admin.catalog.productAddExist', ['catalog_id' => $catalog->id]) }}"
+           class="btn btn-sm btn-primary"
+           onclick="return catalogContent(this)">Добавить существующий товар</a>
 
         @if (count($products))
             <table class="table table-striped table-v-middle">
@@ -26,6 +30,7 @@
                 <tr>
                     <th width="100"></th>
                     <th>Название</th>
+                    <th width="60">Размер</th>
                     <th width="130">Сортировка</th>
                     <th width="50"></th>
                 </tr>
@@ -35,11 +40,13 @@
                     <tr data-id="{{ $item->id }}">
                         <td>
                             @if ($img = $item->single_image)
-                                <img src="{{ $img->thumb(1) }}" height="100" width="100">
+                                <img src="{{ $img->thumb(1) }}" height="100" width="100" alt="photo">
                             @endif
                         </td>
                         <td><a href="{{ route('admin.catalog.productEdit', ['catalog_id' => $catalog->id, 'id' => $item->id]) }}"
-                               onclick="return catalogContent(this)" style="{{ $item->published != 1 ? 'text-decoration:line-through;' : '' }}">{{ $item->name }}</a></td>
+                               onclick="return catalogContent(this)" style="{{ $item->published != 1 ? 'text-decoration:line-through;' : '' }}">{{ $item->name }}</a>
+                        </td>
+                        <td width="80">{{ $item->size }}</td>
                         <td>
                             <form class="input-group input-group-sm"
                                   action="{{ route('admin.catalog.update-order', [$item->id]) }}"
@@ -53,7 +60,8 @@
                             </form>
                         </td>
                         <td>
-                            <a class="glyphicon glyphicon-trash" href="{{ route('admin.catalog.productDel', ['catalog_id' => $catalog->id, 'id' => $item->id]) }}"
+                            <a class="glyphicon glyphicon-trash"
+                               href="{{ route('admin.catalog.productDel', ['catalog_id' => $catalog->id, 'id' => $item->id]) }}"
                                style="font-size:20px; color:red;" title="Удалить" onclick="return productDel(this)"></a>
                         </td>
                     </tr>
