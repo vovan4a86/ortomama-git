@@ -16,6 +16,7 @@
 
 <form action="{{ route('admin.catalog.productSave') }}" onsubmit="return productSave(this, event)">
     {!! Form::hidden('id', $product->id) !!}
+    {!! Form::hidden('catalog_id', $current_catalog->id) !!}
 
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
@@ -39,7 +40,8 @@
             <div class="tab-pane active" id="tab_1">
                 {!! Form::groupText('name', $product->name, 'Название') !!}
                 {!! Form::groupText('h1', $product->h1, 'H1') !!}
-                {!! Form::groupSelect('catalog_id', $catalogs, $current_catalog->id, 'Каталог') !!}
+                {!! Form::groupSelect('selected_catalog_ids[]', $catalogs, $pinned_catalogs, 'Каталог', ['multiple']) !!}
+{{--                {!! Form::groupMultiSelect('catalog_id', $catalogs, $pinned_catalogs, 'Каталог') !!}--}}
                 {!! Form::groupText('article', $product->article, 'Артикул') !!}
                 {!! Form::groupText('size', $product->size, 'Размер') !!}
                 {!! Form::groupSelect('brand_id', array_merge([0 => 'Не указано'], $brands), $product->brand_id, 'Бренд') !!}

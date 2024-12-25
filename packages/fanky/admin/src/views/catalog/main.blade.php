@@ -4,6 +4,8 @@
 	<script type="text/javascript" src="/adminlte/plugins/ckeditor/ckeditor.js"></script>
     <script type="text/javascript" src="/adminlte/plugins/jstree/dist/jstree.min.js"></script>
     <link href="/adminlte/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+{{--	<script type="text/javascript" src="/adminlte/plugins/multiselect/js/bootstrap-multiselect.min.js"></script>--}}
+{{--	<link href="/adminlte/plugins/multiselect/css/bootstrap-multiselect.min.css" rel="stylesheet" type="text/css" />--}}
 	<script type="text/javascript" src="/adminlte/interface_catalog.js"></script>
 @stop
 

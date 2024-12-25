@@ -31,6 +31,7 @@ class AdminServiceProvider extends ServiceProvider {
 		FormBuilder::component('groupTextarea', 'admin::components.form_block.textarea', ['name', 'value' => null, 'label' => null, 'attributes' => []]);
 		FormBuilder::component('groupNumber', 'admin::components.form_block.number', ['name', 'value' => null, 'label' => null, 'attributes' => []]);
 		FormBuilder::component('groupSelect', 'admin::components.form_block.select', ['name', 'list' => null, 'value' => null, 'label' => null, 'attributes' => []]);
+		FormBuilder::component('groupMultiSelect', 'admin::components.form_block.multi_select', ['name', 'list' => null, 'values' => null, 'label' => null, 'attributes' => []]);
 		FormBuilder::component('groupCheckbox', 'admin::components.form_block.checkbox', ['name', 'value' => null, 'checked' => null, 'label' => null, 'attributes' => []]);
     }
 

@@ -88,8 +88,6 @@ class AdminCatalogController extends AdminController
         if (!$id || !($catalog = Catalog::findOrFail($id))) {
             $catalog = new Catalog([
                 'parent_id' => Request::get('parent'),
-                'text_prev' => Settings::get('catalog_text_prev_template'),
-                'text_after' => Settings::get('catalog_text_after_template'),
                 'published' => 1
             ]);
         }
@@ -97,12 +95,10 @@ class AdminCatalogController extends AdminController
             ->where('id', '!=', $catalog->id)
             ->get();
 
-        $catalogProducts = $catalog->getRecurseProducts()->orderBy('name')->pluck('id', 'name')->all();
 
         return view('admin::catalog.catalog_edit', [
             'catalog' => $catalog,
-            'catalogs' => $catalogs,
-            'catalogProducts' => $catalogProducts,
+            'catalogs' => $catalogs
         ]);
     }
 
@@ -211,11 +207,12 @@ class AdminCatalogController extends AdminController
                 'published' => 1,
                 'brand_id' => 0,
                 'in_stock' => 1,
-                'order' => Product::where('catalog_id', $catalog_id)->max('order') + 1
+//                'order' => Product::where('catalog_id', $catalog_id)->max('order') + 1
             ]);
         }
 
         $current_catalog = Catalog::find($catalog_id);
+        $pinned_catalogs = $product->catalog ? $product->catalog->pluck('id')->all() : [];
         $catalogs = Catalog::getCatalogList();
 
         $brands = Brand::pluck('value', 'id')->all();
@@ -247,7 +244,8 @@ class AdminCatalogController extends AdminController
             'genders' => $genders,
             'product_genders' => $product_genders,
             'cats' => $cats,
-            'product_cats' => $product_cats
+            'product_cats' => $product_cats,
+            'pinned_catalogs' => $pinned_catalogs
         ];
         return view('admin::catalog.product_edit', $data);
     }
@@ -255,13 +253,18 @@ class AdminCatalogController extends AdminController
     public function postProductSave(): array
     {
         $id = Request::get('id');
-        $data = Request::except(['id', 'sizes', 'types', 'chars', 'genders', 'seasons', 'catalog_id']);
+        $data = Request::except(['id', 'sizes', 'types', 'chars', 'genders', 'seasons', 'catalog_id', 'selected_catalog_ids']);
         $sizes = Request::get('sizes');
         $types = Request::get('types');
         $genders = Request::get('genders');
         $seasons = Request::get('seasons');
         $cats = Request::get('cats');
         $catalog_id = Request::get('catalog_id');
+        $selected_catalog_ids = Request::get('selected_catalog_ids');
+        if(!isset($selected_catalog_ids[$catalog_id])) {
+            $selected_catalog_ids[] = $catalog_id;
+        }
+
 
         if (!array_get($data, 'published')) {
             $data['published'] = 0;
@@ -322,12 +325,7 @@ class AdminCatalogController extends AdminController
             $product->update($data);
         }
 
-        $catalog = Catalog::find($catalog_id);
-        $catalog_product_ids = $catalog->products()->pluck('product_id')->all();
-        if (!in_array($product->id, $catalog_product_ids)) {
-            $catalog->products()->attach($product->id);
-        }
-
+        $product->catalog()->sync($selected_catalog_ids);
         $product->sizes()->sync($sizes);
         $product->types()->sync($types);
         $product->genders()->sync($genders);
