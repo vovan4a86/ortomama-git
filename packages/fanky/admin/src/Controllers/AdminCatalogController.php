@@ -485,7 +485,8 @@ class AdminCatalogController extends AdminController
             $has_children = (bool)$catalog->children()->count();
             $result[] = [
                 'id' => $catalog->id,
-                'text' => $catalog->name,
+                'text' => mb_strimwidth($catalog->name, 0, 46, '...'),
+                'title' => $catalog->name,
                 'children' => $has_children,
                 'icon' => ($catalog->published) ? 'fa fa-eye text-green' : 'fa fa-eye-slash text-muted',
             ];

@@ -263,12 +263,12 @@ $(document).ready(function () {
         parent =  treeInst.get_node( data.parent );
         var d = {
             'id':   data.node.id,
-            'parent': (data.parent == '#')? 0: data.parent,
+            'parent': (data.parent === '#')? 0: data.parent,
             'sorted': parent.children
         };
         sendAjax('/admin/catalog/catalog-reorder', d);
     }).on("activate_node.jstree", function(e,data){
-        if(data.event.button == 0){
+        if(data.event.button === 0){
             window.location.href = '/admin/catalog/products/' + data.node.id;
         }
     });
