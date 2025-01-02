@@ -122,6 +122,12 @@ class Product extends Model {
         return $this->belongsToMany(Catalog::class);
     }
 
+    public function getAllCatalogsString(): string
+    {
+        $catalogs_arr = $this->catalog()->pluck('name')->toArray();
+        return implode(', ', $catalogs_arr);
+    }
+
     public function sizes(): BelongsToMany
     {
         return $this->belongsToMany(Size::class)

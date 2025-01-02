@@ -81,17 +81,6 @@
             </div>
 
             <div class="tab-pane" id="tab_filters">
-{{--                {!! Form::groupSelect('brand_id', $brands, $product->brand_id, 'Бренд') !!}--}}
-                <hr>
-{{--                <label class="control-label">Размеры товара:</label>--}}
-{{--                <div style="max-width: 440px;">--}}
-{{--                    @foreach($sizes as $size)--}}
-{{--                        <input type="checkbox" name="sizes[]" id="size_{{ $size->value }}" value="{{$size->id}}"--}}
-{{--                                {{ in_array($size->id, $product_sizes) ? 'checked' : '' }}>--}}
-{{--                        <label for="size_{{ $size->value }}" style="margin-right: 10px;">{{$size->value}}</label>--}}
-{{--                    @endforeach--}}
-{{--                </div>--}}
-                <hr>
                 <label class="control-label">Сезонность:</label>
                 <div style="max-width: 440px;">
                     @foreach($seasons as $season)

@@ -52,14 +52,32 @@ class AdminCatalogController extends AdminController
 
     public function postProducts($catalog_id)
     {
+        $per_page = Request::get('per_page');
+        if (!$per_page) {
+            $per_page = session('per_page', 50);
+        }
         $catalog = Catalog::findOrFail($catalog_id);
-        $products = Pagination::init($catalog->products()->orderBy('order'), 20)
-            ->get();
+        $products = $catalog->products()->orderBy('order');
+        if ($q = Request::get('q')) {
+            $products->where(
+                function ($query) use ($q) {
+                    $query->orWhere('name', 'LIKE', '%' . $q . '%')
+                        ->orWhere('article', 'LIKE', '%' . $q . '%');
+                }
+            );
+        }
+        $products = $products->paginate($per_page);
+        $catalog_list = Catalog::getCatalogList();
+        session(['per_page' => $per_page]);
 
-        return view('admin::catalog.products', [
-            'catalog' => $catalog,
-            'products' => $products
-        ]);
+        return view(
+            'admin::catalog.products',
+            [
+                'catalog' => $catalog,
+                'products' => $products,
+                'catalog_list' => $catalog_list
+            ]
+        );
     }
 
     public function getProducts($catalog_id)
@@ -377,15 +395,38 @@ class AdminCatalogController extends AdminController
 
     public function postProductDelete($catalog_id, $id): array
     {
-        $product = Product::whereCatalogId($catalog_id)->whereId($id)->first();
+        $product = Product::find($id);
+        $c = Catalog::find($catalog_id);
         if (count($product->images)) {
             foreach ($product->images as $item) {
                 $item->deleteImage();
                 $item->delete();
             }
         }
-        $c = Catalog::find($catalog_id);
+
         $c->products()->detach($id);
+
+        if($product->catalog()->count() == 0) {
+            $product->delete();
+        }
+
+        return ['success' => true];
+    }
+
+    public function postProductDeleteFromAllCategories($id): array
+    {
+        $product = Product::find($id);
+        if (count($product->images)) {
+            foreach ($product->images as $item) {
+                $item->deleteImage();
+                $item->delete();
+            }
+        }
+
+        foreach ($product->catalog as $catalog) {
+            $catalog->products()->detach($id);
+        }
+
         $product->delete();
 
         return ['success' => true];
@@ -551,5 +592,113 @@ class AdminCatalogController extends AdminController
                 return view('admin::catalog.main', ['catalogs' => $catalogs, 'content' => $content]);
             }
         }
+    }
+
+    //search
+    public function search()
+    {
+        $q = Request::get('q');
+        if (!$q) {
+            $products = [];
+        } else {
+            $products = Product::query()->where(
+                function ($query) use ($q) {
+                    $query->orWhere('name', 'LIKE', '%' . $q . '%');
+                }
+            )->with('catalog')->paginate(50)->appends(['q' => $q]);
+        }
+        $catalogs = Catalog::orderBy('order')->get();
+        $catalog_list = Catalog::getCatalogList();
+        $content = view(
+            'admin::catalog.search',
+            compact('catalogs', 'catalog_list', 'products')
+        )->render();
+        return view(
+            'admin::catalog.main',
+            compact('content', 'catalogs')
+        );
+    }
+
+    //mass
+    public function postMoveProducts($current_catalog_id)
+    {
+        $current_catalog = Catalog::findOrFail($current_catalog_id);
+        $move_catalog_id = Request::get('catalog_id');
+        $item_ids = Request::get('items', []);
+
+        if (!$current_catalog || !$move_catalog_id) {
+            return ['success' => false, 'msg' => 'Не указан ID каталога'];
+        }
+
+        $move_catalog = Catalog::findOrFail($move_catalog_id);
+        foreach ($item_ids as $item_id) {
+            $current_catalog->products()->detach($item_id);
+            $move_catalog->products()->attach($item_id);
+        }
+
+        return ['success' => true];
+    }
+
+    public function postDeleteProducts()
+    {
+        $item_ids = Request::get('items', []);
+        if ($item_ids) {
+            $products = Product::whereIn('id', $item_ids)->get();
+            foreach ($products as $product) {
+                $product->additional_catalogs()->detach();
+                $product->delete();
+            }
+        }
+
+        return ['success' => true];
+    }
+
+    public function postDeleteProductsImage()
+    {
+        $item_ids = Request::get('items', []);
+        if ($item_ids) {
+            $products = Product::whereIn('id', $item_ids)->get();
+            foreach ($products as $product) {
+                $images = $product->images;
+
+                if ($images) {
+                    foreach ($images as $image) {
+                        $image->deleteImage();
+                        $image->delete();
+                    }
+                }
+            }
+        }
+
+        return ['success' => true];
+    }
+
+    public function postAddProductsImages()
+    {
+        $images = Request::file('mass_images');
+        $ids = Request::get('product_ids');
+
+        if ($ids && $images) {
+            foreach ($ids as $n => $id) {
+                $product = Product::find($id);
+                if ($product) {
+                    if (count($product->images)) {
+                        foreach ($product->images as $img) {
+                            $order = $img->order + count($images);
+                            $img->update(['order' => $order]);
+                        }
+                    }
+
+                    foreach ($images as $i => $image) {
+                        $file_name = ProductImage::uploadImage($image, count($ids) === $n + 1);
+                        ProductImage::create(['product_id' => $product->id, 'image' => $file_name, 'order' => $i]);
+                    }
+                }
+            }
+        } else {
+            return ['success' => false];
+        }
+
+        return ['success' => true];
     }
 }

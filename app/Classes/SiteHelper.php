@@ -13,14 +13,11 @@ use Carbon\Carbon;
 use Fanky\Admin\Models\Catalog as Catalog;
 use Fanky\Admin\Models\City;
 use Cache;
-use Fanky\Admin\Models\Deal;
 use Fanky\Admin\Models\Page;
 use Fanky\Admin\Models\Redirect;
 use Fanky\Admin\Models\Product;
-use Fanky\Admin\Models\Complex;
 use App\Sitemap as Sitemap;
 use Fanky\Admin\Models\SearchIndex;
-use Fanky\Admin\Models\Action1;
 use Image;
 use Request;
 
@@ -758,4 +755,10 @@ class SiteHelper {
 			return '';
 		}
 	}
+
+    //return random hex color
+    public static function rand_color(): string
+    {
+        return sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+    }
 }

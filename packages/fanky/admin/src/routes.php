@@ -58,6 +58,9 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		$controller  = 'AdminCatalogController@';
 		Route::get('/', [AdminCatalogController::class, 'getIndex']);
 
+        Route::get('search', $controller . 'search')
+            ->name('.search');
+
         Route::get('export', $controller . 'getExportFile')
             ->name('.export');
 
@@ -94,16 +97,16 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 		Route::post('product-save', $controller . 'postProductSave')
 			->name('.productSave');
 
-		Route::post('product-reorder', $controller . 'postProductReorder')
+        Route::post('{catalog_id}/product-delete/{id}', $controller . 'postProductDelete')
+            ->name('.productDel');
+
+        Route::post('product-reorder', $controller . 'postProductReorder')
 			->name('.productReorder');
 
-		Route::post('update-order/{id}', $controller . 'postUpdateOrder')
+        Route::post('update-order/{id}', $controller . 'postUpdateOrder')
 			->name('.update-order');
 
-		Route::post('{catalog_id}/product-delete/{id}', $controller . 'postProductDelete')
-			->name('.productDel');
-
-		Route::post('product-image-upload/{id}', $controller . 'postProductImageUpload')
+        Route::post('product-image-upload/{id}', $controller . 'postProductImageUpload')
 			->name('.productImageUpload');
 
 		Route::post('product-image-delete/{id}', $controller . 'postProductImageDelete')
@@ -129,6 +132,19 @@ Route::group(['namespace' => 'Fanky\Admin\Controllers', 'prefix' => 'admin', 'as
 
 		Route::get('get-catalogs/{id?}', $controller . 'getGetCatalogs')
 			->name('.get_catalogs');
+
+        //mass
+		Route::post('move-products/{current_catalog_id}', $controller . 'postMoveProducts')
+			->name('.move-products');
+
+		Route::post('delete-products', $controller . 'postDeleteProducts')
+			->name('.delete-products');
+
+		Route::post('delete-products-image', $controller . 'postDeleteProductsImage')
+			->name('.delete-products-image');
+
+		Route::post('add-products-images', $controller . 'postAddProductsImages')
+			->name('.add-products-images');
 	});
 
     Route::group(['as' => '.colors', 'prefix' => 'colors'], function () {

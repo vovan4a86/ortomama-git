@@ -140,12 +140,8 @@ class Catalog extends Model {
 		return $this->belongsTo('Fanky\Admin\Models\Catalog', 'parent_id');
 	}
 
-    public function menu_actions(): HasMany {
-        return $this->hasMany(MenuAction::class);
-    }
-
 	public function children(): HasMany {
-		return $this->hasMany('Fanky\Admin\Models\Catalog', 'parent_id');
+		return $this->hasMany(Catalog::class, 'parent_id');
 	}
 
 	public function public_children(): HasMany {

@@ -55,9 +55,15 @@ trait HasImage{
 	 * @param \Illuminate\Http\UploadedFile $image
 	 * @return string
 	 */
-	public static function uploadImage($image) {
+	public static function uploadImage($image, $last = null) {
 		$file_name = md5(uniqid(rand(), true)) . '_' . time() . '.' . Str::lower($image->getClientOriginalExtension());
-		$image->move(public_path(self::UPLOAD_URL), $file_name);
+
+        if(!$last) {
+            copy($image, public_path(self::UPLOAD_URL . $file_name));
+        } else {
+            $image->move(public_path(self::UPLOAD_URL), $file_name);
+        }
+
         $image = ImageManager::gd()->read(public_path(self::UPLOAD_URL . $file_name))
             ->resize(1920, 1080);
 
